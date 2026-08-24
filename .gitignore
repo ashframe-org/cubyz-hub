@@ -1,0 +1,30 @@
+# Databases
+*.db
+*.sqlite
+
+# Runtime data
+data/
+uploads/
+avatars/
+banners/
+*.db*
+public/dist/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.example
+# Logs
+*.log
+logs/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+#custom
+migrate-uploads.js
+update.js

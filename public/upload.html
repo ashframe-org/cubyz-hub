@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #1A1F1C; }</style>
+  <title>Upload - Cubyz Hub</title>
+  <link rel="stylesheet" href="style.css?v=system-font-1" />
+  <link rel="stylesheet" href="upload.css?v=system-font-1">
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+  </header>
+
+  <main class="uh-main">
+    <div class="uh-card">
+      <div class="uh-left">
+        <div class="uh-steps">
+          <div id="step1Indicator" class="step active">1. Addon details</div>
+          <div id="step2Indicator" class="step">2. Verify & submit</div>
+        </div>
+
+        <form id="uploadForm" class="uh-form" autocomplete="off">
+          <div class="field-row" style="display:none;">
+            <label>Author</label>
+            <div id="authorName" class="readonly">Loading…</div>
+          </div>
+
+          <div class="field-row">
+            <label for="addon-name">Addon Name</label>
+            <input id="addon-name" name="name" type="text" required maxlength="120" placeholder="My Awesome Addon">
+          </div>
+
+          <div class="field-row two-col">
+            <div>
+              <label for="addon-version">Addon Version</label>
+              <input id="addon-version" name="version" type="text" required placeholder="e.g. 0.1.0">
+            </div>
+            <div style="display:none;">
+              <label for="identifier">Identifier</label>
+              <input id="identifier" name="identifier" type="text" readonly
+                placeholder="auto-generated from addon name">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label for="short-desc">Short Description (max 120 chars)</label>
+            <input id="short-desc" name="description" type="text" required maxlength="120"
+              placeholder="Short one-line summary">
+            <small class="hint">Shown on homepage.</small>
+          </div>
+
+          <div class="field-row">
+            <label for="long-desc">Long Description</label>
+            <textarea id="long-desc" name="longDescription" rows="6"
+              placeholder="Detailed description - Supports HTML & MARKDOWN"></textarea>
+          </div>
+
+          <div class="field-row">
+            <label>Compatibility</label>
+            <select id="compatibility-select" class="compat-select"></select>
+            <small class="hint">Select which Cubyz version this addon is made for.</small>
+          </div>
+
+          <div class="field-row">
+            <label>Tags (up to 6)</label>
+            <div id="tag-chips" class="chips"></div>
+            <small class="hint">Pick tags for categories.</small>
+          </div>
+
+          <div class="field-row file-row">
+            <label class="file-label">
+              Icon <span>(required)</span>
+              <input id="icon-file" name="icon" type="file" accept="image/*" required>
+              <span class="file-name" id="icon-name">No file chosen</span>
+            </label>
+
+            <label class="file-label">
+              Banner <span>(required)</span>
+              <input id="banner-file" name="banner" type="file" accept="image/*" required>
+              <span class="file-name" id="banner-name">No file chosen</span>
+            </label>
+
+            <label class="file-label">
+              Addon File (.zip) <span>(required)</span>
+              <input id="main-file" name="file" type="file" accept=".zip" required>
+              <span class="file-name" id="addonfile-name">No file chosen</span>
+            </label>
+
+            <label class="file-label">
+              Screenshots <span>(optional)</span>
+              <input id="screenshots-file" name="screenshots" type="file" accept="image/*" multiple>
+              <span class="file-name" id="screenshots-name">No files chosen</span>
+            </label>
+          </div>
+
+
+          <div class="form-actions">
+            <button type="button" id="toStep2" class="btn primary">Next</button>
+            <button type="reset" id="resetForm" class="btn">Reset</button>
+          </div>
+        </form>
+
+
+        <div id="verifyPanel" class="verify-panel hidden">
+          <h3>Verify your details</h3>
+          <div class="verify-list">
+            <div><strong>Name:</strong> <span id="v-name"></span></div>
+            <div><strong>Identifier:</strong> <span id="v-identifier"></span></div>
+            <div><strong>Version:</strong> <span id="v-version"></span></div>
+            <div><strong>Short:</strong> <span id="v-short"></span></div>
+            <div><strong>Compatibility:</strong> <span id="v-compat"></span></div>
+            <div><strong>Tags:</strong> <span id="v-tags"></span></div>
+            <div><strong>Files:</strong> <span id="v-files"></span></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="backToStep1" class="btn">Back</button>
+            <button type="button" id="submitBtn" class="btn primary">Confirm & Upload</button>
+          </div>
+
+          <div id="uploadProgress" class="progress hidden">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:0%"></div>
+            </div>
+            <div id="progressText" class="progress-text">Waiting…</div>
+          </div>
+        </div>
+
+        <div id="uploadResult" class="upload-result hidden"></div>
+      </div>
+
+
+      <aside class="uh-right">
+        <h4 class="preview-title">Live preview</h4>
+        <article id="previewCard" class="addon-card-preview">
+          <div id="previewBanner" class="preview-banner" style="background-image: url('assets/default_banner.png')">
+          </div>
+          <div class="preview-body">
+            <div class="preview-icon"><img id="previewIcon" src="assets/default_icon.png" alt="icon"></div>
+            <div class="preview-info">
+              <h3 id="previewName">Addon name</h3>
+              <p id="previewShort" class="muted">Short description</p>
+              <div id="previewTags" class="preview-tags"></div>
+              <div class="preview-meta">
+                <span id="previewVersion">v—</span>
+                <span id="previewAuthor">by —</span>
+              </div>
+              <div class="preview-actions">
+                <button class="btn disabled">Download</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </aside>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+  </footer>
+  <script src="dist/compress.js?v=1"></script>
+  <script>
+
+    (() => {
+      function createUserDropdown(user) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'user-menu-wrapper';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'auth-btn user-label user-dropdown-toggle';
+        button.title = 'Account';
+        button.setAttribute('aria-haspopup', 'menu');
+        button.setAttribute('aria-expanded', 'false');
+
+        const userIcon = document.createElement('img');
+        userIcon.className = 'user-icon';
+        const DEFAULT_AVATAR = '/assets/Snale_Avatar.webp';
+        const avatarUrl = user.avatarUrl || DEFAULT_AVATAR;
+        userIcon.src = avatarUrl;
+        userIcon.onerror = () => {
+          userIcon.src = DEFAULT_AVATAR;
+        };
+        userIcon.alt = 'User avatar';
+
+        const userName = document.createElement('span');
+        userName.className = 'user-name';
+        userName.textContent = 'Account';
+
+        const arrow = document.createElement('span');
+        arrow.className = 'user-dropdown-arrow';
+        arrow.textContent = '▾';
+
+        button.append(userIcon, userName, arrow);
+
+        const menu = document.createElement('div');
+        menu.className = 'user-dropdown-menu';
+        menu.setAttribute('role', 'menu');
+        menu.setAttribute('aria-hidden', 'true');
+
+        const items = [
+          { label: 'Profile', href: `/profile/${encodeURIComponent(user.username)}` },
+          { label: 'Dashboard', href: '/dashboard.html' },
+          { label: 'Logout', action: 'logout' }
+        ];
+
+        items.forEach(item => {
+          const itemButton = document.createElement('button');
+          itemButton.type = 'button';
+          itemButton.className = 'user-dropdown-item';
+          itemButton.setAttribute('role', 'menuitem');
+          itemButton.textContent = item.label;
+          if (item.href) itemButton.dataset.href = item.href;
+          if (item.action) itemButton.dataset.action = item.action;
+          menu.appendChild(itemButton);
+        });
+
+        button.addEventListener('click', e => {
+          e.stopPropagation();
+          const isOpen = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+          menu.classList.toggle('visible', !isOpen);
+          menu.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+        });
+
+        wrapper.append(button, menu);
+        return wrapper;
+      }
+
+      async function loadNavUser() {
+        try {
+          const res = await fetch('/api/auth/status');
+          const j = await res.json().catch(() => ({ ok: false }));
+          const nav = document.getElementById('nav-user');
+          if (!nav) return;
+          nav.innerHTML = '';
+
+          if (j.ok && j.user) {
+            nav.append(createUserDropdown(j.user));
+          } else {
+            const loginBtn = document.createElement('button');
+            loginBtn.className = 'auth-btn';
+            loginBtn.textContent = 'Login / Register';
+            loginBtn.onclick = () => (window.location.href = '/');
+            nav.append(loginBtn);
+          }
+        } catch (err) {
+          console.error('NAV ERROR:', err);
+        }
+      }
+
+      const tagOptions = ["Biomes", "Recipes", "Tools", "Items", "Textures", "QoL","Mod", "Structures"];
+
+      const authorNameEl = document.getElementById('authorName');
+      const nameEl = document.getElementById('addon-name');
+      const identifierEl = document.getElementById('identifier');
+      const versionEl = document.getElementById('addon-version');
+      const shortEl = document.getElementById('short-desc');
+      const longEl = document.getElementById('long-desc');
+
+      const tagChips = document.getElementById('tag-chips');
+
+      const iconInput = document.getElementById('icon-file');
+      const bannerInput = document.getElementById('banner-file');
+      const screensInput = document.getElementById('screenshots-file');
+      const mainFileInput = document.getElementById('main-file');
+
+      const previewBanner = document.getElementById('previewBanner');
+      const previewIcon = document.getElementById('previewIcon');
+      const previewName = document.getElementById('previewName');
+      const previewShort = document.getElementById('previewShort');
+      const previewTags = document.getElementById('previewTags');
+      const previewVersion = document.getElementById('previewVersion');
+      const previewAuthor = document.getElementById('previewAuthor');
+
+      const toStep2Btn = document.getElementById('toStep2');
+      const backBtn = document.getElementById('backToStep1');
+      const verifyPanel = document.getElementById('verifyPanel');
+      const uploadForm = document.getElementById('uploadForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const uploadResult = document.getElementById('uploadResult');
+      const uploadProgress = document.getElementById('uploadProgress');
+      const progressFill = document.querySelector('.progress-fill');
+      const progressText = document.getElementById('progressText');
+
+      const previewTagsContainer = document.getElementById('previewTags');
+
+      const selectedTags = new Set();
+      tagOptions.forEach(t => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = t;
+        b.addEventListener('click', () => {
+          if (selectedTags.has(t)) { selectedTags.delete(t); b.classList.remove('active'); }
+          else {
+            if (selectedTags.size >= 6) { alert('Max 6 tags'); return; }
+            selectedTags.add(t); b.classList.add('active');
+          }
+          updatePreviewTags();
+        });
+        tagChips.appendChild(b);
+      });
+
+      async function loadCompatibilityOptions() {
+        const select = document.getElementById("compatibility-select");
+        if (!select) return;
+        select.innerHTML = "";
+        try {
+          const res = await fetch("/api/game/versions");
+          const data = await res.json();
+          if (!data.ok || !Array.isArray(data.versions)) return;
+          data.versions.forEach(v => {
+            const opt = document.createElement("option");
+            opt.value = v;
+            opt.textContent = v;
+            select.appendChild(opt);
+          });
+        } catch (err) {
+          console.error("Failed to load compatibility versions:", err);
+        }
+      }
+
+      async function loadAuthor() {
+        try {
+          const r = await fetch('/api/auth/status');
+          const j = await r.json().catch(() => ({ ok: false }));
+          if (j && j.ok && j.user) {
+            authorNameEl.textContent = j.user.username;
+            previewAuthor.textContent = `by ${j.user.username}`;
+          } else {
+            authorNameEl.textContent = 'Not logged in - please log in first';
+            previewAuthor.textContent = 'by —';
+          }
+        } catch (e) {
+          authorNameEl.textContent = 'Unknown';
+        }
+      }
+
+      loadAuthor();
+      loadCompatibilityOptions();
+
+      let manualIdentifier = false;
+      nameEl.addEventListener('input', () => {
+        previewName.textContent = nameEl.value || 'Addon name';
+        if (!manualIdentifier) {
+          identifierEl.value = slugify(nameEl.value || '');
+        }
+      });
+      identifierEl.addEventListener('input', () => { manualIdentifier = !!identifierEl.value; });
+
+      shortEl.addEventListener('input', () => previewShort.textContent = shortEl.value || 'Short description');
+      versionEl.addEventListener('input', () => previewVersion.textContent = `v${versionEl.value || '—'}`);
+
+      iconInput.addEventListener('change', () => {
+        previewFileToImg(iconInput.files[0], previewIcon);
+      });
+      bannerInput.addEventListener('change', () => {
+        if (bannerInput.files[0]) {
+          const url = URL.createObjectURL(bannerInput.files[0]);
+          previewBanner.style.backgroundImage = `url('${url}')`;
+        }
+      });
+
+      function previewFileToImg(file, imgEl) {
+        if (!file) { imgEl.src = 'assets/default_icon.png'; return; }
+        const reader = new FileReader();
+        reader.onload = () => imgEl.src = reader.result;
+        reader.readAsDataURL(file);
+      }
+
+      function updatePreviewTags() {
+        previewTagsContainer.innerHTML = '';
+        [...selectedTags].forEach(t => {
+          const s = document.createElement('span'); s.className = 'preview-tag'; s.textContent = t;
+          previewTagsContainer.appendChild(s);
+        });
+      }
+
+      function updatePreviewCompat() {
+        document.getElementById('v-compat') && (document.getElementById('v-compat').textContent = document.getElementById("compatibility-select").value || '—');
+      }
+
+      function slugify(s) {
+        return s.toLowerCase().replace(/[^a-z0-9\-]+/g, '-').replace(/^-+|-+$/g, '').replace(/--+/g, '-').slice(0, 60);
+      }
+
+      // compressImage() is provided by compress.js (loaded above)
+
+      toStep2Btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!nameEl.value.trim()) return alert('Name required.');
+        if (!identifierEl.value.trim()) return alert('Identifier required.');
+        if (!versionEl.value.trim()) return alert('Version required.');
+        if (!shortEl.value.trim()) return alert('Short description required.');
+        const selectedCompat = document.getElementById("compatibility-select").value;
+        if (!selectedCompat) return alert('Please select a compatibility version.');
+        if (selectedTags.size === 0) return alert('Choose at least one tag.');
+        if (!iconInput.files[0]) return alert('Icon required.');
+        if (!bannerInput.files[0]) return alert('Banner required.');
+        if (!mainFileInput.files[0]) return alert('Addon file required.');
+
+        document.getElementById('v-name').textContent = nameEl.value;
+        document.getElementById('v-identifier').textContent = identifierEl.value;
+        document.getElementById('v-version').textContent = versionEl.value;
+        document.getElementById('v-short').textContent = shortEl.value;
+        document.getElementById('v-compat').textContent = document.getElementById("compatibility-select").value || '—';
+        document.getElementById('v-tags').textContent = [...selectedTags].join(', ');
+        const filesList = [];
+        if (iconInput.files[0]) filesList.push('Icon');
+        if (bannerInput.files[0]) filesList.push('Banner');
+        if (mainFileInput.files[0]) filesList.push(mainFileInput.files[0].name);
+        if (screensInput.files.length) filesList.push(`${screensInput.files.length} screenshot(s)`);
+        document.getElementById('v-files').textContent = filesList.join(', ');
+
+        document.getElementById('step1Indicator').classList.remove('active');
+        document.getElementById('step2Indicator').classList.add('active');
+        verifyPanel.classList.remove('hidden');
+        uploadForm.classList.add('hidden');
+        updatePreviewTags();
+        updatePreviewCompat();
+      });
+
+      backBtn.addEventListener('click', () => {
+        document.getElementById('step1Indicator').classList.add('active');
+        document.getElementById('step2Indicator').classList.remove('active');
+        verifyPanel.classList.add('hidden');
+        uploadForm.classList.remove('hidden');
+      });
+
+      submitBtn.addEventListener('click', async () => {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        uploadProgress.classList.remove('hidden');
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Compressing graphics...';
+
+        const fd = new FormData();
+        fd.append('name', nameEl.value.trim());
+        fd.append('identifier', identifierEl.value.trim());
+        fd.append('version', versionEl.value.trim());
+        fd.append('description', shortEl.value.trim());
+        fd.append('longDescription', longEl.value.trim());
+        fd.append('compatibility', document.getElementById("compatibility-select").value || '');
+        fd.append('tags', JSON.stringify([...selectedTags]));
+
+        // 1. Process & Compress Icon (e.g., Target 512x512 max)
+        if (iconInput.files[0]) {
+          const compressedIcon = await compressImage(iconInput.files[0], 512, 512, 0.90);
+          fd.append('icon', compressedIcon);
+        }
+
+        // 2. Process & Compress Banner (e.g., Target 1280x720 max)
+        if (bannerInput.files[0]) {
+          const compressedBanner = await compressImage(bannerInput.files[0], 1280, 720, 0.85);
+          fd.append('banner', compressedBanner);
+        }
+
+        // 3. Keep main addon payload as-is
+        if (mainFileInput.files[0]) {
+          fd.append('file', mainFileInput.files[0]);
+        }
+
+        // 4. Loop & Compress all supplemental screenshots (e.g., Target 1920x1080 max)
+        if (screensInput.files.length) {
+          for (let i = 0; i < screensInput.files.length; i++) {
+            progressText.textContent = `Compressing screenshot (${i + 1}/${screensInput.files.length})...`;
+            const compressedScreen = await compressImage(screensInput.files[i], 1920, 1080, 0.80);
+            fd.append('screenshots', compressedScreen);
+          }
+        }
+
+        progressText.textContent = 'Preparing upload...';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/addons/upload', true);
+
+        xhr.upload.onprogress = (evt) => {
+          if (!evt.lengthComputable) return;
+          const pct = Math.round((evt.loaded / evt.total) * 100);
+          progressFill.style.width = pct + '%';
+          progressText.textContent = `Uploading — ${pct}%`;
+        };
+
+        xhr.onload = () => {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            if (res.ok && res.addon && res.addon.id) {
+              progressFill.style.width = '100%';
+              progressText.textContent = 'Upload complete — redirecting…';
+              const popup = document.getElementById("successPopup");
+              if (popup) popup.classList.add("show");
+
+              setTimeout(() => {
+                const name = res.addon.name || "addon";
+                const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+                window.location.href = `/addon/${res.addon.id}-${slug}`;
+              }, 1200);
+            } else {
+              throw new Error(res.error || 'Upload failed');
+            }
+          } catch (err) {
+            progressText.textContent = 'Upload failed';
+            uploadResult.classList.remove('hidden');
+            uploadResult.innerHTML = '<div class="error"> ' + (err.message || 'Upload failed') + '</div>';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Confirm & Upload';
+          }
+        };
+
+        xhr.onerror = () => {
+          progressText.textContent = 'Network error';
+          uploadResult.classList.remove('hidden');
+          uploadResult.innerHTML = '<div class="error">Network error — please check your connection and try again.</div>';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Confirm & Upload';
+        };
+
+        xhr.send(fd);
+      });
+
+      document.getElementById('resetForm').addEventListener('click', () => {
+        previewBanner.style.backgroundImage = "url('assets/default_banner.png')";
+        previewIcon.src = 'assets/default_icon.png';
+        previewName.textContent = 'Addon name';
+        previewShort.textContent = 'Short description';
+        previewTagsContainer.innerHTML = '';
+        previewVersion.textContent = 'v—';
+        selectedTags.clear();
+        [...tagChips.querySelectorAll('.chip')].forEach(x => x.classList.remove('active'));
+        document.getElementById("compatibility-select").selectedIndex = 0;
+      });
+    })();
+
+    function showSelectedFile(inputId, labelId, multiple = false) {
+      const input = document.getElementById(inputId);
+      const label = document.getElementById(labelId);
+
+      input.addEventListener("change", () => {
+        if (input.files.length === 0) {
+          label.textContent = multiple ? "No files chosen" : "No file chosen";
+        } else if (multiple) {
+          label.textContent = `${input.files.length} file(s) selected`;
+        } else {
+          label.textContent = input.files[0].name;
+        }
+      });
+    }
+
+    showSelectedFile("icon-file", "icon-name");
+    showSelectedFile("banner-file", "banner-name");
+    showSelectedFile("main-file", "addonfile-name");
+    showSelectedFile("screenshots-file", "screenshots-name", true);
+  </script>
+  <script type="module" src="/dist/auth.js?v=nav-search-1"></script>
+  <div id="successPopup">Upload successful 🎉</div>
+</body>
+
+</html>

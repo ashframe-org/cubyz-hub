@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #1A1F1C; }</style>
+
+  <title>Home - Cubyz Hub</title>
+
+  <link rel="preload" href="style.css?v=system-font-1" as="style">
+  <link rel="stylesheet" href="style.css?v=system-font-1" />
+  <style>
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    .auth-toggle {
+      text-align: center;
+    }
+
+    .auth-toggle a,
+    .auth-toggle a:link,
+    .auth-toggle a:visited {
+      color: #5BA65B;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      transition: 0.2s ease;
+    }
+
+    .auth-toggle a:hover {
+      background: rgba(91,166,91,0.15);
+      color: #6fcf6f;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title bbh-sans-hegarty-regular">Cubyz Hub</h1>
+
+    <div class="header-actions nav-user" id="nav-user"></div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h2>Discover, Download, and Share Addons for Cubyz</h2>
+
+      <div class="filter-bar">
+
+        <input
+          id="searchBar"
+          class="search-input"
+          type="text"
+          placeholder="Search addons…"
+          autocomplete="off"
+        >
+
+        <select id="sortSelect" class="sort-select">
+          <option value="newest">Newest</option>
+          <option value="liked">Most Liked</option>
+          <option value="downloads">Most Downloaded</option>
+          <option value="name">Name (A–Z)</option>
+        </select>
+
+      </div>
+
+      <div id="tagFilters" class="tag-filter-row"></div>
+    </section>
+
+    <section
+      id="addon-container"
+      class="addon-container"
+      aria-live="polite"
+    ></section>
+
+    <section id="empty-state" class="empty-state" style="display:none;">
+      <a href="upload.html" class="primary-btn">Upload an addon</a>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+  </footer>
+
+  <div id="authModal" class="modal" aria-hidden="true">
+    <div
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authTitle"
+    >
+
+      <h2 id="authTitle">Login</h2>
+
+      <form id="authForm">
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          required
+          autocomplete="username"
+        >
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          required
+          autocomplete="current-password"
+        >
+
+        <button type="submit" id="authSubmit">Login</button>
+
+        <p class="auth-toggle">
+          <a href="#" id="toggleAuth">Create an account</a>
+        </p>
+      </form>
+
+    </div>
+  </div>
+
+  <script type="module" src="dist/load_addons.js?v=card-link-1"></script>
+
+  <script type="module" src="./dist/auth.js?v=nav-search-1"></script>
+
+  <script>
+    function createUserDropdown(user) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "user-menu-wrapper";
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "auth-btn user-label user-dropdown-toggle";
+      button.title = "Account";
+      button.setAttribute("aria-haspopup", "menu");
+      button.setAttribute("aria-expanded", "false");
+
+      const icon = document.createElement("img");
+      icon.className = "user-icon";
+      const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
+      const avatarUrl = user.avatarUrl || DEFAULT_AVATAR;
+      icon.src = avatarUrl;
+      icon.onerror = () => {
+        icon.src = DEFAULT_AVATAR;
+      };
+      icon.alt = "User avatar";
+
+      const name = document.createElement("span");
+      name.className = "user-name";
+      name.textContent = "Account";
+
+      const arrow = document.createElement("span");
+      arrow.className = "user-dropdown-arrow";
+      arrow.textContent = "▾";
+
+      button.append(icon, name, arrow);
+
+      const menu = document.createElement("div");
+      menu.className = "user-dropdown-menu";
+      menu.setAttribute("role", "menu");
+      menu.setAttribute("aria-hidden", "true");
+
+      const items = [
+        { label: "Profile", href: `/profile/${encodeURIComponent(user.username)}` },
+        { label: "Dashboard", href: "/dashboard.html" },
+        { label: "Logout", action: "logout" }
+      ];
+
+      items.forEach(item => {
+        const itemButton = document.createElement("button");
+        itemButton.type = "button";
+        itemButton.className = "user-dropdown-item";
+        itemButton.setAttribute("role", "menuitem");
+        itemButton.textContent = item.label;
+        if (item.href) itemButton.dataset.href = item.href;
+        if (item.action) itemButton.dataset.action = item.action;
+        menu.appendChild(itemButton);
+      });
+
+      button.addEventListener("click", e => {
+        e.stopPropagation();
+        const isOpen = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", isOpen ? "false" : "true");
+        menu.classList.toggle("visible", !isOpen);
+        menu.setAttribute("aria-hidden", isOpen ? "true" : "false");
+      });
+
+      wrapper.append(button, menu);
+      return wrapper;
+    }
+
+    async function loadNavUser() {
+      try {
+        const res = await fetch("/api/auth/status");
+        const j = await res.json().catch(() => ({ ok: false }));
+        const nav = document.getElementById("nav-user");
+        nav.innerHTML = "";
+
+        if (j.ok && j.user) {
+          nav.append(createUserDropdown(j.user));
+        } else {
+          const login = document.createElement("button");
+          login.className = "auth-btn";
+          login.textContent = "Login / Register";
+          login.onclick = () => {
+            const modal = document.getElementById("authModal");
+            if (modal) modal.classList.add("active");
+          };
+          nav.append(login);
+        }
+      } catch (err) {
+        console.error("NAV ERROR:", err);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadNavUser);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #1A1F1C; }</style>
+  <title>Dashboard - Cubyz Hub</title>
+  <link rel="stylesheet" href="dashboard.css?v=system-font-1">
+
+</head>
+
+<body>
+  <header class="site-header">
+    <h1 class="site-title bbh-sans-hegarty-regular" onclick="location.href='index.html'" style="cursor:pointer;">
+      Cubyz Hub
+    </h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+  </header>
+
+  <main class="dash-main" style="max-width:1200px;margin:20px auto;padding:0 18px 40px;">
+    <section style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+      <div>
+        <h2 style="margin:0;color:#fff;">Your Addons</h2>
+        <p style="margin:4px 0 0;color:#aaa;">Manage your uploaded addons - edit, update versions or delete.</p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button id="goUpload" class="primary-btn">Upload Addon</button>
+      </div>
+    </section>
+
+    <section id="addonGrid" class="addon-grid"
+      style="display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px;"></section>
+
+    <div id="emptyState" class="empty-state hidden" style="text-align:center; padding:40px; color:#999;">
+      <h3>No addons yet</h3>
+      <p style="color:#bbb;">Upload your first addon to get started.</p>
+      <button id="uploadNew" class="primary-btn">Upload Addon</button>
+    </div>
+    <section class="account-settings">
+      <h3>Account Settings</h3>
+
+      <div class="field">
+        <label>New Username</label>
+        <input id="newUsername" type="text">
+        <button class="primary-btn" onclick="changeUsername()">Update Username</button>
+      </div>
+
+      <div class="field">
+        <label>Change Password</label>
+        <input id="oldPassword" type="password" placeholder="Current password">
+        <input id="newPassword" type="password" placeholder="New password">
+        <button class="primary-btn" onclick="changePassword()">Update Password</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="editModal" class="blur-overlay" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>Edit Addon — <span id="modalAddonName">Loading…</span></h3>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button id="modalClose" class="btn">Close</button>
+        </div>
+      </div>
+
+      <form id="editForm" enctype="multipart/form-data" style="margin-top:12px;">
+        <input type="hidden" id="editId" name="id">
+        <div class="form-section">
+          <h4 class="section-title">General</h4>
+          <div class="field">
+            <label>Name</label>
+            <input id="e_name" name="name" type="text" required>
+          </div>
+          <div class="field" style="width:200px;">
+            <label>Compatibility</label>
+            <select id="e_compat" name="compatibility" class="compat-select"></select>
+          </div>
+          <div class="field">
+            <label>Short Description</label>
+            <input id="e_short" name="description" type="text" maxlength="120">
+          </div>
+          <div class="field">
+            <label>Long Description (HTML or MARKDOWN)</label>
+            <textarea id="e_long" name="longDescription" rows="6"></textarea>
+          </div>
+          <div class="field">
+            <label>Tags</label>
+            <div id="edit-tag-chips" class="chips"></div>
+            <input type="hidden" id="e_tags" name="tags">
+            <small class="hint">Click to toggle tags</small>
+          </div>
+        </div>
+
+
+        <div class="modal-actions" style="justify-content:flex-end;">
+          <button type="button" id="cancelEdit" class="btn">Cancel</button>
+          <button type="submit" class="primary-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="blur-overlay" aria-hidden="true">
+    <div class="confirm-box">
+      <h3>Confirm Delete</h3>
+      <p>Are you sure you want to permanently delete this addon? This cannot be undone.</p>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <button id="confirmCancel" class="btn">Cancel</button>
+        <button id="confirmOk" class="delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-area" id="toastArea"></div>
+  <footer class="site-footer">
+    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+  </footer>
+
+  <script src="dist/dashboard.js?v=nav-user-2"></script>
+  <script type="module" src="dist/auth.js?v=nav-search-1"></script>
+</body>
+
+</html>

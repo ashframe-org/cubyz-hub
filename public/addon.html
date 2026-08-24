@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #1A1F1C; }</style>
+  <title>Addon - Cubyz Hub</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CubyzHub Addon">
+  <meta property="og:description" content="View this addon on CubyzHub">
+  <meta property="og:image" content="/assets/default_icon.png">
+  <meta property="og:url" content="">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="addon.css?v=system-font-1">
+  <style>
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <style>
+    #authModal {
+      display: none;
+    }
+    #authModal.active {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+  </header>
+
+  <section class="addon-top">
+
+    <div class="like-container">
+      <button id="likeBtn" class="like-btn">❤</button>
+      <span id="likeCount" class="like-count">0</span>
+    </div>
+
+    <div class="addon-top-left">
+      <div class="addon-icon-large">
+        <img id="addon-icon" src="assets/default_icon.png" alt="Addon Icon">
+      </div>
+
+      <div class="addon-top-info">
+        <div class="addon-title-row">
+          <h1 id="addon-name">Loading...</h1>
+        </div>
+
+        <a id="download-link" class="download-btn" href="#">Download</a>
+      </div>
+    </div>
+
+    <div class="addon-banner-box">
+      <img id="addon-banner" src="assets/default_banner.png" alt="Addon Banner">
+    </div>
+
+  </section>
+
+  <main class="addon-content">
+    <div class="left-column">
+      <div class="tab-bar">
+        <button class="active" data-tab="desc">Description</button>
+        <button data-tab="versions">Versions</button>
+        <button data-tab="comments">Comments</button>
+      </div>
+
+      <div id="desc" class="tab-content active">
+        <div class="addon-description-layout">
+          <div id="addon-description" class="addon-longdesc">
+            Loading description…
+          </div>
+
+          <div class="screenshots-section">
+            <div class="screenshots-header">
+              <span>SCREENSHOTS</span>
+              <button id="add-screenshot-btn" class="add-screenshot-btn" title="Add screenshot">＋</button>
+            </div>
+            <div class="screenshots" id="screenshots"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="versions" class="tab-content">
+        <div id="version-upload-box" class="version-upload-box" style="display:none; margin-bottom:12px;">
+          <input id="new-version-input" type="text" placeholder="Enter new version (e.g 1.2.0)" />
+          <input id="new-file-input" type="file" accept=".zip" />
+          <button id="upload-version-btn" class="download-btn">Upload Version</button>
+        </div>
+        <ul id="versions-list"></ul>
+      </div>
+
+      <div id="comments" class="tab-content">
+        <div id="comments-list"></div>
+        <div id="comment-form">
+          <textarea id="comment-text" placeholder="Write a comment…"></textarea>
+          <button class="comment-btn" id="post-comment">Post Comment</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="addon-card">
+        <h3>Compatibility</h3>
+        <div class="info-row">
+          <span class="info-label">Cubyz Version</span>
+          <span class="info-value" id="compatibility">—</span>
+        </div>
+      </div>
+
+      <div class="addon-card">
+        <h3>File Information</h3>
+        <div class="info-row">
+          <span class="info-label">Addon Version</span>
+          <span class="info-value" id="addon-version">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Uploaded</span>
+          <span class="info-value" id="created-at">—</span>
+        </div>
+        <div>
+          <h4 style="margin:.6rem 0 .3rem;">Tags</h4>
+          <div id="addon-tags" class="tag-badges"></div>
+        </div>
+      </div>
+
+      <div class="addon-card">
+        <h3>
+          Creators
+          <button id="add-creator-btn" class="creator-add-btn" title="Add an additional creator">+</button>
+        </h3>
+        <div class="author-row" id="creator-panel">
+          <img id="author-avatar" class="author-avatar" src="/assets/Snale_Avatar.webp" alt="Author avatar">
+          <a id="author-name" class="author-link" href="#">—</a>
+        </div>
+        <div id="creator-list" class="creator-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+  </footer>
+  <div id="imgModal" class="img-modal">
+  <span id="imgModalClose" class="img-modal-close">✕</span>
+
+  <button id="imgPrev" class="img-nav left">❮</button>
+  <img id="imgModalContent" class="img-modal-content">
+  <button id="imgNext" class="img-nav right">❯</button>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+  <script src="dist/auth.js?v=nav-search-1"></script>
+  <script src="dist/compress.js?v=1"></script>
+  <script>
+    (function () {
+      function fadeInImage(img) {
+        img.classList.add("img-fade");
+        const reveal = () => img.classList.add("loaded");
+        if (img.complete && img.naturalWidth > 0) {
+          reveal();
+        } else {
+          img.addEventListener("load", reveal, { once: true });
+          img.addEventListener("error", reveal, { once: true });
+        }
+      }
+
+      let addonId = new URLSearchParams(window.location.search).get("id");
+
+      if (!addonId) {
+        const path = window.location.pathname.split("/").pop();
+        if (path) {
+          const idPart = path.split("-")[0];
+          if (/^\d+$/.test(idPart)) {
+            addonId = idPart;
+          }
+        }
+      }
+
+      (async () => {
+        const hasQueryId = new URLSearchParams(window.location.search).get("id");
+        if (!hasQueryId) return;
+
+        try {
+          const res = await fetch(`/api/addons/${addonId}`);
+          const data = await res.json();
+          if (!data.ok) return;
+
+          const name = data.addon.name || "addon";
+
+          const slug = name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+
+          const newUrl = `/addon/${addonId}-${slug}`;
+
+          if (window.location.pathname !== newUrl) {
+            window.history.replaceState(null, "", newUrl);
+          }
+        } catch (e) {
+          console.warn("Failed to upgrade URL:", e);
+        }
+      })();
+
+      function isSafeUrl(urlStr) {
+        if (!urlStr) return false;
+        if (/^\s*javascript:/i.test(urlStr)) return false;
+        try {
+          const url = new URL(urlStr, location.href);
+          return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "data:";
+        } catch (e) {
+          return !/^\s*javascript:/i.test(urlStr);
+        }
+      }
+
+      function isSafeImageUrl(src) {
+        if (!src) return false;
+        if (/^\s*data:/i.test(src)) return /^data:image\//i.test(src);
+        try {
+          const url = new URL(src, location.href);
+          return url.protocol === "http:" || url.protocol === "https:";
+        } catch {
+          return !/^\s*javascript:/i.test(src);
+        }
+      }
+
+      function parseCreators(value) {
+        if (!value) return [];
+        if (Array.isArray(value)) return value.filter(Boolean);
+        try {
+          const parsed = JSON.parse(value);
+          return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function getUsersFromPage() {
+        const users = new Set(window.__addonPageUsers || []);
+        document.querySelectorAll(".comment-author").forEach((el) => {
+          const name = el.textContent.trim();
+          if (name) users.add(name);
+        });
+        const authorLink = document.getElementById("author-name");
+        if (authorLink) {
+          const authorName = authorLink.textContent.trim();
+          if (authorName) users.add(authorName);
+        }
+        return Array.from(users);
+      }
+
+      function closeCreatorMenu() {
+        const existing = document.getElementById("creator-menu");
+        if (existing) existing.remove();
+      }
+
+      function showCreatorMenu(button) {
+        closeCreatorMenu();
+
+        const menu = document.createElement("div");
+        menu.id = "creator-menu";
+        menu.className = "creator-menu";
+
+        const searchInput = document.createElement("input");
+        searchInput.type = "search";
+        searchInput.className = "creator-search-input";
+        searchInput.placeholder = "Search users by name...";
+        searchInput.autocomplete = "off";
+        menu.appendChild(searchInput);
+
+        const results = document.createElement("div");
+        results.className = "creator-search-results";
+        menu.appendChild(results);
+
+        const renderResults = (users, message) => {
+          results.innerHTML = "";
+          if (!users.length) {
+            const empty = document.createElement("div");
+            empty.className = "creator-menu-empty";
+            empty.textContent = message;
+            results.appendChild(empty);
+            return;
+          }
+
+          users.forEach((username) => {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.textContent = username;
+            item.onclick = async (event) => {
+              event.stopPropagation();
+              await addCreator(username);
+              closeCreatorMenu();
+            };
+            results.appendChild(item);
+          });
+        };
+
+        async function searchUsers(query) {
+          const trimmed = String(query || "").trim();
+          if (!trimmed) {
+            renderResults([], "Type a username to search.");
+            return;
+          }
+
+          try {
+            const res = await fetch(`/api/users/search?q=${encodeURIComponent(trimmed)}`);
+            const json = await res.json();
+            if (!json.ok || !Array.isArray(json.users)) {
+              renderResults([], "No matching users found.");
+              return;
+            }
+
+            const available = json.users.filter((username) => {
+              return (
+                username &&
+                username !== window.__addonAuthor &&
+                !(window.__addonCreators || []).includes(username)
+              );
+            });
+
+            renderResults(available, available.length ? "" : "No matching users found.");
+          } catch (err) {
+            console.error("Creator search failed:", err);
+            renderResults([], "Search failed.");
+          }
+        }
+
+        searchInput.addEventListener("input", (event) => {
+          searchUsers(event.target.value);
+        });
+
+        renderResults([], "Type a username to search.");
+
+        const rect = button.getBoundingClientRect();
+        menu.style.top = `${rect.bottom + window.scrollY + 6}px`;
+        menu.style.left = `${rect.left + window.scrollX}px`;
+
+        document.body.appendChild(menu);
+        setTimeout(() => {
+          document.addEventListener("click", closeCreatorMenu, { once: true });
+        }, 0);
+
+        searchInput.focus();
+      }
+
+      async function setCreators(creators) {
+        if (!addonId) return;
+        try {
+          const res = await fetch(`/api/addons/${addonId}/creators`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ creators }),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            throw new Error(data.error || "Failed to update creators.");
+          }
+          window.__addonCreators = creators;
+          await renderCreators({ author: window.__addonAuthor, author_id: window.__addonAuthor, creators });
+        } catch (err) {
+          console.error("Update creators failed:", err);
+          alert(err.message || "Failed to update creators.");
+        }
+      }
+
+      async function addCreator(username) {
+        if (!addonId) return;
+        const creators = Array.from(
+          new Set([...(window.__addonCreators || []), username])
+        );
+        await setCreators(creators);
+      }
+
+      async function removeCreator(username) {
+        if (!addonId) return;
+        const creators = (window.__addonCreators || []).filter((c) => c !== username);
+        await setCreators(creators);
+      }
+
+      async function renderCreators(addon) {
+        const authorLink = document.getElementById("author-name");
+        const authorAvatar = document.getElementById("author-avatar");
+        const creatorList = document.getElementById("creator-list");
+        const addBtn = document.getElementById("add-creator-btn");
+        const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
+
+        const author = addon.author || "Unknown";
+
+        if (authorLink) {
+          authorLink.textContent = author;
+          authorLink.href = `/profile/${encodeURIComponent(author)}`;
+        }
+
+        if (authorAvatar) {
+          try {
+            const userRes = await fetch(`/api/users/${encodeURIComponent(author)}`);
+            const userData = await userRes.json();
+            if (userData.ok && userData.user && userData.user.avatarUrl) {
+              authorAvatar.src = userData.user.avatarUrl;
+            } else {
+              authorAvatar.src = DEFAULT_AVATAR;
+            }
+          } catch {
+            authorAvatar.src = DEFAULT_AVATAR;
+          }
+          authorAvatar.onerror = () => {
+            authorAvatar.src = DEFAULT_AVATAR;
+          };
+        }
+
+        window.__addonAuthor = author;
+        window.__addonCreators = parseCreators(addon.creators || []);
+
+        if (creatorList) {
+          creatorList.innerHTML = "";
+          const isOwner = window.__currentUser && window.__currentUser === author;
+          if (window.__addonCreators.length > 0) {
+            for (const creator of window.__addonCreators) {
+              const chip = document.createElement("div");
+              chip.className = "creator-chip";
+
+              const avatar = document.createElement("img");
+              avatar.className = "creator-chip-avatar";
+              avatar.src = DEFAULT_AVATAR;
+
+
+              try {
+                const userRes = await fetch(`/api/users/${encodeURIComponent(creator)}`);
+                const userData = await userRes.json();
+                if (userData.ok && userData.user && userData.user.avatarUrl) {
+                  avatar.src = userData.user.avatarUrl;
+                }
+              } catch {
+
+              }
+
+              avatar.onerror = () => {
+                avatar.src = DEFAULT_AVATAR;
+              };
+
+              const content = document.createElement("div");
+              content.className = "creator-chip-content";
+              const link = document.createElement("a");
+              link.href = `/profile/${encodeURIComponent(creator)}`;
+              link.textContent = creator;
+              content.appendChild(link);
+
+              chip.append(avatar, content);
+
+              if (isOwner) {
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "creator-remove-btn";
+                removeBtn.title = "Remove creator";
+                removeBtn.textContent = "✕";
+                removeBtn.onclick = async (event) => {
+                  event.stopPropagation();
+                  await removeCreator(creator);
+                };
+                chip.appendChild(removeBtn);
+              }
+
+              creatorList.appendChild(chip);
+            }
+          }
+        }
+
+        if (addBtn) {
+          addBtn.style.display =
+            window.__currentUser && window.__currentUser === author
+              ? "inline-flex"
+              : "none";
+          addBtn.onclick = (event) => {
+            event.stopPropagation();
+            showCreatorMenu(addBtn);
+          };
+        }
+      }
+
+      const purifierConfig = {
+        ADD_TAGS: ['img'],
+        ADD_ATTR: ['src', 'alt', 'title']
+      };
+
+
+      function createUserDropdown(user) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "user-menu-wrapper";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "auth-btn user-label user-dropdown-toggle";
+        button.title = "Account";
+        button.setAttribute("aria-haspopup", "menu");
+        button.setAttribute("aria-expanded", "false");
+
+        const userIcon = document.createElement("img");
+        userIcon.className = "user-icon";
+        const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
+        const userId = user.id || user.username;
+        const avatarPath = `/avatars/${userId}.webp?t=${Date.now()}`;
+        userIcon.src = avatarPath;
+        userIcon.onerror = () => {
+          userIcon.src = DEFAULT_AVATAR;
+        };
+        userIcon.alt = "User avatar";
+
+        const userName = document.createElement("span");
+        userName.className = "user-name";
+        userName.textContent = 'Account';
+
+        const arrow = document.createElement("span");
+        arrow.className = "user-dropdown-arrow";
+        arrow.textContent = "▾";
+
+        button.append(userIcon, userName, arrow);
+
+        const menu = document.createElement("div");
+        menu.className = "user-dropdown-menu";
+        menu.setAttribute("role", "menu");
+        menu.setAttribute("aria-hidden", "true");
+
+        const items = [
+          { label: "Profile", href: `/profile/${encodeURIComponent(user.username)}` },
+          { label: "Dashboard", href: "/dashboard.html" },
+          { label: "Logout", action: "logout" }
+        ];
+
+        items.forEach(item => {
+          const itemButton = document.createElement("button");
+          itemButton.type = "button";
+          itemButton.className = "user-dropdown-item";
+          itemButton.setAttribute("role", "menuitem");
+          itemButton.textContent = item.label;
+          if (item.href) itemButton.dataset.href = item.href;
+          if (item.action) itemButton.dataset.action = item.action;
+          menu.appendChild(itemButton);
+        });
+
+        button.addEventListener("click", e => {
+          e.stopPropagation();
+          const isOpen = button.getAttribute("aria-expanded") === "true";
+          button.setAttribute("aria-expanded", isOpen ? "false" : "true");
+          menu.classList.toggle("visible", !isOpen);
+          menu.setAttribute("aria-hidden", isOpen ? "true" : "false");
+        });
+
+        wrapper.append(button, menu);
+        return wrapper;
+      }
+
+      async function loadNavBar() {
+        try {
+          const res = await fetch("/api/auth/status");
+          const json = await res.json().catch(() => ({ ok: false }));
+          const nav = document.getElementById("nav-user");
+          if (!nav) return;
+          nav.innerHTML = "";
+
+          if (json && json.ok && json.user) {
+            nav.append(createUserDropdown(json.user));
+          } else {
+            const loginBtn = document.createElement("button");
+            loginBtn.className = "auth-btn";
+            loginBtn.textContent = "Login / Register";
+            loginBtn.onclick = () => (window.location.href = "/");
+
+            nav.append(loginBtn);
+          }
+        } catch (err) {
+          console.error("Navbar load failed:", err);
+        }
+      }
+
+      async function fetchAddon() {
+        if (!addonId) return;
+        try {
+          const res = await fetch(`/api/addons/${addonId}`);
+          const data = await res.json();
+          if (!data.ok) return;
+
+          const a = data.addon;
+
+          window.__addonAuthor = a.author;
+          document.title = `CubyzHub — ${a.name || "Addon"}`;
+
+          const setMeta = (prop, value) => {
+            let el = document.querySelector(`meta[property="${prop}"]`);
+            if (!el) return;
+            el.setAttribute("content", value || "");
+          };
+
+          setMeta("og:title", a.name || "Addon");
+          setMeta("og:description", a.description || "View this addon on CubyzHub");
+          setMeta("og:image", isSafeImageUrl(a.iconUrl) ? a.iconUrl : "/assets/default_icon.png");
+          setMeta("og:url", window.location.href);
+
+          const bannerEl = document.getElementById("addon-banner");
+          const iconEl = document.getElementById("addon-icon");
+          const dlEl = document.getElementById("download-link");
+
+
+          document.querySelector(".addon-top")?.classList.add("fade-in");
+          document.querySelector(".addon-content")?.classList.add("fade-in");
+
+          const banner = a.bannerUrl;
+          bannerEl.src = isSafeImageUrl(banner) ? banner : "assets/default_banner.png";
+          fadeInImage(bannerEl);
+
+          const icon = a.iconUrl;
+          iconEl.src = isSafeImageUrl(icon) ? icon : "assets/default_icon.png";
+          fadeInImage(iconEl);
+
+
+          const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+
+
+          const addBtn = document.getElementById("add-screenshot-btn");
+
+          if (addBtn) {
+            if (isOwner) {
+              addBtn.style.display = "inline-flex";
+
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = "image/*";
+              input.multiple = true;
+              input.style.display = "none";
+              document.body.appendChild(input);
+
+              addBtn.onclick = () => input.click();
+
+              input.onchange = async () => {
+                if (!input.files.length) return;
+
+                const fd = new FormData();
+                for (const f of input.files) {
+                  const compressed = await compressImage(f, 1920, 1080, 0.80);
+                  fd.append("screenshots", compressed);
+                }
+
+                try {
+                  const res = await fetch(`/api/addons/${addonId}/update`, {
+                    method: "POST",
+                    body: fd,
+                    credentials: "include"
+                  });
+
+                  const data = await res.json().catch(() => ({}));
+
+                  if (res.ok && data.ok) {
+                    location.reload();
+                  } else {
+                    console.error("Upload failed:", data);
+                    alert(data.error || "Screenshot upload failed.");
+                  }
+                } catch (err) {
+                  console.error("Upload error:", err);
+                  alert("Screenshot upload failed.");
+                }
+              };
+            } else {
+              addBtn.style.display = "none";
+            }
+          }
+
+          if (isOwner) {
+
+            if (bannerEl && bannerEl.parentElement) {
+              bannerEl.parentElement.classList.add("editable-image", "editable-hint");
+            }
+            if (iconEl && iconEl.parentElement) {
+              iconEl.parentElement.classList.add("editable-image", "editable-hint");
+            }
+
+            iconEl.style.cursor = "pointer";
+            iconEl.title = "Click to change icon";
+
+            const iconInput = document.createElement("input");
+            iconInput.type = "file";
+            iconInput.accept = "image/*";
+            iconInput.style.display = "none";
+            document.body.appendChild(iconInput);
+
+            iconEl.onclick = () => iconInput.click();
+
+            iconInput.onchange = async () => {
+              if (!iconInput.files[0]) return;
+              const compressedIcon = await compressImage(iconInput.files[0], 512, 512, 0.90);
+              const fd = new FormData();
+              fd.append("icon", compressedIcon);
+
+              await fetch(`/api/addons/${addonId}/update`, {
+                method: "POST",
+                body: fd
+              });
+
+              location.reload();
+            };
+
+
+            bannerEl.style.cursor = "pointer";
+            bannerEl.title = "Click to change banner";
+
+            const bannerInput = document.createElement("input");
+            bannerInput.type = "file";
+            bannerInput.accept = "image/*";
+            bannerInput.style.display = "none";
+            document.body.appendChild(bannerInput);
+
+            bannerEl.onclick = () => bannerInput.click();
+
+            bannerInput.onchange = async () => {
+              if (!bannerInput.files[0]) return;
+              const compressedBanner = await compressImage(bannerInput.files[0], 1280, 720, 0.85);
+              const fd = new FormData();
+              fd.append("banner", compressedBanner);
+
+              await fetch(`/api/addons/${addonId}/update`, {
+                method: "POST",
+                body: fd
+              });
+
+              location.reload();
+            };
+          }
+
+          document.getElementById("addon-name").textContent = a.name || "Unknown";
+          const authorProfileEl = document.getElementById("author-name");
+          if (authorProfileEl) {
+            authorProfileEl.textContent = a.author || "Unknown";
+            authorProfileEl.href = `/profile/${encodeURIComponent(a.author || "")}`;
+          }
+          const avatarEl = document.getElementById("author-avatar");
+          if (avatarEl) {
+            const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
+            try {
+              const userRes = await fetch(`/api/users/${encodeURIComponent(a.author)}`);
+              const userData = await userRes.json();
+              if (userData.ok && userData.user && userData.user.avatarUrl) {
+                avatarEl.src = userData.user.avatarUrl;
+              } else {
+                avatarEl.src = DEFAULT_AVATAR;
+              }
+            } catch {
+              avatarEl.src = DEFAULT_AVATAR;
+            }
+            avatarEl.onerror = () => {
+              avatarEl.src = DEFAULT_AVATAR;
+            };
+          }
+
+          await renderCreators(a);
+
+          document.getElementById("addon-version").textContent = a.version || "—";
+          document.getElementById("compatibility").textContent = a.compatibility || "—";
+          document.getElementById("created-at").textContent = a.created_at ? new Date(a.created_at).toLocaleDateString() : "—";
+
+          if (isSafeUrl(a.fileUrl)) {
+
+  dlEl.href = `/api/addons/${addonId}/download`;
+  dlEl.removeAttribute("onclick");
+} else {
+  dlEl.href = "#";
+  dlEl.removeAttribute("onclick");
+}
+
+dlEl.onclick = (e) => {
+  if (!window.__currentUser) {
+    e.preventDefault();
+    alert("You must be logged in to download addons.");
+  }
+};
+
+          const longDesc = a.longDescription || "No description available.";
+
+          function looksLikeMarkdown(text) {
+            return (
+              text.includes("#") ||
+              text.includes("**") ||
+              text.includes("- ") ||
+              (text.includes("[") && text.includes("]("))
+            );
+          }
+
+          function looksLikeHTML(text) {
+            return /<\/?[a-z][\s\S]*>/i.test(text);
+          }
+
+          let html;
+
+          if (looksLikeHTML(longDesc)) {
+
+            html = longDesc;
+          } else if (looksLikeMarkdown(longDesc)) {
+            html = marked.parse(longDesc);
+          } else {
+            const escaped = longDesc
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+            html = escaped.replace(/\n/g, "<br>");
+          }
+
+          const cleanHtml = DOMPurify.sanitize(html, purifierConfig);
+          const descEl = document.getElementById("addon-description");
+          descEl.innerHTML = cleanHtml;
+
+          const tagsEl = document.getElementById("addon-tags");
+          tagsEl.innerHTML = "";
+          try {
+            const tagArr = JSON.parse(a.tags || "[]");
+            tagArr.forEach((t) => {
+              const div = document.createElement("div");
+              div.className = "tag-badge";
+              div.textContent = String(t);
+              tagsEl.appendChild(div);
+            });
+          } catch (e) {
+
+          }
+
+          const shotsEl = document.getElementById("screenshots");
+          shotsEl.innerHTML = "";
+          try {
+            const imgs = JSON.parse(a.screenshots || "[]");
+            imgs.forEach((src) => {
+              if (!isSafeImageUrl(src)) return;
+
+              const wrapper = document.createElement("div");
+              wrapper.className = "screenshot-item";
+
+              const img = document.createElement("img");
+              img.src = src;
+              img.alt = "screenshot";
+              fadeInImage(img);
+
+              wrapper.appendChild(img);
+
+              const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+
+              if (isOwner) {
+                const delBtn = document.createElement("button");
+                delBtn.className = "screenshot-delete-btn";
+                delBtn.textContent = "✕";
+                delBtn.title = "Delete screenshot";
+
+delBtn.onclick = async (e) => {
+  e.stopPropagation();
+  if (!confirm("Delete this screenshot?")) return;
+
+  try {
+
+    const fd = new FormData();
+    fd.append("removeScreenshots", src);
+
+    const res = await fetch(`/api/addons/${addonId}/update`, {
+      method: "POST",
+      body: fd,
+      credentials: "include"
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.ok) {
+      wrapper.remove();
+    } else {
+      alert(data.error || "Failed to delete screenshot.");
+    }
+  } catch (err) {
+    console.error("Delete screenshot failed:", err);
+    alert("Failed to delete screenshot.");
+  }
+};
+
+                wrapper.appendChild(delBtn);
+              }
+
+              shotsEl.appendChild(wrapper);
+            });
+
+            setupScreenshotZoom();
+
+          } catch (e) {
+            console.warn("Could not load screenshots:", e);
+          }
+        } catch (err) {
+          console.error("Failed to fetch addon:", err);
+        }
+      }
+
+      async function fetchComments() {
+        if (!addonId) return;
+        try {
+          const cRes = await fetch(`/api/comments/${addonId}`);
+          const cData = await cRes.json();
+          const list = document.getElementById("comments-list");
+          list.innerHTML = "";
+          window.__addonPageUsers = new Set();
+          if (cData.ok && Array.isArray(cData.comments) && cData.comments.length) {
+            cData.comments.forEach((c) => {
+              if (c.username) window.__addonPageUsers.add(c.username);
+              const div = document.createElement("div");
+              div.className = "comment";
+              div.style.position = "relative";
+
+              const author = document.createElement("div");
+              author.className = "comment-author";
+              author.textContent = c.username || "Anonymous";
+
+              const content = document.createElement("div");
+              content.textContent = c.content || "";
+
+              const date = document.createElement("div");
+              date.className = "comment-date";
+              date.textContent = c.created_at ? new Date(c.created_at).toLocaleString() : "";
+
+              div.append(author, content, date);
+
+              const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+
+              if (isOwner) {
+                const delBtn = document.createElement("button");
+                delBtn.textContent = "✕";
+                delBtn.title = "Delete comment";
+                delBtn.style.position = "absolute";
+                delBtn.style.top = "6px";
+                delBtn.style.right = "6px";
+                delBtn.style.background = "transparent";
+                delBtn.style.border = "none";
+                delBtn.style.color = "#aaa";
+                delBtn.style.cursor = "pointer";
+
+                delBtn.onmouseenter = () => delBtn.style.color = "#ff5555";
+                delBtn.onmouseleave = () => delBtn.style.color = "#aaa";
+
+                delBtn.onclick = async (e) => {
+                  e.stopPropagation();
+                  if (!confirm("Delete this comment?")) return;
+
+                  try {
+                    const res = await fetch(`/api/comments/${c.id}`, {
+                      method: "DELETE"
+                    });
+
+                    const data = await res.json();
+
+                    if (data.ok) {
+                      div.remove();
+                    } else {
+                      alert(data.error || "Failed to delete comment.");
+                    }
+                  } catch (err) {
+                    console.error("Delete comment failed:", err);
+                    alert("Failed to delete comment.");
+                  }
+                };
+
+                div.appendChild(delBtn);
+              }
+
+              list.appendChild(div);
+            });
+          } else {
+            list.innerHTML = "<p>No comments yet.</p>";
+          }
+        } catch (err) {
+          console.error("Failed to fetch comments:", err);
+        }
+      }
+
+      function setupCommentForm() {
+        const postBtn = document.getElementById("post-comment");
+        if (!postBtn) return;
+
+        postBtn.addEventListener("click", async () => {
+          const ta = document.getElementById("comment-text");
+          const content = ta?.value.trim();
+          if (!content) return alert("Please write a comment.");
+
+          try {
+            const res = await fetch(`/api/comments/${addonId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content }),
+            });
+            const data = await res.json();
+            if (data.ok) {
+              ta.value = "";
+              fetchComments();
+            } else {
+              alert(" " + (data.error || "Failed to post comment."));
+            }
+          } catch (err) {
+            console.error("Post comment failed:", err);
+            alert("Failed to post comment.");
+          }
+        });
+      }
+
+      async function fetchVersions() {
+        if (!addonId) return;
+        try {
+          const vRes = await fetch(`/api/versions/${addonId}`);
+          const vData = await vRes.json();
+          const vList = document.getElementById("versions-list");
+          vList.innerHTML = "";
+
+          let currentUser = null;
+          let addonAuthor = null;
+          try {
+            const s = await fetch("/api/auth/status").then(r => r.json());
+            if (s.ok) currentUser = s.user?.username;
+          } catch {}
+
+          try {
+            const aRes = await fetch(`/api/addons/${addonId}`).then(r => r.json());
+            if (aRes.ok) addonAuthor = aRes.addon.author;
+          } catch {}
+
+          const uploadBox = document.getElementById("version-upload-box");
+          if (uploadBox && currentUser && addonAuthor && currentUser === addonAuthor) {
+            uploadBox.style.display = "flex";
+          }
+
+          if (vData.ok && Array.isArray(vData.versions) && vData.versions.length) {
+            vData.versions.forEach((v) => {
+              const li = document.createElement("li");
+              li.className = "version-row";
+
+              if (v.fileUrl === document.getElementById("download-link").getAttribute("href")) {
+                li.classList.add("active-version");
+              }
+
+              const info = document.createElement("div");
+              info.className = "version-info";
+
+const download = document.createElement("a");
+download.className = "version-download";
+download.textContent = "Download";
+if (isSafeUrl(v.fileUrl)) {
+  // Route through your new backend endpoint instead of linking directly to the file!
+  download.href = `/api/versions/download/${v.id}`;
+  download.removeAttribute("target"); // Let the browser stream it cleanly in the same tab
+} else {
+  download.href = "#";
+}
+
+download.onclick = (e) => {
+  if (!window.__currentUser) {
+    e.preventDefault();
+    alert("You must be logged in to download addons.");
+  }
+};
+
+              const tag = document.createElement("span");
+              tag.className = "version-tag";
+              tag.textContent = v.version || "unknown";
+
+              const date = document.createElement("span");
+              date.className = "version-date";
+              date.textContent = v.created_at
+                ? new Date(v.created_at).toLocaleString()
+                : "";
+
+              info.appendChild(tag);
+              info.appendChild(date);
+              li.appendChild(info);
+              li.appendChild(download);
+
+              // show delete button only for owner
+              if (currentUser && addonAuthor && currentUser === addonAuthor) {
+                const delBtn = document.createElement("button");
+                delBtn.textContent = "✕";
+                delBtn.className = "version-delete-btn";
+                delBtn.title = "Delete version";
+
+                delBtn.onclick = async () => {
+                  if (!confirm("Delete this version?")) return;
+
+                  try {
+                    const res = await fetch("/api/versions/delete", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ versionIds: [v.id] })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.ok) {
+                      // Refresh everything to reflect new active version
+                      await fetchAddon();
+                      await fetchVersions();
+                    } else {
+                      alert(data.error || "Failed to delete version.");
+                    }
+                  } catch (e) {
+                    console.error("Delete failed:", e);
+                    alert("Failed to delete version.");
+                  }
+                };
+
+                li.appendChild(delBtn);
+              }
+
+              vList.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.className = "version-empty";
+            li.textContent = "No previous versions available.";
+            vList.appendChild(li);
+          }
+
+          // Setup version upload handler
+          const uploadBtn = document.getElementById("upload-version-btn");
+          if (uploadBtn) {
+            uploadBtn.onclick = async () => {
+              const version = document.getElementById("new-version-input").value.trim();
+              const fileInput = document.getElementById("new-file-input");
+
+              if (!fileInput.files.length) {
+                return alert("Please select a file.");
+              }
+
+              if (!version) {
+                return alert("You must enter a version when uploading a file.");
+              }
+
+              const fd = new FormData();
+              fd.append("file", fileInput.files[0]);
+              fd.append("version", version);
+
+              try {
+                const res = await fetch(`/api/addons/${addonId}/update`, {
+                  method: "POST",
+                  body: fd
+                });
+
+                const data = await res.json();
+
+                if (data.ok) {
+                  location.reload();
+                } else {
+                  alert(data.error || "Upload failed.");
+                }
+              } catch (e) {
+                console.error("Upload failed:", e);
+                alert("Upload failed.");
+              }
+            };
+          }
+        } catch (err) {
+          console.error("Failed to fetch versions:", err);
+        }
+      }
+
+
+
+async function setupStarSystem() {
+  console.log("STAR SYSTEM INIT");
+
+  let addonId = new URLSearchParams(window.location.search).get("id");
+
+  // FIX: support /addon/:id-slug URLs
+  if (!addonId) {
+    const match = window.location.pathname.match(/^\/addon\/(\d+)-/);
+    if (match) addonId = match[1];
+  }
+
+  if (!addonId) {
+    console.error("No addonId found");
+    return;
+  }
+
+  const likeBtn = document.getElementById("likeBtn");
+  const likeCount = document.getElementById("likeCount");
+
+  if (!likeBtn || !likeCount) {
+    console.error("Like button or count element missing");
+    return;
+  }
+
+  let user = null;
+
+  try {
+    const s = await fetch("/api/auth/status", {
+      credentials: "include"
+    }).then(r => r.json());
+
+    if (s.ok) user = s.user;
+  } catch (err) {
+    console.error("Auth check failed:", err);
+  }
+
+  async function refreshStars() {
+    const res = await fetch(`/api/addons/${addonId}`, {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+    if (!data.ok) return;
+
+    const likes = data.addon.likes ?? data.addon.stars ?? 0;
+    likeCount.textContent = likes;
+
+    if (user) {
+      const likedRes = await fetch(`/api/addons/${addonId}/liked`, {
+        credentials: "include"
+      }).then(r => r.json());
+
+      if (likedRes.ok) {
+        likeBtn.classList.toggle("liked", likedRes.liked);
+      }
+    }
+  }
+
+  await refreshStars();
+
+  likeBtn.addEventListener("click", async () => {
+    console.log("LIKE CLICK");
+
+    if (!user) {
+      alert("You must be logged in to like addons.");
+      return;
+    }
+
+    likeBtn.disabled = true;
+
+    try {
+      const res = await fetch(`/api/addons/${addonId}/like`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.ok) {
+        console.error("Like failed:", data);
+        return;
+      }
+
+      likeCount.textContent = data.stars ?? likeCount.textContent;
+      likeBtn.classList.toggle("liked", data.liked);
+    } finally {
+      likeBtn.disabled = false;
+    }
+  });
+}
+
+      document.querySelectorAll(".tab-bar button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tabs = document.querySelectorAll(".tab-content");
+          const activeTab = document.querySelector(".tab-content.active");
+          const target = document.getElementById(btn.dataset.tab);
+
+          tabs.forEach((tab) => tab.classList.remove("active"));
+          document.querySelectorAll(".tab-bar button").forEach((b) =>
+            b.classList.remove("active")
+          );
+          btn.classList.add("active");
+
+          const baseHeight = activeTab ? activeTab.offsetHeight : 350;
+          tabs.forEach((tab) => (tab.style.minHeight = baseHeight + "px"));
+
+          if (target) target.classList.add("active");
+        });
+      });
+
+      function setupScreenshotZoom() {
+  const modal = document.getElementById("imgModal");
+  const modalImg = document.getElementById("imgModalContent");
+  const closeBtn = document.getElementById("imgModalClose");
+  const prevBtn = document.getElementById("imgPrev");
+  const nextBtn = document.getElementById("imgNext");
+
+  const images = Array.from(document.querySelectorAll("#screenshots img"));
+  let currentIndex = 0;
+
+  function showImage(index) {
+    if (!images.length) return;
+    currentIndex = (index + images.length) % images.length;
+    modalImg.src = images[currentIndex].src;
+  }
+
+  images.forEach((img, index) => {
+    img.style.cursor = "zoom-in";
+    img.addEventListener("click", () => {
+      modal.style.display = "flex";
+      showImage(index);
+    });
+  });
+
+  prevBtn.addEventListener("click", () => showImage(currentIndex - 1));
+  nextBtn.addEventListener("click", () => showImage(currentIndex + 1));
+
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (modal.style.display !== "flex") return;
+
+    if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+    if (e.key === "ArrowRight") showImage(currentIndex + 1);
+    if (e.key === "Escape") modal.style.display = "none";
+  });
+}
+      window.addEventListener("DOMContentLoaded", async () => {
+        // Owner detection: get current user before loading addon
+        let currentUser = null;
+        try {
+          const s = await fetch("/api/auth/status").then(r => r.json());
+          if (s.ok) currentUser = s.user?.username;
+        } catch {}
+        window.__currentUser = currentUser;
+        loadNavBar();
+        fetchAddon();
+        fetchComments();
+        fetchVersions();
+        setupCommentForm();
+        setupStarSystem();
+      });
+
+    })();
+  </script>
+
+</body>
+
+</html>

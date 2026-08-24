@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #1A1F1C; }</style>
+  <title>Profile - Cubyz Hub</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/profile.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+  </header>
+
+  <main class="profile-page">
+    <section class="profile-hero">
+      <div class="profile-card profile-hero-card">
+        <div class="profile-banner" id="profile-banner"></div>
+        <div class="profile-hero-body">
+          <div class="profile-left">
+            <div class="profile-avatar-shell">
+              <img id="profile-avatar" class="profile-avatar" src="/assets/Snale_Avatar.webp" alt="Profile avatar">
+            </div>
+            <div class="profile-info">
+              <h1 id="profile-name">Loading…</h1>
+              <p class="profile-handle" id="profile-handle">@loading</p>
+            </div>
+          </div>
+          <div class="profile-right">
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <strong id="profile-addons-count">0</strong>
+                <span>Addons</span>
+              </div>
+              <div class="profile-stat">
+                <strong id="profile-downloads-count">0</strong>
+                <span>Downloads</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="profile-grid">
+      <section class="profile-section profile-addons">
+        <div class="section-header">
+          <div>
+            <h2>Addons</h2>
+            <p class="muted">All addons uploaded by this creator.</p>
+          </div>
+        </div>
+
+        <section id="addon-container" class="addon-container profile-addon-container" aria-live="polite"></section>
+        <div id="no-addons" class="empty-state hidden">
+          <h3>No addons yet</h3>
+          <p class="muted">This user has not uploaded any addons yet.</p>
+        </div>
+      </section>
+
+      <aside class="profile-section profile-sidebar">
+        <div class="profile-card">
+          <h3>About</h3>
+          <p id="profile-about">This creator is passionate about Cubyz addons and new experiences. Expect quality updates and carefully crafted mods.</p>
+          <p class="profile-joined" id="profile-joined-date">Joined —</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+  </footer>
+
+  <script src="/dist/compress.js?v=1"></script>
+  <script type="module" src="/dist/profile.js"></script>
+  <script type="module" src="/dist/auth.js?v=nav-search-1"></script>
+</body>
+
+</html>

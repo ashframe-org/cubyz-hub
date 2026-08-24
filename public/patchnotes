@@ -1,0 +1,40 @@
+v0.1.0
+FIXED:
+Dashboard & Logout buttons now show correctly when logged in.
+
+CHANGED:
+Font has been replaced.
+The Addon page now has a new layout
+All pages now follow the same colour / button / text style
+The Dashboard button has been replaced by the User Button
+View Addon button was removed and now you can click on the whole card to view the page
+
+NEW:
+You can zoom and switch between screenshots
+Each page now has a header for easier navigation
+
+
+v0.2.0
+FIXED
+- File handling and cleanup issues.
+- Version syncing between addon page and dashboard.
+- Latest compatibility not displaying correctly.
+- Markdown formating is now supported will fallback to HTML.
+- Backend fixes for file uploads & delation.
+- Miscellaneous minor fixes
+
+NEW
+- You can now update USERNAME & PASSWORD in the dashboard.
+- Delete individual addon versions (from addon page)
+- Upload new versions directly from addon page (versions tab)
+- Add screenshots via addon page (+ button)
+- Edit icon and banner directly on addon page (with visual indicators)
+- Addon owners can delete comments.
+
+ADJUSTED
+- Version management moved from dashboard to addon page
+- UI improvements for icon/banner editing.
+- Game version tags replaced with Dropbox system.
+
+
+
