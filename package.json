@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "build:js": "esbuild public/auth.js public/dashboard.js public/profile.js public/load_addons.js public/addon_cards.js public/compress.js --minify --outdir=public/dist"
   },
-  "author": "",
+  "author": "Ashframe",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -31,11 +31,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iNiKKo/Cubyz-Hub.git"
+    "url": "git+https://github.com/ashframe-org/cubyz-addon-marketplace.git"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/iNiKKo/Cubyz-Hub/issues"
+    "url": "https://github.com/ashframe-org/cubyz-addon-marketplace/issues"
   },
-  "homepage": "https://github.com/iNiKKo/Cubyz-Hub#readme"
+  "homepage": "https://github.com/ashframe-org/cubyz-addon-marketplace#readme"
 }
