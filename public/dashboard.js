@@ -434,14 +434,14 @@ window.addEventListener("DOMContentLoaded", () => {
   const goUpload = document.getElementById("goUpload");
   if (goUpload) {
     goUpload.addEventListener("click", () => {
-      window.location.href = "/upload.html";
+      window.location.href = "/upload.html"; 
     });
   }
 
   const uploadNew = document.getElementById("uploadNew");
   if (uploadNew) {
     uploadNew.addEventListener("click", () => {
-      window.location.href = "/upload.html";
+      window.location.href = "/upload.html"; 
     });
   }
 });

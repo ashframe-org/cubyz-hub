@@ -1,20 +1,17 @@
 # Databases
 *.db
+*.db.bak
 *.sqlite
 
 # Runtime data
-data/
-uploads/
-avatars/
-banners/
-*.db*
-public/dist/
+runtime/
 
 # Dependencies
 node_modules/
 
 # Environment
 .env
+
 # Logs
 *.log
 logs/
