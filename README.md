@@ -1,4 +1,4 @@
-# Cubyz Addon Marketplace
+# Cubyz Hub
 
 A self-hosted web application for browsing, publishing, and downloading Cubyz
 add-ons.
