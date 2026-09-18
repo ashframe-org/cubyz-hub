@@ -1,7 +1,6 @@
 # Cubyz Hub
 
-A self-hosted web application for browsing, publishing, and downloading Cubyz
-add-ons.
+Share and discover Cubyz add-ons, mods, models and skins, publish your own, and find servers to play on. 
 
 ## Licence
 
