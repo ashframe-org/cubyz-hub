@@ -1,0 +1,616 @@
+:root {
+    --bg-color: var(--bg, #121212);
+    --panel-bg: var(--card-bg, #1e1e1e);
+    --accent-color: var(--accent, #007acc);
+    --text-color: var(--text, #e0e0e0);
+    --border-color: var(--border, #333333);
+    --dropdown-bg: var(--input-bg, #2d2d2d);
+}
+.creator-app {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.creator-app, .creator-app input, .creator-app select, .creator-app button, .creator-app textarea {
+    font-family: ui-monospace, "Cascadia Code", "Roboto Mono", Menlo, Monaco, Consolas, monospace;
+}
+.creator-app {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    user-select: none;
+}
+.creator-app .site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 20px 20px 0 20px;
+}
+.creator-app .container {
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+.creator-app .main-content {
+    flex: 1 0 auto;
+    width: 100%;
+}
+.creator-app .row {
+    display: flex;
+    gap: 15px;
+}
+.creator-app .col {
+    flex: 1;
+}
+.creator-app .panel {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.creator-app .biome-section-box {
+    background: var(--panel-bg);
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.creator-app .biome-section-box h3 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+}
+.creator-app .biome-grid-row {
+    display: grid;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.creator-app .biome-grid-row.cols-1 { grid-template-columns: 1fr; }
+.creator-app .biome-grid-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.creator-app .biome-grid-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.creator-app .toolbar-container-block {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    gap: 15px;
+}
+.creator-app .toolbar-flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.creator-app .border-split {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+.creator-app .toolbar-main-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+}
+.creator-app .toolbar-metrics-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.creator-app .status-header-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+.creator-app .form-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+.creator-app label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 14px;
+}
+.creator-app .inline-name-field {
+    margin-bottom: 0;
+    width: 300px;
+}
+.creator-app .inline-name-field label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.creator-app input[type="text"], .creator-app input[type="number"], .creator-app select {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: white;
+    border-radius: 4px;
+    box-sizing: border-box;
+    user-select: text;
+}
+.creator-app select {
+    cursor: pointer;
+}
+.creator-app input:focus, .creator-app select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+.creator-app input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+.creator-app input[type="number"]::-webkit-inner-spin-button, .creator-app input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    background: var(--input-bg);
+    filter: invert(0.85);
+    cursor: pointer;
+}
+.creator-app input[type="checkbox"] {
+    appearance: none;
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+    outline: none;
+    box-sizing: border-box;
+    margin: 0;
+}
+.creator-app input[type="checkbox"]:hover { border-color: #555555; }
+.creator-app input[type="checkbox"]:focus { border-color: var(--accent-color); }
+.creator-app input[type="checkbox"]:checked { background-color: var(--accent-color); border-color: var(--accent-color); }
+.creator-app input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 2.5px 2px 0;
+    transform: rotate(45deg);
+}
+.creator-app input[type="checkbox"]:disabled {
+    background-color: #1a1a1b;
+    border-color: #2d2d2d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.creator-app .hint-text {
+    font-size: 10px;
+    color: #666666;
+    font-weight: normal;
+    margin-left: 3px;
+}
+.creator-app .field-explanation {
+    font-size: 11px;
+    color: #8b949e;
+    display: block;
+    margin-top: 4px;
+    line-height: 1.3;
+    font-weight: normal;
+}
+.creator-app button {
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #444;
+}
+.creator-app .btn-primary {
+    background-color: var(--accent-color);
+    width: 100%;
+    margin-top: 10px;
+}
+.creator-app .btn-primary:hover { background-color: var(--accent-dark); }
+.creator-app .btn-primary.toolbar-btn {
+    width: max-content;
+    margin-top: 0;
+}
+.creator-app .btn-secondary {
+    font-size: 13px;
+    padding: 8px 12px;
+    margin-right: 10px;
+}
+.creator-app .btn-secondary:hover { background-color: var(--text-muted); }
+.creator-app .import-label-btn {
+    margin: 0;
+    padding: 0 18px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    box-sizing: border-box;
+}
+.creator-app .import-label-btn:hover { background: #3a3a3c; }
+.creator-app .toolbar-buttons-side button.toolbar-btn {
+    height: 38px;
+    padding: 0 18px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+.creator-app .nav-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.creator-app .nav-btn {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    font-size: 14px;
+    color: white;
+}
+.creator-app .nav-btn.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.creator-app .texture-select-wrapper {
+    position: relative;
+}
+.creator-app .texture-select-wrapper input[type="text"] {
+    padding-right: 32px;
+}
+.creator-app .dropdown-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    z-index: 10;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    line-height: 1.4;
+    min-width: max-content;
+}
+.creator-app .dropdown-option {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.creator-app .dropdown-option:hover { background-color: #3e3e42; }
+.creator-app .texture-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    image-rendering: pixelated;
+    object-fit: contain;
+    background: #000;
+}
+.creator-app .file-input-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 4px;
+}
+.creator-app .clear-input-btn:hover {
+    color: var(--danger);
+}
+.creator-app #projectSidebar {
+width: 320px;
+}
+.creator-app .sidebar-tree-row, .creator-app .sidebar-tree-item-row {
+    min-height: 20px;
+    padding: 6px 8px;
+}
+.creator-app .sidebar-tree-row div, .creator-app .sidebar-tree-item-row div {
+    white-space: normal;
+    word-break: break-all;
+    line-height: 1.3;
+    padding-right: 4px;
+}
+.creator-app #sidebarBlocksTree::-webkit-scrollbar, .creator-app #sidebarItemsTree::-webkit-scrollbar, .creator-app #sidebarRecipesTree::-webkit-scrollbar, .creator-app #sidebarBiomesTree::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+.creator-app #sidebarBlocksTree::-webkit-scrollbar-track, .creator-app #sidebarItemsTree::-webkit-scrollbar-track, .creator-app #sidebarRecipesTree::-webkit-scrollbar-track, .creator-app #sidebarBiomesTree::-webkit-scrollbar-track {
+background: #111111;
+border-radius: 4px;
+}
+.creator-app #sidebarBlocksTree::-webkit-scrollbar-thumb, .creator-app #sidebarItemsTree::-webkit-scrollbar-thumb, .creator-app #sidebarRecipesTree::-webkit-scrollbar-thumb, .creator-app #sidebarBiomesTree::-webkit-scrollbar-thumb {
+background: #3a3a3c;
+border-radius: 4px;
+}
+.creator-app #sidebarBlocksTree::-webkit-scrollbar-thumb:hover, .creator-app #sidebarItemsTree::-webkit-scrollbar-thumb:hover, .creator-app #sidebarRecipesTree::-webkit-scrollbar-thumb:hover, .creator-app #sidebarBiomesTree::-webkit-scrollbar-thumb:hover {
+background: var(--accent-color, var(--accent));
+}
+.creator-app .status-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 30px;
+    min-width: 280px;
+    overflow: visible;
+    transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.creator-app .status-container.expanded-metrics {
+    background: var(--panel-bg);
+    border-radius: 4px;
+    z-index: 1000;
+}
+.creator-app .status-container .metric-hidden-pill {
+    display: none;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+.creator-app .status-container.expanded-metrics .metric-hidden-pill {
+    display: inline-flex;
+    opacity: 1;
+    max-height: 40px;
+}
+.creator-app .status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+.creator-app .status-pill.version-active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent-border);
+    font-weight: bold;
+}
+.creator-app .properties-list-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.creator-app .property-inline-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+}
+.creator-app .prop-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: bold;
+    min-width: 90px;
+    text-transform: uppercase;
+}
+.creator-app .prop-segmented-control {
+    display: flex;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color, #3c3c3c);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 2px;
+    gap: 2px;
+}
+.creator-app .prop-segmented-control label {
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+.creator-app .prop-segmented-control input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.creator-app .prop-segmented-control span {
+    display: block;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-radius: 4px;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.creator-app .prop-segmented-control label:hover span {
+    background: var(--input-bg);
+    color: #fff;
+}
+.creator-app .prop-segmented-control input[type="radio"]:checked + span {
+    background: var(--accent);
+    color: #000;
+    font-weight: bold;
+}
+.creator-app .color-picker-input-wrapper {
+    background: var(--panel-bg);
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+.creator-app .color-picker-input-wrapper input[type="color"] {
+    width: 60px;
+    height: 28px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+.creator-app .app-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+.creator-app .custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.creator-app .custom-modal-box {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+.creator-app .custom-modal-title {
+    margin-top: 0;
+    font-size: 16px;
+    color: #ff9800;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+}
+.creator-app .custom-modal-message {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+    margin-bottom: 24px;
+}
+.creator-app .custom-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+.creator-app .modal-btn {
+    margin: 0;
+    padding: 8px 16px;
+    font-size: 13px;
+    width: auto;
+}
+@media (max-width: 1100px) {
+    .creator-app .biome-dashboard-split { grid-template-columns: 1fr; }
+}
+
+.creator-app .creator-field-invalid {
+    border-color: var(--danger-fill) !important;
+    box-shadow: 0 0 0 1px var(--danger-fill);
+}
+
+.creator-app .start-modal-choice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+.creator-app .start-modal-choice-info {
+    flex: 1;
+    min-width: 0;
+}
+.creator-app .start-modal-choice-title {
+    font-weight: bold;
+    font-size: 15px;
+    color: #eee;
+    margin-bottom: 2px;
+}
+.creator-app .start-modal-choice-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.creator-app .start-modal-choice-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.creator-app .start-modal-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+.creator-app .start-modal-footer a {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-decoration: none;
+}
+.creator-app .start-modal-footer a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+.creator-app .start-modal-version-select {
+    width: auto;
+    min-width: 140px;
+    height: 34px;
+    box-sizing: border-box;
+    padding: 6px 10px;
+    font-size: 13px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    color: var(--text);
+    outline: none;
+}
+.creator-app .start-modal-version-select:focus {
+    border-color: var(--accent);
+}
+
+.creator-app .migration-offer-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    background: #2c251e;
+    border: 1px solid #443826;
+    border-left: 3px solid #ff9800;
+    border-radius: 4px;
+    color: #ffcc80;
+    font-size: 13px;
+}
+.creator-app .migration-offer-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}

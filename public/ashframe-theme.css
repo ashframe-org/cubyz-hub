@@ -1,0 +1,86 @@
+
+:root[data-theme="ashframe"] {
+    --bg: #101010;
+    --bg-alt: #171717;
+    --card-bg: #1c1c1c;
+    --accent: #e05d5d;
+    --accent-dark: #ae4848;
+    --text: #e8e8e8;
+    --text-muted: #9d9d9d;
+    --border: #292929;
+    --ghost-border: #393939;
+    --ghost-text: #d7d7d7;
+    --accent-soft: rgba(224, 93, 93, .15);
+    --accent-border: rgba(224, 93, 93, .4);
+    --input-bg: #171717;
+    --input-border: #292929;
+    --focus-glow: rgba(224, 93, 93, .35);
+    --danger: #ff6b6b;
+    --danger-fill: #D20A2E;
+    --danger-soft: rgba(210, 10, 46, .12);
+    --danger-border: rgba(210, 10, 46, .4);
+    --edit-hint: #ff3b2e;
+    --font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+[data-theme="ashframe"] body {
+    text-shadow: none;
+}
+
+[data-theme="ashframe"] body::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    opacity: 0.04;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.35' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+    background-size: 96px 96px;
+}
+
+[data-theme="ashframe"] .site-title {
+    color: #eee;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+}
+
+[data-theme="ashframe"] .user-dropdown-arrow {
+    color: var(--accent);
+}
+
+[data-theme="ashframe"] .addon-title {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+[data-theme="ashframe"] .addon-row-title {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+[data-theme="ashframe"] .addon-icon img {
+    border: 2px solid #101010;
+}
+
+[data-theme="ashframe"] .editable-image::before,
+[data-theme="ashframe"] .editable-hint.editable-text::after,
+[data-theme="ashframe"] .editable-hint#addon-tags::after,
+[data-theme="ashframe"] .editable-hint#compatibility::after,
+[data-theme="ashframe"] .editable-hint#addon-version::after,
+[data-theme="ashframe"] #previewIconWrap.editable-hint::after,
+[data-theme="ashframe"] #previewBanner.editable-hint::after,
+[data-theme="ashframe"] .profile-avatar-shell.editable::after,
+[data-theme="ashframe"] .profile-about.editable::after,
+[data-theme="ashframe"] .profile-banner.editable::after {
+    color: #ff3b2e !important;
+    opacity: 1 !important;
+    text-shadow: 0 0 6px rgba(255, 59, 46, 0.7) !important;
+}
+
+[data-theme="ashframe"] .editable-hint.editable-text:hover::after,
+[data-theme="ashframe"] .editable-hint#addon-tags:hover::after,
+[data-theme="ashframe"] .editable-hint#compatibility:hover::after,
+[data-theme="ashframe"] .editable-hint#addon-version:hover::after,
+[data-theme="ashframe"] .editable-image:hover::before {
+    color: #ff6b5c !important;
+    text-shadow: 0 0 8px rgba(255, 107, 92, 0.9) !important;
+}

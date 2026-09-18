@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://addons.ashframe.net/sitemap.xml

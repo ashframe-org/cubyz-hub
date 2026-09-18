@@ -5,279 +5,399 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="dark">
-  <style>html { background: #1A1F1C; }</style>
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("cubyzhub-theme");
+        if (saved !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
   <title>Upload - Cubyz Hub</title>
-  <link rel="stylesheet" href="style.css?v=system-font-1" />
-  <link rel="stylesheet" href="upload.css?v=system-font-1">
+  <meta name="description" content="Upload a Cubyz addon or mod to share with the community.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="dist/buttons.css?v=20260919-17" />
+  <link rel="stylesheet" href="dist/style.css?v=20260919-17" />
+  <link rel="stylesheet" href="upload.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/ashframe-theme.css?v=20260919-17" />
 </head>
 
-<body>
+<body class="no-nav-search">
 
   <header class="site-header">
     <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
     <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
   </header>
 
   <main class="uh-main">
     <div class="uh-card">
-      <div class="uh-left">
-        <div class="uh-steps">
-          <div id="step1Indicator" class="step active">1. Addon details</div>
-          <div id="step2Indicator" class="step">2. Verify & submit</div>
-        </div>
-
-        <form id="uploadForm" class="uh-form" autocomplete="off">
-          <div class="field-row" style="display:none;">
-            <label>Author</label>
-            <div id="authorName" class="readonly">Loading…</div>
-          </div>
-
-          <div class="field-row">
-            <label for="addon-name">Addon Name</label>
-            <input id="addon-name" name="name" type="text" required maxlength="120" placeholder="My Awesome Addon">
-          </div>
-
-          <div class="field-row two-col">
-            <div>
-              <label for="addon-version">Addon Version</label>
-              <input id="addon-version" name="version" type="text" required placeholder="e.g. 0.1.0">
-            </div>
-            <div style="display:none;">
-              <label for="identifier">Identifier</label>
-              <input id="identifier" name="identifier" type="text" readonly
-                placeholder="auto-generated from addon name">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <label for="short-desc">Short Description (max 120 chars)</label>
-            <input id="short-desc" name="description" type="text" required maxlength="120"
-              placeholder="Short one-line summary">
-            <small class="hint">Shown on homepage.</small>
-          </div>
-
-          <div class="field-row">
-            <label for="long-desc">Long Description</label>
-            <textarea id="long-desc" name="longDescription" rows="6"
-              placeholder="Detailed description - Supports HTML & MARKDOWN"></textarea>
-          </div>
-
-          <div class="field-row">
-            <label>Compatibility</label>
-            <select id="compatibility-select" class="compat-select"></select>
-            <small class="hint">Select which Cubyz version this addon is made for.</small>
-          </div>
-
-          <div class="field-row">
-            <label>Tags (up to 6)</label>
-            <div id="tag-chips" class="chips"></div>
-            <small class="hint">Pick tags for categories.</small>
-          </div>
-
-          <div class="field-row file-row">
-            <label class="file-label">
-              Icon <span>(required)</span>
-              <input id="icon-file" name="icon" type="file" accept="image/*" required>
-              <span class="file-name" id="icon-name">No file chosen</span>
-            </label>
-
-            <label class="file-label">
-              Banner <span>(required)</span>
-              <input id="banner-file" name="banner" type="file" accept="image/*" required>
-              <span class="file-name" id="banner-name">No file chosen</span>
-            </label>
-
-            <label class="file-label">
-              Addon File (.zip) <span>(required)</span>
-              <input id="main-file" name="file" type="file" accept=".zip" required>
-              <span class="file-name" id="addonfile-name">No file chosen</span>
-            </label>
-
-            <label class="file-label">
-              Screenshots <span>(optional)</span>
-              <input id="screenshots-file" name="screenshots" type="file" accept="image/*" multiple>
-              <span class="file-name" id="screenshots-name">No files chosen</span>
-            </label>
-          </div>
-
-
-          <div class="form-actions">
-            <button type="button" id="toStep2" class="btn primary">Next</button>
-            <button type="reset" id="resetForm" class="btn">Reset</button>
-          </div>
-        </form>
-
-
-        <div id="verifyPanel" class="verify-panel hidden">
-          <h3>Verify your details</h3>
-          <div class="verify-list">
-            <div><strong>Name:</strong> <span id="v-name"></span></div>
-            <div><strong>Identifier:</strong> <span id="v-identifier"></span></div>
-            <div><strong>Version:</strong> <span id="v-version"></span></div>
-            <div><strong>Short:</strong> <span id="v-short"></span></div>
-            <div><strong>Compatibility:</strong> <span id="v-compat"></span></div>
-            <div><strong>Tags:</strong> <span id="v-tags"></span></div>
-            <div><strong>Files:</strong> <span id="v-files"></span></div>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" id="backToStep1" class="btn">Back</button>
-            <button type="button" id="submitBtn" class="btn primary">Confirm & Upload</button>
-          </div>
-
-          <div id="uploadProgress" class="progress hidden">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:0%"></div>
-            </div>
-            <div id="progressText" class="progress-text">Waiting…</div>
-          </div>
-        </div>
-
-        <div id="uploadResult" class="upload-result hidden"></div>
+      <div class="uh-steps">
+        <div id="step1Indicator" class="step active">1. Details</div>
+        <div id="step2Indicator" class="step">2. Verify & submit</div>
       </div>
 
+      <form id="uploadForm" class="uh-form" autocomplete="off">
+        <div class="field-row" style="display:none;">
+          <label>Author</label>
+          <div id="authorName" class="readonly">Loading…</div>
+        </div>
 
-      <aside class="uh-right">
-        <h4 class="preview-title">Live preview</h4>
+        <input id="addon-name" name="name" type="hidden" required maxlength="120">
+        <input id="short-desc" name="description" type="hidden" required maxlength="60">
+        <input id="identifier" name="identifier" type="hidden" readonly>
+        <input id="addon-version" name="version" type="hidden" required maxlength="20">
+        <input id="addon-license" name="license" type="hidden" maxlength="60">
+        <textarea id="long-desc" name="longDescription" hidden></textarea>
+
+        <div class="upload-type-section">
+          <label class="upload-type-label">
+            What are you uploading?
+            <button type="button" class="upload-type-info-btn" id="uploadTypeInfoBtn" aria-label="What's the difference?" title="What's the difference?">?</button>
+          </label>
+          <div id="uploadTypeInfo" class="upload-type-info hidden">
+            <p><strong>Addon</strong> - a drop-in package hosted here on CubyzHub. You upload a .zip and people download it directly from this site.</p>
+            <p><strong>Mod</strong> - an actual game file modification. Too large/complex to host here, so you link to wherever it's actually released instead (e.g. a GitHub repo).</p>
+          </div>
+          <div class="upload-type-toggle" id="uploadTypeToggle" role="radiogroup" aria-label="Upload type">
+            <button type="button" class="upload-type-btn active" data-type="addon" role="radio" aria-checked="true">
+              <span class="upload-type-check" aria-hidden="true"></span>
+              <strong>Addon</strong>
+            </button>
+            <button type="button" class="upload-type-btn" data-type="mod" role="radio" aria-checked="false">
+              <span class="upload-type-check" aria-hidden="true"></span>
+              <strong>Mod</strong>
+            </button>
+          </div>
+        </div>
+
         <article id="previewCard" class="addon-card-preview">
-          <div id="previewBanner" class="preview-banner" style="background-image: url('assets/default_banner.png')">
+          <div id="previewBanner" class="preview-banner editable-hint preview-placeholder" title="Click to change banner">
+            <span class="preview-placeholder-hint">+ Banner</span>
+            <div class="preview-edit-overlay">Change banner</div>
           </div>
           <div class="preview-body">
-            <div class="preview-icon"><img id="previewIcon" src="assets/default_icon.png" alt="icon"></div>
+            <div class="preview-icon editable-hint preview-placeholder" id="previewIconWrap" title="Click to change icon">
+              <span class="preview-placeholder-hint">+ Icon</span>
+              <img id="previewIcon" alt="icon" hidden>
+            </div>
             <div class="preview-info">
-              <h3 id="previewName">Addon name</h3>
-              <p id="previewShort" class="muted">Short description</p>
-              <div id="previewTags" class="preview-tags"></div>
-              <div class="preview-meta">
-                <span id="previewVersion">v—</span>
-                <span id="previewAuthor">by —</span>
+              <h3 id="previewName" class="editable-text editable-hint" title="Click to edit name">Name</h3>
+              <p id="previewShort" class="muted editable-text editable-hint" title="Click to edit short description">Short description</p>
+              <div id="previewTags" class="preview-tags editable-hint" title="Click to edit tags">
+                <span class="preview-tags-placeholder">Click to add tags…</span>
               </div>
-              <div class="preview-actions">
-                <button class="btn disabled">Download</button>
+              <div class="preview-meta">
+                <button type="button" id="previewChannel" class="version-channel-badge" data-channel="release" title="Release — click to change">R</button>
+                <span id="previewVersion" class="editable-text editable-hint" title="Click to edit version">Version</span>
+                <span id="previewCompat" class="editable-text editable-hint" title="Click to select compatibility">Compatibility: —</span>
+                <span id="previewLicense" class="editable-text editable-hint" title="Click to edit license">+ License</span>
+                <span id="previewAiUsage" class="editable-text editable-hint" title="Click to set AI usage">AI usage: No AI</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-divider"></div>
+
+          <div class="preview-section">
+            <span class="preview-section-label">Description</span>
+            <p id="previewLongDesc" class="editable-text editable-hint preview-longdesc" title="Click to edit long description">
+              <span class="preview-longdesc-placeholder">Click to write a description…</span>
+            </p>
+          </div>
+
+          <div class="preview-divider"></div>
+
+          <div class="preview-section preview-files">
+            <div class="file-tile" id="mainFileTile">
+              <label class="file-tile-label">
+                <input id="main-file" type="file" accept=".zip" required hidden>
+                <span class="file-tile-title" id="mainFileTileTitle">Addon file (.zip) <em>required</em></span>
+                <span class="file-tile-name" id="addonfile-name">Click to choose file…</span>
+              </label>
+              <button type="button" class="file-remove hidden" id="mainFileRemove" title="Remove file">✕</button>
+            </div>
+
+            <div class="file-tile file-tile-release-link hidden" id="releaseLinkTile">
+              <label class="file-tile-label" for="github-repo-input">
+                <span class="file-tile-title">GitHub repo <em>required</em></span>
+              </label>
+              <input id="github-repo-input" name="githubRepoUrl" type="url" placeholder="https://github.com/you/your-mod">
+
+              <div class="github-mode-toggle" id="githubModeToggle" role="radiogroup" aria-label="How visitors get this mod">
+                <button type="button" class="github-mode-btn active" data-mode="manual">Link to repo only</button>
+                <button type="button" class="github-mode-btn" data-mode="release">Auto-pull GitHub releases</button>
+              </div>
+              <small class="hint" id="githubModeHint">Visitors are sent straight to the repo - no Versions tab.</small>
+            </div>
+
+            <div class="file-tile-screens" id="screenshotsTile">
+              <span class="preview-section-label">Screenshots <em>optional</em></span>
+              <div class="screenshots-picker">
+                <label id="screenshotsAddTile" class="screenshots-add-tile preview-placeholder" title="Click to add screenshots">
+                  <input id="screenshots-file" type="file" accept="image/*" multiple hidden>
+                  <span class="preview-placeholder-hint">+</span>
+                </label>
+                <div id="screenshotsThumbs" class="screenshot-thumbs"></div>
               </div>
             </div>
           </div>
         </article>
-      </aside>
+
+        <div class="form-actions">
+          <button type="button" id="toStep2" class="btn btn-primary">Next</button>
+          <button type="reset" id="resetForm" class="btn btn-primary">Reset</button>
+        </div>
+      </form>
+
+      <div id="verifyPanel" class="verify-panel hidden">
+        <h3>Verify your details</h3>
+        <p class="verify-subtitle">Double check everything below before it goes live.</p>
+
+        <div class="verify-header">
+          <img id="v-icon" class="verify-icon" alt="icon">
+          <div class="verify-header-text">
+            <div id="v-name" class="verify-name"></div>
+            <div id="v-short" class="verify-short"></div>
+          </div>
+        </div>
+
+        <div class="verify-grid">
+          <div class="verify-item">
+            <span class="verify-label">Version</span>
+            <span id="v-version" class="verify-value"></span>
+          </div>
+          <div class="verify-item">
+            <span class="verify-label">Compatibility</span>
+            <span id="v-compat" class="verify-value"></span>
+          </div>
+          <div class="verify-item verify-item-wide">
+            <span class="verify-label">Tags</span>
+            <span id="v-tags" class="verify-value"></span>
+          </div>
+          <div class="verify-item verify-item-wide">
+            <span class="verify-label">Files</span>
+            <span id="v-files" class="verify-value"></span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="backToStep1" class="btn btn-primary">Back</button>
+          <button type="button" id="submitBtn" class="btn btn-primary">Confirm & Upload</button>
+        </div>
+
+        <div id="uploadProgress" class="progress hidden">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:0%"></div>
+          </div>
+          <div id="progressText" class="progress-text">Waiting…</div>
+        </div>
+      </div>
+
+      <div id="uploadResult" class="upload-result hidden"></div>
+
+      <div id="tagPopover" class="tag-popover hidden">
+        <div class="tag-popover-header">
+          <strong>Tags (up to 6)</strong>
+          <button type="button" id="tagPopoverClose" class="tag-popover-close">✕</button>
+        </div>
+        <div id="tag-chips" class="chips"></div>
+      </div>
+
+      <div id="compatPopover" class="tag-popover hidden">
+        <div class="tag-popover-header">
+          <strong>Compatibility</strong>
+          <button type="button" id="compatPopoverClose" class="tag-popover-close">✕</button>
+        </div>
+        <select id="compatibility-select" class="compat-select"></select>
+        <small class="hint" id="compatHint">Select which Cubyz version this addon is made for.</small>
+      </div>
+
+      <div id="aiUsagePopover" class="tag-popover hidden">
+        <div class="tag-popover-header">
+          <strong>AI usage</strong>
+          <button type="button" id="aiUsagePopoverClose" class="tag-popover-close">✕</button>
+        </div>
+        <select id="ai-usage-select" class="compat-select">
+          <option value="none">No AI</option>
+          <option value="full">AI</option>
+        </select>
+        <small class="hint">Let people know whether AI was used to make this.</small>
+      </div>
+
+      <input id="icon-file" type="file" accept="image/*" hidden>
+      <input id="banner-file" type="file" accept="image/*" hidden>
     </div>
   </main>
   <footer class="site-footer">
-    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="upload.html">Upload</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.63-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.36.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.7-.32 12.9.1 17.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1-.01-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0c.12.1.24.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.83 19.83 0 0 0 6.01-3.03.08.08 0 0 0 .03-.06c.5-4.83-.83-9-3.53-12.66a.06.06 0 0 0-.03-.03ZM8.02 14.6c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42Z"></path></svg>
+          Discord Server
+        </a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          Open Source
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
   </footer>
-  <script src="dist/compress.js?v=1"></script>
+  <script src="vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="theme-toggle.js?v=20260919-17"></script>
+  <script src="toast.js?v=20260919-17"></script>
+  <script src="vendor/marked.umd.js?v=20260919-17"></script>
+  <script src="vendor/purify.min.js?v=20260919-17"></script>
+  <script src="markdown-editor.js?v=20260919-17"></script>
+  <script src="dist/compress.js?v=20260919-17"></script>
+  <script src="dist/image-cropper.js?v=20260919-17"></script>
+  <script type="module">
+    import { enhanceSelect } from './dist/custom-select.js?v=20260919-17';
+    window.enhanceSelect = enhanceSelect;
+  </script>
   <script>
 
     (() => {
-      function createUserDropdown(user) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'user-menu-wrapper';
-
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'auth-btn user-label user-dropdown-toggle';
-        button.title = 'Account';
-        button.setAttribute('aria-haspopup', 'menu');
-        button.setAttribute('aria-expanded', 'false');
-
-        const userIcon = document.createElement('img');
-        userIcon.className = 'user-icon';
-        const DEFAULT_AVATAR = '/assets/Snale_Avatar.webp';
-        const avatarUrl = user.avatarUrl || DEFAULT_AVATAR;
-        userIcon.src = avatarUrl;
-        userIcon.onerror = () => {
-          userIcon.src = DEFAULT_AVATAR;
-        };
-        userIcon.alt = 'User avatar';
-
-        const userName = document.createElement('span');
-        userName.className = 'user-name';
-        userName.textContent = 'Account';
-
-        const arrow = document.createElement('span');
-        arrow.className = 'user-dropdown-arrow';
-        arrow.textContent = '▾';
-
-        button.append(userIcon, userName, arrow);
-
-        const menu = document.createElement('div');
-        menu.className = 'user-dropdown-menu';
-        menu.setAttribute('role', 'menu');
-        menu.setAttribute('aria-hidden', 'true');
-
-        const items = [
-          { label: 'Profile', href: `/profile/${encodeURIComponent(user.username)}` },
-          { label: 'Dashboard', href: '/dashboard.html' },
-          { label: 'Logout', action: 'logout' }
-        ];
-
-        items.forEach(item => {
-          const itemButton = document.createElement('button');
-          itemButton.type = 'button';
-          itemButton.className = 'user-dropdown-item';
-          itemButton.setAttribute('role', 'menuitem');
-          itemButton.textContent = item.label;
-          if (item.href) itemButton.dataset.href = item.href;
-          if (item.action) itemButton.dataset.action = item.action;
-          menu.appendChild(itemButton);
-        });
-
-        button.addEventListener('click', e => {
-          e.stopPropagation();
-          const isOpen = button.getAttribute('aria-expanded') === 'true';
-          button.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-          menu.classList.toggle('visible', !isOpen);
-          menu.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
-        });
-
-        wrapper.append(button, menu);
-        return wrapper;
-      }
-
-      async function loadNavUser() {
-        try {
-          const res = await fetch('/api/auth/status');
-          const j = await res.json().catch(() => ({ ok: false }));
-          const nav = document.getElementById('nav-user');
-          if (!nav) return;
-          nav.innerHTML = '';
-
-          if (j.ok && j.user) {
-            nav.append(createUserDropdown(j.user));
-          } else {
-            const loginBtn = document.createElement('button');
-            loginBtn.className = 'auth-btn';
-            loginBtn.textContent = 'Login / Register';
-            loginBtn.onclick = () => (window.location.href = '/');
-            nav.append(loginBtn);
-          }
-        } catch (err) {
-          console.error('NAV ERROR:', err);
-        }
-      }
-
-      const tagOptions = ["Biomes", "Recipes", "Tools", "Items", "Textures", "QoL","Mod", "Structures"];
+      const TAG_OPTIONS_BY_TYPE = {
+        addon: ["Biomes", "Recipes", "Tools", "Items", "Textures", "QoL", "Structures"],
+        mod: ["Visual", "Gameplay", "Sound", "Overhaul"]
+      };
+      let tagOptions = TAG_OPTIONS_BY_TYPE.addon;
 
       const authorNameEl = document.getElementById('authorName');
       const nameEl = document.getElementById('addon-name');
       const identifierEl = document.getElementById('identifier');
       const versionEl = document.getElementById('addon-version');
+      const licenseEl = document.getElementById('addon-license');
       const shortEl = document.getElementById('short-desc');
       const longEl = document.getElementById('long-desc');
 
       const tagChips = document.getElementById('tag-chips');
+      const tagPopover = document.getElementById('tagPopover');
+      const tagPopoverClose = document.getElementById('tagPopoverClose');
+
+      let selectedIcon = null;
+      let selectedBanner = null;
+      let manualIdentifier = false;
+
+      let selectedScreenshots = [];
 
       const iconInput = document.getElementById('icon-file');
       const bannerInput = document.getElementById('banner-file');
       const screensInput = document.getElementById('screenshots-file');
       const mainFileInput = document.getElementById('main-file');
+      const mainFileRemove = document.getElementById('mainFileRemove');
+      const screenshotsThumbs = document.getElementById('screenshotsThumbs');
+
+      let uploadType = 'addon';
+      const uploadTypeToggle = document.getElementById('uploadTypeToggle');
+      const mainFileTile = document.getElementById('mainFileTile');
+      const releaseLinkTile = document.getElementById('releaseLinkTile');
+
+      const uploadTypeInfoBtn = document.getElementById('uploadTypeInfoBtn');
+      const uploadTypeInfo = document.getElementById('uploadTypeInfo');
+      uploadTypeInfoBtn.addEventListener('click', () => {
+        uploadTypeInfo.classList.toggle('hidden');
+      });
+
+      const mainFileTileTitle = document.getElementById('mainFileTileTitle');
+
+      function updateTypeWording() {
+        const isMod = uploadType === 'mod';
+        mainFileTileTitle.textContent = isMod ? 'Mod file (.zip)' : 'Addon file (.zip)';
+        mainFileTileTitle.textContent += ' ';
+        const req = document.createElement('em');
+        req.textContent = 'required';
+        mainFileTileTitle.appendChild(req);
+        if (!nameEl.value) previewName.textContent = 'Name';
+        if (!versionEl.value) previewVersion.textContent = 'Version';
+        compatHint.textContent = `Select which Cubyz version this ${isMod ? 'mod' : 'addon'} is made for.`;
+      }
+
+      uploadTypeToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.upload-type-btn');
+        if (!btn) return;
+        uploadType = btn.dataset.type;
+        uploadTypeToggle.querySelectorAll('.upload-type-btn').forEach((b) => {
+          const isActive = b === btn;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', String(isActive));
+        });
+        mainFileTile.classList.toggle('hidden', uploadType !== 'addon');
+        releaseLinkTile.classList.toggle('hidden', uploadType !== 'mod');
+        updateTypeWording();
+        renderTagOptions();
+        if (uploadType === 'mod') {
+          mainFileInput.value = '';
+          document.getElementById('addonfile-name').textContent = 'Click to choose file…';
+          mainFileRemove.classList.add('hidden');
+          previewChannel.classList.add('hidden');
+        } else {
+          githubRepoInput.value = '';
+          previewVersion.classList.remove('hidden');
+          previewChannel.classList.remove('hidden');
+        }
+      });
+
+      let githubMode = 'manual';
+      const githubModeToggle = document.getElementById('githubModeToggle');
+      const githubModeHint = document.getElementById('githubModeHint');
+      const githubRepoInput = document.getElementById('github-repo-input');
+
+      const GITHUB_MODE_HINTS = {
+        manual: "Visitors are sent straight to the repo - no Versions tab.",
+        release: "The mod page's Versions tab always shows the repo's actual GitHub releases."
+      };
+
+      githubModeToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.github-mode-btn');
+        if (!btn) return;
+        githubMode = btn.dataset.mode;
+        githubModeToggle.querySelectorAll('.github-mode-btn').forEach((b) => b.classList.toggle('active', b === btn));
+        githubModeHint.textContent = GITHUB_MODE_HINTS[githubMode];
+        versionEl.value = '';
+        previewVersion.classList.toggle('hidden', uploadType === 'mod' && githubMode === 'release');
+      });
 
       const previewBanner = document.getElementById('previewBanner');
+      const previewIconWrap = document.getElementById('previewIconWrap');
       const previewIcon = document.getElementById('previewIcon');
       const previewName = document.getElementById('previewName');
       const previewShort = document.getElementById('previewShort');
       const previewTags = document.getElementById('previewTags');
       const previewVersion = document.getElementById('previewVersion');
-      const previewAuthor = document.getElementById('previewAuthor');
+      const previewChannel = document.getElementById('previewChannel');
+      const previewLicense = document.getElementById('previewLicense');
+      const previewCompat = document.getElementById('previewCompat');
+      const previewLongDesc = document.getElementById('previewLongDesc');
+      const compatPopover = document.getElementById('compatPopover');
+      const compatPopoverClose = document.getElementById('compatPopoverClose');
+      const compatSelect = document.getElementById('compatibility-select');
+      const compatHint = document.getElementById('compatHint');
 
       const toStep2Btn = document.getElementById('toStep2');
       const backBtn = document.getElementById('backToStep1');
@@ -292,21 +412,241 @@
       const previewTagsContainer = document.getElementById('previewTags');
 
       const selectedTags = new Set();
-      tagOptions.forEach(t => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'chip';
-        b.textContent = t;
-        b.addEventListener('click', () => {
-          if (selectedTags.has(t)) { selectedTags.delete(t); b.classList.remove('active'); }
-          else {
-            if (selectedTags.size >= 6) { alert('Max 6 tags'); return; }
-            selectedTags.add(t); b.classList.add('active');
-          }
-          updatePreviewTags();
+
+      function renderTagOptions() {
+        tagOptions = TAG_OPTIONS_BY_TYPE[uploadType] || TAG_OPTIONS_BY_TYPE.addon;
+        for (const t of [...selectedTags]) {
+          if (!tagOptions.includes(t)) selectedTags.delete(t);
+        }
+        tagChips.innerHTML = '';
+        tagOptions.forEach(t => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'chip';
+          b.textContent = t;
+          if (selectedTags.has(t)) b.classList.add('active');
+          b.addEventListener('click', () => {
+            if (selectedTags.has(t)) { selectedTags.delete(t); b.classList.remove('active'); }
+            else {
+              if (selectedTags.size >= 6) { toast.error('Max 6 tags'); return; }
+              selectedTags.add(t); b.classList.add('active');
+            }
+            updatePreviewTags();
+          });
+          tagChips.appendChild(b);
         });
-        tagChips.appendChild(b);
+        updatePreviewTags();
+      }
+      renderTagOptions();
+
+
+      previewIconWrap.addEventListener('click', () => iconInput.click());
+      iconInput.addEventListener('change', () => {
+        const file = iconInput.files[0];
+        iconInput.value = '';
+        if (!file) return;
+        openImageCropper(file, 1, (croppedIcon) => {
+          selectedIcon = croppedIcon;
+          previewIcon.src = URL.createObjectURL(croppedIcon);
+          previewIcon.hidden = false;
+          previewIconWrap.classList.remove('preview-placeholder');
+        }, { outputWidth: 512, outputHeight: 512 });
       });
+
+      previewBanner.addEventListener('click', () => bannerInput.click());
+      bannerInput.addEventListener('change', () => {
+        const file = bannerInput.files[0];
+        bannerInput.value = '';
+        if (!file) return;
+        openImageCropper(file, 16 / 9, (croppedBanner) => {
+          selectedBanner = croppedBanner;
+          const url = URL.createObjectURL(croppedBanner);
+          previewBanner.style.backgroundImage = `url('${url}')`;
+          previewBanner.classList.remove('preview-placeholder');
+        }, { outputWidth: 1280, outputHeight: 720 });
+      });
+
+      makeEditable(previewName, {
+        value: () => nameEl.value,
+        placeholder: 'Name',
+        maxLength: 120,
+        onCommit: (val) => {
+          nameEl.value = val;
+          previewName.textContent = val || 'Name';
+          if (!manualIdentifier) identifierEl.value = slugify(val || '');
+        }
+      });
+
+      makeEditable(previewShort, {
+        value: () => shortEl.value,
+        placeholder: 'Short description',
+        maxLength: 60,
+        onCommit: (val) => {
+          shortEl.value = val;
+          previewShort.textContent = val || 'Short description';
+        }
+      });
+
+      makeEditable(previewVersion, {
+        value: () => versionEl.value,
+        placeholder: 'e.g. 0.1.0',
+        maxLength: 20,
+        onCommit: (val) => {
+          versionEl.value = val;
+          previewVersion.textContent = val ? `v${val}` : 'Version';
+        }
+      });
+
+      makeEditable(previewLicense, {
+        value: () => licenseEl.value,
+        placeholder: 'e.g. MIT, GPL-3.0...',
+        maxLength: 60,
+        onCommit: (val) => {
+          licenseEl.value = val;
+          previewLicense.textContent = val || '+ License';
+        }
+      });
+
+      const purifierConfig = { ADD_TAGS: ['img'], ADD_ATTR: ['src', 'alt', 'title'] };
+
+      function looksLikeMarkdown(text) {
+        return (
+          /^#{1,6}\s/m.test(text) ||
+          text.includes('**') ||
+          text.includes('- ') ||
+          (text.includes('[') && text.includes(']('))  ||
+          /\|\s*-{3,}\s*\|/.test(text)
+        );
+      }
+
+      function looksLikeHTML(text) {
+        return /<\/?[a-z][\s\S]*>/i.test(text);
+      }
+
+      marked.setOptions({ breaks: true });
+
+      function renderLongDescription(text) {
+        if (!text) {
+          previewLongDesc.innerHTML = '<span class="preview-longdesc-placeholder">Click to write a description…</span>';
+          return;
+        }
+        let html;
+        if (looksLikeHTML(text)) {
+          html = text;
+        } else if (looksLikeMarkdown(text)) {
+          html = marked.parse(text);
+        } else {
+          const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          html = escaped.replace(/\n/g, '<br>');
+        }
+        previewLongDesc.innerHTML = DOMPurify.sanitize(html, purifierConfig);
+      }
+
+      const longDescEditor = attachMarkdownEditor(previewLongDesc, {
+        getValue: () => longEl.value,
+        placeholder: 'Detailed description - Supports HTML & MARKDOWN',
+        previewClass: 'preview-longdesc',
+        renderPreview: (el, value) => renderLongDescription(value),
+        onSave: (val) => {
+          longEl.value = val;
+          renderLongDescription(val);
+        }
+      });
+
+      previewTags.addEventListener('click', () => {
+        closePopovers(tagPopover);
+        tagPopover.classList.remove('hidden');
+      });
+      tagPopoverClose.addEventListener('click', () => {
+        tagPopover.classList.add('hidden');
+      });
+
+      previewCompat.addEventListener('click', () => {
+        closePopovers(compatPopover);
+        compatPopover.classList.remove('hidden');
+      });
+      compatPopoverClose.addEventListener('click', () => {
+        compatPopover.classList.add('hidden');
+      });
+      compatSelect.addEventListener('change', () => {
+        previewCompat.textContent = `Compatibility: ${compatSelect.value || '—'}`;
+        updatePreviewCompat();
+      });
+
+      const previewAiUsage = document.getElementById('previewAiUsage');
+      const aiUsagePopover = document.getElementById('aiUsagePopover');
+      const aiUsagePopoverClose = document.getElementById('aiUsagePopoverClose');
+      const aiUsageSelect = document.getElementById('ai-usage-select');
+      const AI_USAGE_LABELS = { none: 'No AI', full: 'AI' };
+
+      previewAiUsage.addEventListener('click', () => {
+        closePopovers(aiUsagePopover);
+        aiUsagePopover.classList.remove('hidden');
+      });
+      aiUsagePopoverClose.addEventListener('click', () => {
+        aiUsagePopover.classList.add('hidden');
+      });
+      aiUsageSelect.addEventListener('change', () => {
+        previewAiUsage.textContent = `AI usage: ${AI_USAGE_LABELS[aiUsageSelect.value] || AI_USAGE_LABELS.none}`;
+      });
+
+      const RELEASE_CHANNEL_LABELS = { release: 'Release', beta: 'Beta', alpha: 'Alpha' };
+      const RELEASE_CHANNEL_LETTERS = { release: 'R', beta: 'B', alpha: 'A' };
+      const RELEASE_CHANNEL_CYCLE = { release: 'beta', beta: 'alpha', alpha: 'release' };
+      let releaseChannel = 'release';
+      previewChannel.addEventListener('click', () => {
+        releaseChannel = RELEASE_CHANNEL_CYCLE[releaseChannel];
+        previewChannel.dataset.channel = releaseChannel;
+        previewChannel.textContent = RELEASE_CHANNEL_LETTERS[releaseChannel];
+        previewChannel.title = `${RELEASE_CHANNEL_LABELS[releaseChannel]} — click to change`;
+      });
+
+      function closePopovers(except) {
+        [tagPopover, compatPopover, aiUsagePopover].forEach(p => { if (p !== except) p.classList.add('hidden'); });
+      }
+      document.addEventListener('click', (e) => {
+        if (!tagPopover.classList.contains('hidden') && !tagPopover.contains(e.target) && !previewTags.contains(e.target)) {
+          tagPopover.classList.add('hidden');
+        }
+        if (!compatPopover.classList.contains('hidden') && !compatPopover.contains(e.target) && !previewCompat.contains(e.target)) {
+          compatPopover.classList.add('hidden');
+        }
+        if (!aiUsagePopover.classList.contains('hidden') && !aiUsagePopover.contains(e.target) && !previewAiUsage.contains(e.target)) {
+          aiUsagePopover.classList.add('hidden');
+        }
+      });
+
+      function makeEditable(el, { value, placeholder, maxLength, multiline, onCommit }) {
+        el.addEventListener('click', () => {
+          if (el.querySelector('input, textarea')) return;
+          const current = value();
+          const input = document.createElement(multiline ? 'textarea' : 'input');
+          if (!multiline) input.type = 'text';
+          else input.rows = 6;
+          input.className = 'inline-edit-input';
+          input.value = current || '';
+          input.placeholder = placeholder;
+          if (maxLength) input.maxLength = maxLength;
+          el.textContent = '';
+          el.appendChild(input);
+          input.focus();
+          if (!multiline) input.select();
+
+          let finished = false;
+          function finish(commit) {
+            if (finished) return;
+            finished = true;
+            const val = input.value.trim();
+            if (commit) onCommit(val);
+            else onCommit(current);
+          }
+          input.addEventListener('blur', () => finish(true));
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !multiline) { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); finish(false); input.blur(); }
+          });
+        });
+      }
 
       async function loadCompatibilityOptions() {
         const select = document.getElementById("compatibility-select");
@@ -322,6 +662,8 @@
             opt.textContent = v;
             select.appendChild(opt);
           });
+          previewCompat.textContent = `Compatibility: ${select.value || '—'}`;
+          if (window.enhanceSelect) window.enhanceSelect(select);
         } catch (err) {
           console.error("Failed to load compatibility versions:", err);
         }
@@ -333,50 +675,40 @@
           const j = await r.json().catch(() => ({ ok: false }));
           if (j && j.ok && j.user) {
             authorNameEl.textContent = j.user.username;
-            previewAuthor.textContent = `by ${j.user.username}`;
           } else {
-            authorNameEl.textContent = 'Not logged in - please log in first';
-            previewAuthor.textContent = 'by —';
+            requireLogin();
           }
         } catch (e) {
           authorNameEl.textContent = 'Unknown';
         }
       }
 
+      function requireLogin() {
+        document.body.classList.add('uh-locked');
+        let attempts = 0;
+        const tryOpen = setInterval(() => {
+          const authBtn = document.querySelector('#authBtn,[data-open-auth]');
+          if (authBtn) {
+            clearInterval(tryOpen);
+            authBtn.click();
+          } else if (++attempts > 40) {
+            clearInterval(tryOpen);
+          }
+        }, 100);
+      }
+
       loadAuthor();
       loadCompatibilityOptions();
 
-      let manualIdentifier = false;
-      nameEl.addEventListener('input', () => {
-        previewName.textContent = nameEl.value || 'Addon name';
-        if (!manualIdentifier) {
-          identifierEl.value = slugify(nameEl.value || '');
-        }
-      });
-      identifierEl.addEventListener('input', () => { manualIdentifier = !!identifierEl.value; });
-
-      shortEl.addEventListener('input', () => previewShort.textContent = shortEl.value || 'Short description');
-      versionEl.addEventListener('input', () => previewVersion.textContent = `v${versionEl.value || '—'}`);
-
-      iconInput.addEventListener('change', () => {
-        previewFileToImg(iconInput.files[0], previewIcon);
-      });
-      bannerInput.addEventListener('change', () => {
-        if (bannerInput.files[0]) {
-          const url = URL.createObjectURL(bannerInput.files[0]);
-          previewBanner.style.backgroundImage = `url('${url}')`;
-        }
-      });
-
-      function previewFileToImg(file, imgEl) {
-        if (!file) { imgEl.src = 'assets/default_icon.png'; return; }
-        const reader = new FileReader();
-        reader.onload = () => imgEl.src = reader.result;
-        reader.readAsDataURL(file);
-      }
-
       function updatePreviewTags() {
         previewTagsContainer.innerHTML = '';
+        if (selectedTags.size === 0) {
+          const ph = document.createElement('span');
+          ph.className = 'preview-tags-placeholder';
+          ph.textContent = 'Click to add tags…';
+          previewTagsContainer.appendChild(ph);
+          return;
+        }
         [...selectedTags].forEach(t => {
           const s = document.createElement('span'); s.className = 'preview-tag'; s.textContent = t;
           previewTagsContainer.appendChild(s);
@@ -391,32 +723,40 @@
         return s.toLowerCase().replace(/[^a-z0-9\-]+/g, '-').replace(/^-+|-+$/g, '').replace(/--+/g, '-').slice(0, 60);
       }
 
-      // compressImage() is provided by compress.js (loaded above)
 
       toStep2Btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (!nameEl.value.trim()) return alert('Name required.');
-        if (!identifierEl.value.trim()) return alert('Identifier required.');
-        if (!versionEl.value.trim()) return alert('Version required.');
-        if (!shortEl.value.trim()) return alert('Short description required.');
+        if (longDescEditor.isEditing()) {
+          return toast.error('You have an unsaved description - click Save (or Cancel) on it before continuing.');
+        }
+        const isGithubRelease = uploadType === 'mod' && githubMode === 'release';
+        if (!nameEl.value.trim()) return toast.error('Name required.');
+        if (!identifierEl.value.trim()) return toast.error('Identifier required.');
+        if (!isGithubRelease && !versionEl.value.trim()) return toast.error('Version required.');
+        if (!shortEl.value.trim()) return toast.error('Short description required.');
         const selectedCompat = document.getElementById("compatibility-select").value;
-        if (!selectedCompat) return alert('Please select a compatibility version.');
-        if (selectedTags.size === 0) return alert('Choose at least one tag.');
-        if (!iconInput.files[0]) return alert('Icon required.');
-        if (!bannerInput.files[0]) return alert('Banner required.');
-        if (!mainFileInput.files[0]) return alert('Addon file required.');
+        if (!selectedCompat) return toast.error('Please select a compatibility version.');
+        if (selectedTags.size === 0) return toast.error('Choose at least one tag.');
+        if (!selectedIcon) return toast.error('Icon required.');
+        if (!selectedBanner) return toast.error('Banner required.');
+        if (uploadType === 'addon' && !mainFileInput.files[0]) return toast.error('Addon file required.');
+        if (uploadType === 'mod' && !/^https?:\/\/github\.com\/[^/]+\/[^/]+\/?$/i.test(githubRepoInput.value.trim())) {
+          return toast.error('Please enter a valid GitHub repo link (https://github.com/owner/repo).');
+        }
 
         document.getElementById('v-name').textContent = nameEl.value;
-        document.getElementById('v-identifier').textContent = identifierEl.value;
-        document.getElementById('v-version').textContent = versionEl.value;
+        document.getElementById('v-version').textContent = versionEl.value ? `v${versionEl.value}` : (isGithubRelease ? 'Auto-pulled from GitHub' : '—');
         document.getElementById('v-short').textContent = shortEl.value;
         document.getElementById('v-compat').textContent = document.getElementById("compatibility-select").value || '—';
         document.getElementById('v-tags').textContent = [...selectedTags].join(', ');
+        if (selectedIcon) document.getElementById('v-icon').src = URL.createObjectURL(selectedIcon);
         const filesList = [];
-        if (iconInput.files[0]) filesList.push('Icon');
-        if (bannerInput.files[0]) filesList.push('Banner');
-        if (mainFileInput.files[0]) filesList.push(mainFileInput.files[0].name);
-        if (screensInput.files.length) filesList.push(`${screensInput.files.length} screenshot(s)`);
+        if (uploadType === 'mod') {
+          filesList.push(githubMode === 'release' ? `${githubRepoInput.value.trim()} (auto-pull releases)` : `${githubRepoInput.value.trim()} (link only)`);
+        } else {
+          filesList.push(mainFileInput.files[0].name);
+        }
+        filesList.push(selectedScreenshots.length ? `${selectedScreenshots.length} screenshot(s)` : 'no screenshots');
         document.getElementById('v-files').textContent = filesList.join(', ');
 
         document.getElementById('step1Indicator').classList.remove('active');
@@ -448,30 +788,40 @@
         fd.append('description', shortEl.value.trim());
         fd.append('longDescription', longEl.value.trim());
         fd.append('compatibility', document.getElementById("compatibility-select").value || '');
+        fd.append('license', licenseEl.value.trim());
+        fd.append('aiUsage', aiUsageSelect.value);
         fd.append('tags', JSON.stringify([...selectedTags]));
+        fd.append('type', uploadType);
+        if (uploadType === 'addon') {
+          fd.append('releaseChannel', releaseChannel);
+        }
+        if (uploadType === 'mod') {
+          fd.append('githubMode', githubMode);
+          fd.append('githubUrl', githubRepoInput.value.trim());
+        }
 
-        // 1. Process & Compress Icon (e.g., Target 512x512 max)
-        if (iconInput.files[0]) {
-          const compressedIcon = await compressImage(iconInput.files[0], 512, 512, 0.90);
+        if (selectedIcon) {
+          const compressedIcon = await compressImage(selectedIcon, 512, 512, 0.90);
           fd.append('icon', compressedIcon);
+          const iconThumb = await compressImage(selectedIcon, 160, 160, 0.90);
+          fd.append('iconThumb', iconThumb);
         }
 
-        // 2. Process & Compress Banner (e.g., Target 1280x720 max)
-        if (bannerInput.files[0]) {
-          const compressedBanner = await compressImage(bannerInput.files[0], 1280, 720, 0.85);
+        if (selectedBanner) {
+          const compressedBanner = await compressImage(selectedBanner, 1280, 720, 0.85);
           fd.append('banner', compressedBanner);
+          const bannerThumb = await compressImage(selectedBanner, 600, 260, 0.85);
+          fd.append('bannerThumb', bannerThumb);
         }
 
-        // 3. Keep main addon payload as-is
         if (mainFileInput.files[0]) {
           fd.append('file', mainFileInput.files[0]);
         }
 
-        // 4. Loop & Compress all supplemental screenshots (e.g., Target 1920x1080 max)
-        if (screensInput.files.length) {
-          for (let i = 0; i < screensInput.files.length; i++) {
-            progressText.textContent = `Compressing screenshot (${i + 1}/${screensInput.files.length})...`;
-            const compressedScreen = await compressImage(screensInput.files[i], 1920, 1080, 0.80);
+        if (selectedScreenshots.length) {
+          for (let i = 0; i < selectedScreenshots.length; i++) {
+            progressText.textContent = `Compressing screenshot (${i + 1}/${selectedScreenshots.length})...`;
+            const compressedScreen = await compressImage(selectedScreenshots[i], 1920, 1080, 0.80);
             fd.append('screenshots', compressedScreen);
           }
         }
@@ -500,7 +850,8 @@
               setTimeout(() => {
                 const name = res.addon.name || "addon";
                 const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-                window.location.href = `/addon/${res.addon.id}-${slug}`;
+                const prefix = res.addon.type === "mod" ? "/mod" : "/addon";
+                window.location.href = `${prefix}/${res.addon.id}-${slug}`;
               }, 1200);
             } else {
               throw new Error(res.error || 'Upload failed');
@@ -508,7 +859,12 @@
           } catch (err) {
             progressText.textContent = 'Upload failed';
             uploadResult.classList.remove('hidden');
-            uploadResult.innerHTML = '<div class="error"> ' + (err.message || 'Upload failed') + '</div>';
+            uploadResult.textContent = '';
+            const errBox = document.createElement('div');
+            errBox.className = 'error';
+            errBox.textContent = err.message || 'Upload failed';
+            uploadResult.appendChild(errBox);
+            if (typeof window.toast === 'function') window.toast.error(err.message || 'Upload failed');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Confirm & Upload';
           }
@@ -517,7 +873,12 @@
         xhr.onerror = () => {
           progressText.textContent = 'Network error';
           uploadResult.classList.remove('hidden');
-          uploadResult.innerHTML = '<div class="error">Network error — please check your connection and try again.</div>';
+          uploadResult.textContent = '';
+          const netBox = document.createElement('div');
+          netBox.className = 'error';
+          netBox.textContent = 'Network error — please check your connection and try again.';
+          uploadResult.appendChild(netBox);
+          if (typeof window.toast === 'function') window.toast.error('Network error — please check your connection and try again.');
           submitBtn.disabled = false;
           submitBtn.textContent = 'Confirm & Upload';
         };
@@ -525,40 +886,109 @@
         xhr.send(fd);
       });
 
-      document.getElementById('resetForm').addEventListener('click', () => {
-        previewBanner.style.backgroundImage = "url('assets/default_banner.png')";
-        previewIcon.src = 'assets/default_icon.png';
-        previewName.textContent = 'Addon name';
-        previewShort.textContent = 'Short description';
-        previewTagsContainer.innerHTML = '';
-        previewVersion.textContent = 'v—';
-        selectedTags.clear();
-        [...tagChips.querySelectorAll('.chip')].forEach(x => x.classList.remove('active'));
-        document.getElementById("compatibility-select").selectedIndex = 0;
-      });
-    })();
-
-    function showSelectedFile(inputId, labelId, multiple = false) {
-      const input = document.getElementById(inputId);
-      const label = document.getElementById(labelId);
-
-      input.addEventListener("change", () => {
-        if (input.files.length === 0) {
-          label.textContent = multiple ? "No files chosen" : "No file chosen";
-        } else if (multiple) {
-          label.textContent = `${input.files.length} file(s) selected`;
-        } else {
-          label.textContent = input.files[0].name;
+      document.getElementById('resetForm').addEventListener('click', (e) => {
+        if (!confirm('Reset the form? Everything you\'ve entered will be lost.')) {
+          e.preventDefault();
+          return;
         }
+        previewBanner.style.backgroundImage = '';
+        previewBanner.classList.add('preview-placeholder');
+        previewIcon.src = '';
+        previewIcon.hidden = true;
+        previewIconWrap.classList.add('preview-placeholder');
+        previewName.textContent = 'Name';
+        previewShort.textContent = 'Short description';
+        previewVersion.textContent = 'Version';
+        previewCompat.textContent = 'Compatibility: —';
+        licenseEl.value = '';
+        previewLicense.textContent = '+ License';
+        aiUsageSelect.value = 'none';
+        previewAiUsage.textContent = 'AI usage: No AI';
+        renderLongDescription('');
+        document.getElementById('addonfile-name').textContent = 'Click to choose file…';
+        selectedScreenshots = [];
+        renderScreenshotThumbs();
+        uploadType = 'addon';
+        uploadTypeToggle.querySelectorAll('.upload-type-btn').forEach((b) => {
+          const isActive = b.dataset.type === 'addon';
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', String(isActive));
+        });
+        mainFileTile.classList.remove('hidden');
+        releaseLinkTile.classList.add('hidden');
+        githubMode = 'manual';
+        githubModeToggle.querySelectorAll('.github-mode-btn').forEach((b) => b.classList.toggle('active', b.dataset.mode === 'manual'));
+        githubModeHint.textContent = GITHUB_MODE_HINTS.manual;
+        githubRepoInput.value = '';
+        previewVersion.classList.remove('hidden');
+        previewChannel.classList.remove('hidden');
+        releaseChannel = 'release';
+        previewChannel.dataset.channel = 'release';
+        previewChannel.textContent = 'R';
+        previewChannel.title = 'Release — click to change';
+        updateTypeWording();
+        selectedTags.clear();
+        renderTagOptions();
+        selectedIcon = null;
+        selectedBanner = null;
+        nameEl.value = '';
+        shortEl.value = '';
+        identifierEl.value = '';
+        versionEl.value = '';
+        longEl.value = '';
+        manualIdentifier = false;
+        [...tagChips.querySelectorAll('.chip')].forEach(x => x.classList.remove('active'));
+        compatSelect.selectedIndex = 0;
+        updatePreviewCompat();
       });
-    }
 
-    showSelectedFile("icon-file", "icon-name");
-    showSelectedFile("banner-file", "banner-name");
-    showSelectedFile("main-file", "addonfile-name");
-    showSelectedFile("screenshots-file", "screenshots-name", true);
+      const addonfileNameEl = document.getElementById('addonfile-name');
+      mainFileInput.addEventListener('change', () => {
+        const file = mainFileInput.files[0];
+        addonfileNameEl.textContent = file ? file.name : 'Click to choose file…';
+        mainFileRemove.classList.toggle('hidden', !file);
+      });
+      mainFileRemove.addEventListener('click', (e) => {
+        e.preventDefault();
+        mainFileInput.value = '';
+        addonfileNameEl.textContent = 'Click to choose file…';
+        mainFileRemove.classList.add('hidden');
+      });
+
+      screensInput.addEventListener('change', () => {
+        selectedScreenshots.push(...screensInput.files);
+        screensInput.value = '';
+        renderScreenshotThumbs();
+      });
+
+      function renderScreenshotThumbs() {
+        screenshotsThumbs.innerHTML = '';
+        selectedScreenshots.forEach((file, i) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'screenshot-thumb';
+          thumb.title = 'Click to remove';
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          const remove = document.createElement('span');
+          remove.className = 'screenshot-thumb-remove';
+          remove.textContent = '✕';
+          thumb.appendChild(img);
+          thumb.appendChild(remove);
+          thumb.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectedScreenshots.splice(i, 1);
+            renderScreenshotThumbs();
+          });
+          screenshotsThumbs.appendChild(thumb);
+        });
+      }
+
+      updatePreviewTags();
+      updateTypeWording();
+    })();
   </script>
-  <script type="module" src="/dist/auth.js?v=nav-search-1"></script>
+  <script type="module" src="/dist/auth.js?v=20260919-17"></script>
   <div id="successPopup">Upload successful 🎉</div>
 </body>
 

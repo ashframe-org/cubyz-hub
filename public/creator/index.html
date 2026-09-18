@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("cubyzhub-theme") !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
+
+  <title>Addon Creator - Cubyz Hub</title>
+  <meta name="description" content="Build Cubyz addons - blocks, items, biomes, entities, particles and recipes - right in your browser.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/dist/buttons.css?v=20260919-17" />
+  <link rel="stylesheet" href="/dist/style.css?v=20260919-17" />
+  <link rel="stylesheet" href="/dist/ashframe-theme.css?v=20260919-17" />
+  <link rel="stylesheet" href="style.css?v=20260919-17" />
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+
+    <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="creatorThemeToggle" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
+  </header>
+
+  <style>
+    .site-header .nav-search { display: none !important; }
+    .site-header #nav-user { margin-left: auto; }
+  </style>
+
+  <main>
+    <div class="creator-app">
+    <div class="site-wrapper">
+
+    <div class="container main-content">
+
+        <div class="panel toolbar-container-block">
+
+            <div class="toolbar-flex-row border-split">
+                <h2 class="toolbar-main-title" style="display: inline-flex; align-items: center; gap: 10px;">
+                    Addon Creator
+                    <span class="app-version-indicator" style="font-size: 11px; background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-weight: normal; vertical-align: middle;">v0.1.7</span>
+                </h2>
+
+                <div class="toolbar-metrics-side" style="position: relative;">
+                    <span class="status-header-label" style="display: block; text-align: right;">Database Metrics</span>
+                    <div id="folderStatus" class="status-container metrics-expand-btn" onclick="window.toggleMetricsPanel()" style="cursor: pointer; display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 4px;">
+                        <span class="status-pill version-active">Connecting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar-flex-row">
+                <div class="form-group inline-name-field">
+                    <label for="addonName">Addon Name <span class="hint-text">(lower-case only)</span></label>
+                    <input type="text" id="addonName" value="" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+                </div>
+
+                <div class="toolbar-buttons-side">
+                    <button type="button" class="import-label-btn" onclick="window.openCloudSaveModal()">My Saves</button>
+                    <button type="button" class="import-label-btn" id="cloudSaveBtn" onclick="window.saveCurrentProject()">Save</button>
+                    <button type="button" class="import-label-btn" onclick="window.startManualVersionUpdate()">Update Version</button>
+                    <button type="button" class="import-label-btn" onclick="window.checkProjectNow()">Check Project</button>
+                    <label class="btn-secondary import-label-btn">
+                        Import Addon (.ZIP)
+                        <input type="file" id="importAddonFile" accept=".zip" style="display: none;" onchange="importExistingAddon(this)">
+                    </label>
+                    <button type="button" class="btn-primary toolbar-btn" onclick="exportFullAddon()">Export Addon (.ZIP)</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="startModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box" style="width: 480px;">
+                <h3 class="custom-modal-title">Welcome to the Addon Creator</h3>
+                <p class="custom-modal-message">How would you like to start?</p>
+
+                <div class="start-modal-choice">
+                    <div class="start-modal-choice-info">
+                        <div class="start-modal-choice-title">New Addon</div>
+                        <div class="start-modal-choice-desc">Start with an empty workspace.</div>
+                    </div>
+                    <div class="start-modal-choice-action">
+                        <select id="startNewAddonVersion" class="start-modal-version-select"></select>
+                        <button type="button" class="btn-primary modal-btn" onclick="window.startModalChooseNew()">Start</button>
+                    </div>
+                </div>
+
+                <div class="start-modal-choice">
+                    <div class="start-modal-choice-info">
+                        <div class="start-modal-choice-title">Load Saved</div>
+                        <div class="start-modal-choice-desc">Pick up a project from your account.</div>
+                    </div>
+                    <div class="start-modal-choice-action">
+                        <button type="button" class="import-label-btn modal-btn" onclick="window.startModalChooseLoad()">My Saves</button>
+                    </div>
+                </div>
+
+                <div class="start-modal-choice" style="border-bottom: none;">
+                    <div class="start-modal-choice-info">
+                        <div class="start-modal-choice-title">Import Addon</div>
+                        <div class="start-modal-choice-desc">Upload an existing addon's .ZIP.</div>
+                    </div>
+                    <div class="start-modal-choice-action">
+                        <button type="button" class="import-label-btn modal-btn" onclick="window.startModalChooseImport()">Import (.ZIP)</button>
+                    </div>
+                </div>
+
+                <div class="start-modal-footer">
+                    <a href="/">← Back to Cubyz Hub</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="versionDetectModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box">
+                <h3 class="custom-modal-title">Confirm Addon Version</h3>
+                <p class="custom-modal-message" id="versionDetectMessage">We think this addon was made for a specific version - is that right?</p>
+                <div class="form-group">
+                    <label for="versionDetectSelect">Source version</label>
+                    <select id="versionDetectSelect" class="sort-select"></select>
+                </div>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-secondary modal-btn" onclick="window.versionDetectCancel()">Cancel Import</button>
+                    <button type="button" class="btn-primary modal-btn" onclick="window.versionDetectContinue()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="postImportChoiceModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box" style="width: 480px;">
+                <h3 class="custom-modal-title">Import Complete</h3>
+                <p class="custom-modal-message" id="postImportChoiceMessage">Imported. What would you like to do?</p>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-secondary modal-btn" id="postImportChoiceUpdateBtn">Update to a different version&hellip;</button>
+                    <button type="button" class="btn-primary modal-btn" id="postImportChoiceEditBtn">Edit at this version</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="updateVersionPickerModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box">
+                <h3 class="custom-modal-title">Update Project Version</h3>
+                <p class="custom-modal-message">Current version: <strong id="updateVersionPickerCurrent">-</strong></p>
+                <div class="form-group">
+                    <label for="updateVersionPickerSelect">Update to</label>
+                    <select id="updateVersionPickerSelect"></select>
+                </div>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-secondary modal-btn" id="updateVersionPickerCancelBtn">Cancel</button>
+                    <button type="button" class="btn-primary modal-btn" id="updateVersionPickerGoBtn">Update</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="migrationResultsModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box" style="width: 480px;">
+                <h3 class="custom-modal-title">Migration Results</h3>
+                <div id="migrationResultsBody" class="custom-modal-message"></div>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-primary modal-btn" id="migrationResultsOkBtn">Got it</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="validationReportModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box" style="width: 480px;">
+                <h3 class="custom-modal-title">Project Check</h3>
+                <div id="validationReportBody" class="custom-modal-message"></div>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-primary modal-btn" id="validationReportOkBtn">Got it</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="migrationOfferBanner" class="migration-offer-banner" style="display: none;">
+            <span id="migrationOfferText"></span>
+            <div class="migration-offer-actions">
+                <button type="button" class="btn-primary modal-btn" id="migrationOfferYesBtn">Update</button>
+                <button type="button" class="btn-secondary modal-btn" id="migrationOfferNoBtn">Not now</button>
+            </div>
+        </div>
+
+        <div id="cloudSaveModal" class="custom-modal-overlay" style="display: none;">
+            <div class="custom-modal-box">
+                <h3 class="custom-modal-title" id="cloudSaveModalTitle">My Saved Projects</h3>
+                <p class="custom-modal-message" id="cloudSaveModalMessage">Sign in to save your progress to your account and pick it back up later.</p>
+                <div id="cloudSaveProjectList" style="max-height: 320px; overflow-y: auto; margin: 12px 0; display: flex; flex-direction: column; gap: 8px;"></div>
+                <div class="custom-modal-actions">
+                    <button type="button" class="btn-secondary modal-btn" onclick="window.closeCloudSaveModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="creatorWorkspaceRow" style="display: flex; gap: 20px; align-items: flex-start; margin-top: 10px;">
+
+            <div id="projectSidebar" class="panel" style="width: 320px; min-width: 320px; box-sizing: border-box; padding: 15px; background: var(--bg-alt); margin-bottom: 0;">
+                <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    Project Explorer
+                    <span id="panelSaveStatus" style="font-size: 11px; text-transform: none; letter-spacing: normal; white-space: nowrap;"></span>
+                </h3>
+
+                <div style="margin-top: 15px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Blocks</div>
+                    <div id="sidebarBlocksTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Items</div>
+                    <div id="sidebarItemsTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Recipes</div>
+                    <div id="sidebarRecipesTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Biomes</div>
+                    <div id="sidebarBiomesTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Entities</div>
+                    <div id="sidebarEntitiesTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-weight: bold; font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Particles</div>
+                    <div id="sidebarParticlesTree" style="display: flex; flex-direction: column; gap: 4px; padding-left: 10px; font-size: 13px; color: var(--text); max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                        <span style="color: var(--text-muted); font-style: italic;">None saved yet</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+                <div class="nav-bar" style="margin-bottom: 15px;">
+                    <button class="nav-btn" onclick="loadStudioPanel('blocks', this)">Blocks</button>
+                    <button class="nav-btn" onclick="loadStudioPanel('items', this)">Items</button>
+                    <button class="nav-btn" onclick="loadStudioPanel('recipes', this)">Recipes</button>
+                    <button class="nav-btn" onclick="loadStudioPanel('biomes', this)">Biomes</button>
+                    <button class="nav-btn" onclick="loadStudioPanel('entities', this)">Entities</button>
+                    <button class="nav-btn" onclick="loadStudioPanel('particles', this)">Particles</button>
+                </div>
+
+                <div id="dynamicWorkspace">
+                    <div class="panel"><p>↑ Select a category to get started! ↑</p></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="customConfirmModal" class="custom-modal-overlay" style="display: none;">
+        <div class="custom-modal-box">
+            <h3 id="customConfirmTitle" class="custom-modal-title">Unsaved Changes</h3>
+            <p id="customConfirmMessage" class="custom-modal-message">You have unsaved changes! Discard and switch panels?</p>
+            <div class="custom-modal-actions">
+                <button type="button" id="customConfirmCancelBtn" class="btn-secondary modal-btn">Cancel</button>
+                <button type="button" id="customConfirmOkBtn" class="btn-primary modal-btn">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="/upload.html">Upload</a>
+        <a href="/models">Models</a>
+        <a href="/servers">Servers</a>
+        <a href="/dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.63-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.36.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.7-.32 12.9.1 17.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1-.01-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0c.12.1.24.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.83 19.83 0 0 0 6.01-3.03.08.08 0 0 0 .03-.06c.5-4.83-.83-9-3.53-12.66a.06.06 0 0 0-.03-.03ZM8.02 14.6c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42Z"></path></svg>
+          Discord Server
+        </a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          Open Source
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
+  </footer>
+
+  <div id="authModal" class="auth-modal">
+    <div
+      class="auth-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authTitle"
+    >
+
+      <h2 id="authTitle">Login</h2>
+
+      <form id="authForm">
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          required
+          maxlength="20"
+          autocomplete="username"
+        >
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          required
+          autocomplete="current-password"
+        >
+
+        <div id="authError" class="auth-error" hidden></div>
+
+        <button type="submit" id="authSubmit">Login</button>
+
+        <div class="auth-divider" id="authDivider">or</div>
+
+        <p class="auth-toggle auth-passkey-row" id="authPasskeyRow">
+          <button type="button" id="passkeyLoginBtn" class="btn btn-ghost btn-sm">Sign in with a passkey</button>
+        </p>
+
+        <div class="auth-footer-links">
+          <a href="#" id="toggleAuth">Create an account</a>
+          <span id="authForgotWrap" class="auth-forgot-group">
+            <span class="auth-footer-sep" aria-hidden="true">·</span>
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+          </span>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="/vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="/theme-toggle.js?v=20260919-17"></script>
+
+  <script src="vendor/jszip-3.10.1.min.js"></script>
+  <script src="app-core.js?v=20260919-17" defer></script>
+  <script src="app-studio.js?v=20260919-17" defer></script>
+  <script src="app-save.js?v=20260919-17" defer></script>
+  <script src="app-io.js?v=20260919-17" defer></script>
+  <script src="app-cloudsave.js?v=20260919-17" defer></script>
+  <script src="app-autosave.js?v=20260919-17" defer></script>
+  <script src="app-stresstest.js?v=20260919-17" defer></script>
+  <script src="app-migrate.js?v=20260919-17" defer></script>
+  <script src="app-versionflow.js?v=20260919-17" defer></script>
+  <script src="app-lint.js?v=20260919-17" defer></script>
+  <script type="module">
+    import { enhanceSelect } from "../custom-select.js?v=20260919-17";
+    function enhanceWhenReady(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.options.length > 0) {
+        try {
+          enhanceSelect(el);
+        } catch (err) {
+          console.error("Failed to enhance version select:", err);
+        }
+        return;
+      }
+      const observer = new MutationObserver(() => {
+        if (el.options.length > 0) {
+          observer.disconnect();
+          try {
+            enhanceSelect(el);
+          } catch (err) {
+            console.error("Failed to enhance version select:", err);
+          }
+        }
+      });
+      observer.observe(el, { childList: true });
+    }
+    enhanceWhenReady("startNewAddonVersion");
+    enhanceWhenReady("versionDetectSelect");
+  </script>
+
+  <script type="module" src="/dist/auth.js?v=20260919-17"></script>
+
+  <script>
+    window.addEventListener("beforeunload", (e) => {
+      if (window.hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!window.hasUnsavedChanges) return;
+      const link = e.target.closest("a[href]");
+      if (!link) return;
+      const href = link.getAttribute("href");
+      if (!href || href === "#" || href.startsWith("#")) return;
+      if (!confirm("You have unsaved changes in the Addon Creator. Leave this page and discard them?")) {
+        e.preventDefault();
+      }
+    }, true);
+  </script>
+
+</body>
+</html>

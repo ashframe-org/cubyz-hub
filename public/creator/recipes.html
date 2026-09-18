@@ -1,0 +1,73 @@
+<div class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+    <h2 style="margin: 0;">Recipe Creator</h2>
+    <div style="display: flex; align-items: center; gap: 8px; position: relative; width: 300px;">
+        <label style="margin: 0; font-size: 13px; color: var(--text-muted); white-space: nowrap;">Load Preset:</label>
+        <div style="position: relative; flex: 1;">
+            <input type="text" id="recipePresetSelectorSearch" value="None" readonly style="cursor: pointer; padding: 6px 12px; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text); border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box;" onfocus="document.getElementById('recipePresetDropdown').style.display='block'">
+            <div id="recipePresetDropdown" class="dropdown-options" style="display: none; position: absolute; top: 100%; right: 0; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1001; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('recipePresetSelectorSearch').value='Oak Planks'; window.loadRecipePreset('planks'); document.getElementById('recipePresetDropdown').style.display='none';">Oak Planks</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('recipePresetSelectorSearch').value='Workbench'; window.loadRecipePreset('workbench'); document.getElementById('recipePresetDropdown').style.display='none';">Workbench</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="recipeFilename">Recipe ID (Filename)</label>
+            <input type="text" id="recipeFilename" value="" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+    </div>
+
+    <div style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 20px;">
+        <h3>Input Ingredients <span class="hint-text">(add up to 4 items)</span></h3>
+
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="form-group col-2"><input type="number" id="recipeInputCount1" value="1" min="1"></div>
+            <div class="form-group col texture-select-wrapper" style="position: relative;">
+                <input type="text" id="recipeInputSearch1" autocomplete="off" placeholder="First item..." onfocus="showRecipeDropdown('recipeInputDropdown1', 'recipeInputSearch1')" oninput="filterDropdown('recipeInputSearch1', 'recipeInputDropdown1')">
+                <div id="recipeInputDropdown1" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 150px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="form-group col-2"><input type="number" id="recipeInputCount2" value="1" min="1"></div>
+            <div class="form-group col texture-select-wrapper" style="position: relative;">
+                <input type="text" id="recipeInputSearch2" autocomplete="off" placeholder="Second item (optional)..." onfocus="showRecipeDropdown('recipeInputDropdown2', 'recipeInputSearch2')" oninput="filterDropdown('recipeInputSearch2', 'recipeInputDropdown2')">
+                <div id="recipeInputDropdown2" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 150px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="form-group col-2"><input type="number" id="recipeInputCount3" value="1" min="1"></div>
+            <div class="form-group col texture-select-wrapper" style="position: relative;">
+                <input type="text" id="recipeInputSearch3" autocomplete="off" placeholder="Third item (optional)..." onfocus="showRecipeDropdown('recipeInputDropdown3', 'recipeInputSearch3')" oninput="filterDropdown('recipeInputSearch3', 'recipeInputDropdown3')">
+                <div id="recipeInputDropdown3" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 150px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-2"><input type="number" id="recipeInputCount4" value="1" min="1"></div>
+            <div class="form-group col texture-select-wrapper" style="position: relative;">
+                <input type="text" id="recipeInputSearch4" autocomplete="off" placeholder="Fourth item (optional)..." onfocus="showRecipeDropdown('recipeInputDropdown4', 'recipeInputSearch4')" oninput="filterDropdown('recipeInputSearch4', 'recipeInputDropdown4')">
+                <div id="recipeInputDropdown4" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 150px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px;">
+        <h3>Output Item Result</h3>
+        <div class="row">
+            <div class="form-group col-3">
+                <label for="recipeOutputCount">Amount Made</label>
+                <input type="number" id="recipeOutputCount" value="1" min="1">
+            </div>
+            <div class="form-group col texture-select-wrapper" style="position: relative;">
+                <label for="recipeOutputSearch">What item does this craft?</label>
+                <input type="text" id="recipeOutputSearch" autocomplete="off" placeholder="Search items or your saved custom blocks..." onfocus="showRecipeDropdown('recipeOutputDropdown', 'recipeOutputSearch')" oninput="filterDropdown('recipeOutputSearch', 'recipeOutputDropdown')">
+                <div id="recipeOutputDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 150px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            </div>
+        </div>
+    </div>
+</div>

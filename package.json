@@ -7,13 +7,18 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build:js": "esbuild public/auth.js public/dashboard.js public/profile.js public/load_addons.js public/addon_cards.js public/compress.js --minify --outdir=public/dist"
+    "test": "node --test tests/utils.test.js tests/api.test.js tests/uploads.test.js tests/dist.test.js",
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "esbuild public/auth.js public/dashboard.js public/profile.js public/load_addons.js public/addon_cards.js public/compress.js public/custom-select.js public/image-cropper.js public/changelog.js public/models.js public/uploadmodel.js public/servers.js public/server-detail.js --minify --outdir=public/dist",
+    "build:css": "esbuild public/style.css public/ashframe-theme.css public/buttons.css --minify --outdir=public/dist"
   },
   "author": "Ashframe",
   "license": "MIT",
   "dependencies": {
+    "@simplewebauthn/server": "^13.1.1",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.4.1",
+    "connect-sqlite3": "^0.9.15",
     "cors": "^2.8.5",
     "dompurify": "3.3.0",
     "dotenv": "^16.0.0",

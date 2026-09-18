@@ -1,6 +1,34 @@
-import { createAddonCard } from './addon_cards.js';
+import { createAddonCard } from './addon_cards.js?v=20260919-17';
 
 const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
+
+const SOCIAL_SERVICES = {
+  discord: {
+    label: "Discord",
+    placeholder: "https://discord.gg/yourinvite",
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.3 5.3A18 18 0 0 0 15.7 4l-.3.6a13 13 0 0 1 4 1.6 15 15 0 0 0-14.8 0 13 13 0 0 1 4-1.6L8.3 4a18 18 0 0 0-4.6 1.3C1.4 9.6.8 13.7 1 17.8a18 18 0 0 0 5.5 2.8l.9-1.4a11 11 0 0 1-1.9-.9l.5-.4a13 13 0 0 0 11.9 0l.5.4a11 11 0 0 1-1.9.9l.9 1.4a18 18 0 0 0 5.5-2.8c.3-4.7-.7-8.8-3.1-12.5ZM8.7 15.3c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.7.8 1.6 1.8c0 1-.7 1.8-1.6 1.8Zm6.6 0c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.7.8 1.6 1.8c0 1-.7 1.8-1.6 1.8Z"/></svg>'
+  },
+  github: {
+    label: "GitHub",
+    placeholder: "https://github.com/yourname",
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.1.39-1.99 1.03-2.7-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5 0c1.9-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.71 1.03 1.6 1.03 2.7 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85v2.75c0 .26.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>'
+  },
+  youtube: {
+    label: "YouTube",
+    placeholder: "https://youtube.com/@yourchannel",
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12s0-3.2-.4-4.7a3 3 0 0 0-2.1-2.1C18 4.8 12 4.8 12 4.8s-6 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.8 2 12 2 12s0 3.2.4 4.7a3 3 0 0 0 2.1 2.1c1.5.4 7.5.4 7.5.4s6 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.7.4-4.7ZM10 15.3V8.7L15.8 12Z"/></svg>'
+  },
+  twitter: {
+    label: "X / Twitter",
+    placeholder: "https://x.com/yourhandle",
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.9 3H22l-7.2 8.2L23 21h-6.6l-5.2-6.7L5.1 21H2l7.7-8.8L1.5 3H8.3l4.7 6.2Zm-1.2 16h1.7L7.4 5H5.6Z"/></svg>'
+  },
+  website: {
+    label: "Website",
+    placeholder: "https://example.com",
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"></path></svg>'
+  }
+};
 
 function getUsernameFromUrl() {
   const pathMatch = window.location.pathname.match(/^\/profile\/([^\/]+)/);
@@ -23,9 +51,44 @@ function formatNumber(value) {
 
 function formatDate(value) {
   if (!value) return "—";
-  const date = new Date(value);
+  const isoValue = value.includes("T") ? value : value.replace(" ", "T") + "Z";
+  const date = new Date(isoValue);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString();
+  return date.toLocaleDateString("en-GB");
+}
+
+function formatLastSeen(value) {
+  if (!value) return "Offline";
+  const isoValue = value.includes("T") ? value : value.replace(" ", "T") + "Z";
+  const date = new Date(isoValue);
+  if (Number.isNaN(date.getTime())) return "Offline";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMin = Math.round(diffMs / 60000);
+  if (diffMin < 1) return "Last seen just now";
+  if (diffMin < 60) return `Last seen ${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `Last seen ${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  if (diffDay < 30) return `Last seen ${diffDay}d ago`;
+  return `Last seen ${date.toLocaleDateString("en-GB")}`;
+}
+
+function renderActivityDot(activity) {
+  const dot = document.getElementById("profile-activity-dot");
+  if (!dot) return;
+
+  if (!activity || activity.visible === false) {
+    dot.classList.add("hidden");
+    return;
+  }
+
+  dot.classList.remove("hidden");
+  dot.classList.toggle("is-online", !!activity.isOnline);
+  dot.setAttribute(
+    "data-tooltip",
+    activity.isOnline ? "Online now" : formatLastSeen(activity.lastSeen)
+  );
 }
 
 function showEmptyState(message) {
@@ -69,6 +132,62 @@ async function checkProfileOwner(username) {
     console.error("PROFILE OWNER CHECK ERROR:", err);
     return false;
   }
+}
+
+async function getCurrentUser() {
+  try {
+    const res = await fetch("/api/auth/status", { credentials: "include" });
+    const json = await res.json();
+    return json.ok ? json.user : null;
+  } catch (err) {
+    console.error("AUTH STATUS CHECK ERROR:", err);
+    return null;
+  }
+}
+
+function setFollowButtonState(button, isFollowing) {
+  button.classList.toggle("following", isFollowing);
+  button.textContent = isFollowing ? "Following" : "Follow";
+}
+
+async function setupFollowButton(profileUsername, isFollowingInitial) {
+  const container = document.getElementById("profile-follow-container");
+  if (!container) return;
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser || currentUser.username === profileUsername) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "follow-btn";
+  setFollowButtonState(button, isFollowingInitial);
+
+  button.addEventListener("click", async () => {
+    const currentlyFollowing = button.classList.contains("following");
+    const endpoint = `/api/users/${encodeURIComponent(profileUsername)}/${currentlyFollowing ? "unfollow" : "follow"}`;
+    button.disabled = true;
+    try {
+      const res = await fetch(endpoint, { method: "POST", credentials: "include" });
+      const json = await res.json();
+      if (json.ok) {
+        setFollowButtonState(button, json.isFollowing);
+      } else {
+        toast.error(json.error || "Unable to update follow status.");
+      }
+    } catch (err) {
+      console.error("FOLLOW TOGGLE ERROR:", err);
+      toast.error("Unable to update follow status.");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  container.innerHTML = "";
+  container.appendChild(button);
 }
 
 function createAboutParagraph(text) {
@@ -136,11 +255,11 @@ function startAboutEdit() {
         const paragraph = createAboutParagraph(json.about || updatedText);
         wrapper.parentNode.replaceChild(paragraph, wrapper);
       } else {
-        alert("Unable to save about text: " + (json.error || "Unknown error"));
+        toast.error("Unable to save about text: " + (json.error || "Unknown error"));
       }
     } catch (err) {
       console.error("SAVE ABOUT ERROR:", err);
-      alert("Unable to save about text.");
+      toast.error("Unable to save about text.");
     }
   });
 
@@ -149,48 +268,60 @@ function startAboutEdit() {
   });
 }
 
+async function submitAvatarFile(avatarFile) {
+  const formData = new FormData();
+  formData.append("avatar", avatarFile);
+
+  try {
+    const res = await fetch("/api/auth/upload-avatar", {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+    const json = await res.json();
+    console.log("Avatar upload response:", json);
+    if (json.ok && json.avatarUrl) {
+      const avatarEl = document.getElementById("profile-avatar");
+      if (avatarEl) {
+        avatarEl.src = `${json.avatarUrl}?t=${Date.now()}`;
+      }
+
+      await loadNavUser();
+    } else if (json.ok) {
+      window.location.reload();
+    } else {
+      toast.error("Unable to upload avatar: " + (json.error || "Unknown error"));
+    }
+  } catch (err) {
+    console.error("UPLOAD AVATAR ERROR:", err);
+    toast.error("Unable to upload avatar.");
+  }
+}
+
 function openAvatarUpload() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "image/*";
   fileInput.style.display = "none";
-  fileInput.addEventListener("change", async () => {
+  fileInput.addEventListener("change", () => {
     const file = fileInput.files?.[0];
     if (!file) {
       fileInput.remove();
       return;
     }
 
-    const compressedAvatar = await compressImage(file, 512, 512, 0.90);
-    const formData = new FormData();
-    formData.append("avatar", compressedAvatar);
-
-    try {
-      const res = await fetch("/api/auth/upload-avatar", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-      const json = await res.json();
-      console.log("Avatar upload response:", json);
-      if (json.ok && json.avatarUrl) {
-        const avatarEl = document.getElementById("profile-avatar");
-        if (avatarEl) {
-          avatarEl.src = `${json.avatarUrl}?t=${Date.now()}`;
-        }
-
-        await loadNavUser();
-      } else if (json.ok) {
-        window.location.reload();
-      } else {
-        alert("Unable to upload avatar: " + (json.error || "Unknown error"));
-      }
-    } catch (err) {
-      console.error("UPLOAD AVATAR ERROR:", err);
-      alert("Unable to upload avatar.");
-    } finally {
+    if (file.type === "image/gif") {
+      submitAvatarFile(file);
       fileInput.remove();
+      return;
     }
+
+    openImageCropper(file, 1, async (croppedAvatar) => {
+      const compressedAvatar = await compressImage(croppedAvatar, 512, 512, 0.90);
+      await submitAvatarFile(compressedAvatar);
+    }, { outputWidth: 512, outputHeight: 512 });
+
+    fileInput.remove();
   });
 
   document.body.appendChild(fileInput);
@@ -202,42 +333,166 @@ function openBannerUpload() {
   fileInput.type = "file";
   fileInput.accept = "image/*";
   fileInput.style.display = "none";
-  fileInput.addEventListener("change", async () => {
+  fileInput.addEventListener("change", () => {
     const file = fileInput.files?.[0];
     if (!file) {
       fileInput.remove();
       return;
     }
 
-    const compressedBanner = await compressImage(file, 1280, 720, 0.85);
-    const formData = new FormData();
-    formData.append("banner", compressedBanner);
+    openImageCropper(file, 16 / 9, async (croppedBanner) => {
+      const compressedBanner = await compressImage(croppedBanner, 1280, 720, 0.85);
+      const formData = new FormData();
+      formData.append("banner", compressedBanner);
 
-    try {
-      const res = await fetch("/api/auth/upload-banner", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-      const json = await res.json();
-      if (json.ok && json.bannerUrl) {
-        const bannerEl = document.getElementById("profile-banner");
-        if (bannerEl) {
-          bannerEl.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.78)), url('${safeUrl(json.bannerUrl, "/assets/default_banner.png")}')`;
+      try {
+        const res = await fetch("/api/auth/upload-banner", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+        const json = await res.json();
+        if (json.ok && json.bannerUrl) {
+          const bannerEl = document.getElementById("profile-banner");
+          if (bannerEl) {
+            bannerEl.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.78)), url('${safeUrl(json.bannerUrl, "/assets/default_banner.png")}')`;
+          }
+        } else {
+          toast.error("Unable to upload banner: " + (json.error || "Unknown error"));
         }
-      } else {
-        alert("Unable to upload banner: " + (json.error || "Unknown error"));
+      } catch (err) {
+        console.error("UPLOAD BANNER ERROR:", err);
+        toast.error("Unable to upload banner.");
       }
-    } catch (err) {
-      console.error("UPLOAD BANNER ERROR:", err);
-      alert("Unable to upload banner.");
-    } finally {
-      fileInput.remove();
-    }
+    }, { outputWidth: 1280, outputHeight: 720 });
+
+    fileInput.remove();
   });
 
   document.body.appendChild(fileInput);
   fileInput.click();
+}
+
+let currentSocialLinks = [];
+
+function renderSocialLinks(links) {
+  currentSocialLinks = Array.isArray(links) ? links : [];
+  const container = document.getElementById("profile-social-links");
+  if (!container) return;
+  container.innerHTML = "";
+  currentSocialLinks.forEach(({ service, url }) => {
+    const meta = SOCIAL_SERVICES[service];
+    if (!meta) return;
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.className = "profile-social-link";
+    link.title = meta.label;
+    link.innerHTML = meta.icon;
+    container.appendChild(link);
+  });
+}
+
+function addSocialLinkRow(service = "", url = "") {
+  const rowsEl = document.getElementById("social-links-rows");
+  if (!rowsEl) return;
+
+  const row = document.createElement("div");
+  row.className = "social-links-row";
+
+  const select = document.createElement("select");
+  select.className = "social-links-service-select";
+  Object.entries(SOCIAL_SERVICES).forEach(([key, meta]) => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = meta.label;
+    if (key === service) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "social-links-url-input";
+  input.value = url;
+  input.placeholder = SOCIAL_SERVICES[select.value]?.placeholder || "https://...";
+  select.addEventListener("change", () => {
+    input.placeholder = SOCIAL_SERVICES[select.value]?.placeholder || "https://...";
+  });
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "social-links-remove-btn";
+  removeBtn.textContent = "✕";
+  removeBtn.addEventListener("click", () => row.remove());
+
+  row.append(select, input, removeBtn);
+  rowsEl.appendChild(row);
+}
+
+function openSocialLinksModal() {
+  const modal = document.getElementById("social-links-modal");
+  const rowsEl = document.getElementById("social-links-rows");
+  if (!modal || !rowsEl) return;
+
+  rowsEl.innerHTML = "";
+  if (currentSocialLinks.length) {
+    currentSocialLinks.forEach(({ service, url }) => addSocialLinkRow(service, url));
+  } else {
+    addSocialLinkRow();
+  }
+  modal.classList.remove("hidden");
+}
+
+function closeSocialLinksModal() {
+  document.getElementById("social-links-modal")?.classList.add("hidden");
+}
+
+function setupSocialLinksEditing() {
+  const editBtn = document.getElementById("edit-social-links-btn");
+  const addRowBtn = document.getElementById("add-social-link-row");
+  const cancelBtn = document.getElementById("social-links-cancel");
+  const saveBtn = document.getElementById("social-links-save");
+  const modal = document.getElementById("social-links-modal");
+
+  editBtn?.classList.remove("hidden");
+  editBtn?.addEventListener("click", openSocialLinksModal);
+  addRowBtn?.addEventListener("click", () => {
+    const rowsEl = document.getElementById("social-links-rows");
+    if (rowsEl && rowsEl.children.length >= Object.keys(SOCIAL_SERVICES).length) return;
+    addSocialLinkRow();
+  });
+  cancelBtn?.addEventListener("click", closeSocialLinksModal);
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeSocialLinksModal();
+  });
+
+  saveBtn?.addEventListener("click", async () => {
+    const rows = document.querySelectorAll("#social-links-rows .social-links-row");
+    const links = Array.from(rows).map((row) => ({
+      service: row.querySelector(".social-links-service-select").value,
+      url: row.querySelector(".social-links-url-input").value.trim()
+    })).filter((l) => l.url);
+
+    try {
+      const res = await fetch("/api/users/social-links", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ links })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        renderSocialLinks(data.links);
+        closeSocialLinksModal();
+      } else {
+        toast.error(data.error || "Failed to save links.");
+      }
+    } catch (err) {
+      console.error("Failed to save social links:", err);
+      toast.error("Failed to save links.");
+    }
+  });
 }
 
 function enableProfileEditing() {
@@ -269,6 +524,180 @@ function escapeHtml(text) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+const communityListState = {
+  followers: { users: [], offset: 0, hasMore: false, loaded: false },
+  following: { users: [], offset: 0, hasMore: false, loaded: false }
+};
+
+function appendCommunityUserRows(listEl, users) {
+  users.forEach((u) => {
+    const li = document.createElement("li");
+    li.className = "community-user-row";
+
+    const link = document.createElement("a");
+    link.href = `/profile/${encodeURIComponent(u.username)}`;
+    link.className = "community-user-link";
+
+    const avatar = document.createElement("img");
+    avatar.className = "community-user-avatar";
+    avatar.alt = "";
+    avatar.src = safeUrl(u.avatarUrl, DEFAULT_AVATAR);
+    avatar.onerror = () => { avatar.src = DEFAULT_AVATAR; };
+
+    const name = document.createElement("span");
+    name.textContent = u.username;
+
+    link.append(avatar, name);
+    li.appendChild(link);
+    listEl.appendChild(li);
+  });
+}
+
+function renderCommunityLoadMore(listEl, tab, username) {
+  listEl.querySelector(".community-load-more")?.remove();
+  const state = communityListState[tab];
+  if (!state.hasMore) return;
+
+  const li = document.createElement("li");
+  li.className = "community-load-more";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn-ghost btn-sm";
+  btn.textContent = "Load more";
+  btn.addEventListener("click", () => loadCommunityList(username, tab, { loadMore: true }));
+  li.appendChild(btn);
+  listEl.appendChild(li);
+}
+
+async function loadCommunityList(username, tab, { loadMore = false } = {}) {
+  const listEl = document.getElementById(`community-${tab}-list`);
+  if (!listEl) return;
+  const state = communityListState[tab];
+
+  if (state.loaded && !loadMore) {
+    listEl.innerHTML = "";
+    appendCommunityUserRows(listEl, state.users);
+    renderCommunityLoadMore(listEl, tab, username);
+    return;
+  }
+
+  try {
+    const offset = loadMore ? state.offset : 0;
+    const res = await fetch(`/api/users/${encodeURIComponent(username)}/${tab}?offset=${offset}`);
+    const json = await res.json();
+    const users = json.ok && Array.isArray(json.users) ? json.users : [];
+
+    if (loadMore) {
+      state.users = state.users.concat(users);
+    } else {
+      state.users = users;
+      listEl.innerHTML = "";
+    }
+    state.offset = offset + users.length;
+    state.hasMore = !!json.hasMore;
+    state.loaded = true;
+
+    if (json.hidden) {
+      const li = document.createElement("li");
+      li.className = "community-user-empty";
+      li.textContent = "This list is private.";
+      listEl.appendChild(li);
+      return;
+    }
+
+    if (!state.users.length) {
+      const li = document.createElement("li");
+      li.className = "community-user-empty";
+      li.textContent = "Nobody here yet.";
+      listEl.appendChild(li);
+      return;
+    }
+
+    listEl.querySelector(".community-load-more")?.remove();
+    appendCommunityUserRows(listEl, users);
+    renderCommunityLoadMore(listEl, tab, username);
+  } catch (err) {
+    console.error(`Failed to load ${tab}:`, err);
+    if (!loadMore) {
+      listEl.innerHTML = "";
+      const li = document.createElement("li");
+      li.className = "community-user-empty";
+      li.textContent = "Could not load this list.";
+      listEl.appendChild(li);
+    }
+  }
+}
+
+function setupProfileTabs() {
+  const tabs = document.querySelectorAll(".profile-tab-bar .tab-bar-btn");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const which = tab.dataset.profileTab;
+      tabs.forEach((t) => t.classList.toggle("active", t === tab));
+      document.getElementById("profile-tab-addons")?.classList.toggle("active", which === "addons");
+      document.getElementById("profile-tab-models")?.classList.toggle("active", which === "models");
+    });
+  });
+}
+
+function renderProfileModel(model) {
+  const card = document.createElement("a");
+  card.className = "model-card fade-in-card";
+  card.href = `/models?model=${encodeURIComponent(model.id)}`;
+  card.innerHTML = `
+    <div class="model-card-header">${escapeHtml(model.title)}</div>
+    <div class="model-card-thumb">
+      <img class="img-fade" src="${escapeHtml(safeUrl(model.texture_path, "/assets/default_icon.png"))}" alt="${escapeHtml(model.title)}">
+    </div>
+    <div class="model-card-footer">${model.asset_type === "skin_only" ? "Skin" : "Full model"}</div>
+  `;
+
+  const img = card.querySelector("img.img-fade");
+  if (img) {
+    const reveal = () => img.classList.add("loaded");
+    if (img.complete && img.naturalWidth > 0) reveal();
+    else {
+      img.addEventListener("load", reveal, { once: true });
+      img.addEventListener("error", reveal, { once: true });
+    }
+  }
+
+  return card;
+}
+
+function renderProfileModels(models) {
+  const modelContainer = document.getElementById("model-container");
+  const noModels = document.getElementById("no-models");
+  if (!modelContainer) return;
+
+  if (!Array.isArray(models) || models.length === 0) {
+    modelContainer.classList.add("hidden");
+    if (noModels) noModels.classList.remove("hidden");
+    return;
+  }
+
+  if (noModels) noModels.classList.add("hidden");
+  modelContainer.classList.remove("hidden");
+  modelContainer.innerHTML = "";
+  models.forEach((model) => modelContainer.appendChild(renderProfileModel(model)));
+}
+
+function setupCommunityTabs(username) {
+  const tabs = document.querySelectorAll(".community-tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const which = tab.dataset.communityTab;
+      tabs.forEach((t) => {
+        t.classList.toggle("active", t === tab);
+        t.setAttribute("aria-selected", t === tab ? "true" : "false");
+      });
+      document.getElementById("community-followers-list")?.classList.toggle("hidden", which !== "followers");
+      document.getElementById("community-following-list")?.classList.toggle("hidden", which !== "following");
+      loadCommunityList(username, which);
+    });
+  });
 }
 
 async function loadProfile() {
@@ -305,9 +734,21 @@ async function loadProfile() {
     setText("stat-location", stats.location || "Earth");
     setText("profile-about", aboutText);
 
+    renderSocialLinks(data.socialLinks);
+
     if (await checkProfileOwner(user.username)) {
       enableProfileEditing();
+      setupSocialLinksEditing();
     }
+
+    setupFollowButton(user.username, !!data.isFollowing);
+
+    setText("profile-followers-count", formatNumber(data.followerCount || 0));
+    setText("profile-following-count", formatNumber(data.followingCount || 0));
+    loadCommunityList(user.username, "followers");
+    setupCommunityTabs(user.username);
+    setupProfileTabs();
+    renderProfileModels(data.models);
 
     const avatarEl = document.getElementById("profile-avatar");
     if (avatarEl) {
@@ -321,6 +762,8 @@ async function loadProfile() {
         revealAvatar();
       };
     }
+
+    renderActivityDot(data.activity);
 
     const bannerEl = document.getElementById("profile-banner");
     if (bannerEl) {

@@ -1,6 +1,3 @@
-// Shared client-side image compression, used before any image (icon,
-// banner, screenshot, avatar) is uploaded anywhere in the app.
-// Downscales to the given bounds and re-encodes as JPEG via canvas.
 function compressImage(file, maxWidth, maxHeight, quality = 0.85) {
   return new Promise((resolve) => {
     if (!file || !file.type || !file.type.startsWith("image/")) {

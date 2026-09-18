@@ -5,15 +5,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="dark">
-  <style>html { background: #1A1F1C; }</style>
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("cubyzhub-theme");
+        if (saved !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
   <title>Addon - Cubyz Hub</title>
+  <meta name="description" content="View this addon on CubyzHub">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <meta property="og:type" content="website">
   <meta property="og:title" content="CubyzHub Addon">
   <meta property="og:description" content="View this addon on CubyzHub">
   <meta property="og:image" content="/assets/default_icon.png">
   <meta property="og:url" content="">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="addon.css?v=system-font-1">
+  <link rel="stylesheet" href="dist/buttons.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/style.css?v=20260919-17">
+  <link rel="stylesheet" href="addon.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/ashframe-theme.css?v=20260919-17" />
   <style>
     body {
       -ms-overflow-style: none;
@@ -38,14 +56,17 @@
   <header class="site-header">
     <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
     <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
   </header>
 
-  <section class="addon-top">
+  <div class="addon-page-grid">
 
-    <div class="like-container">
-      <button id="likeBtn" class="like-btn">❤</button>
-      <span id="likeCount" class="like-count">0</span>
-    </div>
+  <section class="addon-top">
 
     <div class="addon-top-left">
       <div class="addon-icon-large">
@@ -56,8 +77,28 @@
         <div class="addon-title-row">
           <h1 id="addon-name">Loading...</h1>
         </div>
+        <p id="addon-short-desc"></p>
 
-        <a id="download-link" class="download-btn" href="#">Download</a>
+        <div class="addon-top-actions">
+          <a id="download-link" class="btn btn-primary" href="#">Download</a>
+          <div class="addon-top-stats">
+            <button id="likeBtn" class="title-likes like-btn" type="button">
+              <span class="like-icon">❤</span>
+              <span id="likeCount">0</span>
+            </button>
+            <span class="title-downloads">
+              <span class="download-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v12"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14a2 2 0 0 0 2-2v-3"></path>
+                  <path d="M3 16v3a2 2 0 0 0 2 2"></path>
+                </svg>
+              </span>
+              <span id="downloadCount">0</span>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -67,12 +108,20 @@
 
   </section>
 
-  <main class="addon-content">
-    <div class="left-column">
+  <main class="left-column">
       <div class="tab-bar">
-        <button class="active" data-tab="desc">Description</button>
-        <button data-tab="versions">Versions</button>
-        <button data-tab="comments">Comments</button>
+        <button class="tab-bar-btn active" data-tab="desc">
+          <svg class="tab-bar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+          Description
+        </button>
+        <button class="tab-bar-btn" data-tab="versions">
+          <svg class="tab-bar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v8a2 2 0 0 1-1 1.7l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.7l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+          Versions
+        </button>
+        <button class="tab-bar-btn" data-tab="comments">
+          <svg class="tab-bar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path></svg>
+          Comments <span id="comments-count-badge" class="tab-count-badge hidden"></span>
+        </button>
       </div>
 
       <div id="desc" class="tab-content active">
@@ -83,8 +132,11 @@
 
           <div class="screenshots-section">
             <div class="screenshots-header">
-              <span>SCREENSHOTS</span>
-              <button id="add-screenshot-btn" class="add-screenshot-btn" title="Add screenshot">＋</button>
+              <span>
+                <svg class="screenshots-header-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"></path></svg>
+                SCREENSHOTS
+              </span>
+              <button id="add-screenshot-btn" class="btn btn-primary btn-sm" title="Add screenshot">＋</button>
             </div>
             <div class="screenshots" id="screenshots"></div>
           </div>
@@ -92,44 +144,123 @@
       </div>
 
       <div id="versions" class="tab-content">
-        <div id="version-upload-box" class="version-upload-box" style="display:none; margin-bottom:12px;">
-          <input id="new-version-input" type="text" placeholder="Enter new version (e.g 1.2.0)" />
-          <input id="new-file-input" type="file" accept=".zip" />
-          <button id="upload-version-btn" class="download-btn">Upload Version</button>
+        <div id="release-settings-box" class="release-settings-box hidden">
+          <div class="info-row">
+            <span class="info-label">New versions come from</span>
+            <span class="info-value" id="release-mode-value">—</span>
+          </div>
+        </div>
+        <div id="version-upload-box" class="version-upload-box" style="display:none;">
+          <div class="version-upload-row">
+            <button type="button" id="new-version-channel" class="version-channel-badge" data-channel="release" title="Release — click to change">R</button>
+            <input id="new-version-input" type="text" placeholder="Version (e.g 1.2.0)" maxlength="20" />
+            <select id="new-version-compat" class="compat-select"></select>
+          </div>
+          <label id="new-file-dropzone" class="version-file-dropzone">
+            <input id="new-file-input" type="file" accept=".zip" hidden />
+            <span class="version-file-dropzone-hint">＋ .zip — click or drag a file here</span>
+            <span id="new-file-name" class="version-file-dropzone-name hidden"></span>
+          </label>
+          <textarea id="new-version-changelog" placeholder="What changed in this version? (optional)"></textarea>
+          <button id="upload-version-btn" class="btn btn-primary">Upload Version</button>
+        </div>
+        <div class="versions-filter-bar" id="versions-filter-bar" hidden>
+          <label class="versions-filter-field">
+            <span class="versions-filter-label">Release</span>
+            <select id="versions-filter-channel" class="compat-select versions-filter-select">
+              <option value="">All</option>
+              <option value="release">Release</option>
+              <option value="beta">Beta</option>
+              <option value="alpha">Alpha</option>
+            </select>
+          </label>
+          <label class="versions-filter-field">
+            <span class="versions-filter-label">Game version</span>
+            <select id="versions-filter-compat" class="compat-select versions-filter-select">
+              <option value="">All</option>
+            </select>
+          </label>
+        </div>
+        <div class="versions-table-header" id="versions-table-header" hidden>
+          <span class="versions-col-channel">Release</span>
+          <div class="versions-col-group">
+            <span class="versions-col-version">Version</span>
+            <span class="versions-col-compat">Game version</span>
+            <span class="versions-col-date">Published</span>
+            <span class="versions-col-downloads">Downloads</span>
+          </div>
+          <span class="versions-col-actions"></span>
         </div>
         <ul id="versions-list"></ul>
+        <div id="versions-filter-empty" class="version-empty hidden">No versions match these filters.</div>
+        <button id="versions-load-more" class="btn btn-ghost btn-sm hidden" type="button">Load more</button>
       </div>
 
       <div id="comments" class="tab-content">
-        <div id="comments-list"></div>
         <div id="comment-form">
-          <textarea id="comment-text" placeholder="Write a comment…"></textarea>
-          <button class="comment-btn" id="post-comment">Post Comment</button>
+          <img id="comment-form-avatar" class="comment-avatar" src="/assets/Snale_Avatar.webp" alt="" hidden>
+          <div class="comment-form-body">
+            <textarea id="comment-text" placeholder="Write a comment…" maxlength="200"></textarea>
+            <div class="comment-form-footer">
+              <span id="comment-char-count" class="comment-char-count">0/200</span>
+              <button class="comment-btn" id="post-comment">Post Comment</button>
+            </div>
+          </div>
         </div>
+        <div id="comment-login-prompt" class="comment-login-prompt hidden">
+          <button type="button" id="comment-login-link" data-open-auth>Log in</button> to leave a comment.
+        </div>
+        <div id="comments-list"></div>
+        <nav id="comments-pagination" class="addon-pagination" aria-label="Comment pages" hidden></nav>
       </div>
-    </div>
+  </main>
 
-    <div class="right-column">
+  <aside class="right-column">
       <div class="addon-card">
-        <h3>Compatibility</h3>
-        <div class="info-row">
-          <span class="info-label">Cubyz Version</span>
-          <span class="info-value" id="compatibility">—</span>
-        </div>
+        <h3>Supported Versions</h3>
+        <div id="compatibility" class="tag-badges">—</div>
       </div>
 
       <div class="addon-card">
-        <h3>File Information</h3>
-        <div class="info-row">
-          <span class="info-label">Addon Version</span>
-          <span class="info-value" id="addon-version">—</span>
+        <h3>Details</h3>
+        <div class="info-row" id="license-row">
+          <span class="info-label">
+            <svg class="info-label-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 15h6"></path><path d="M9 11h6"></path></svg>
+            License
+          </span>
+          <span class="info-value" id="license-value">—</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Uploaded</span>
+          <span class="info-label">
+            <svg class="info-label-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg>
+            Uploaded
+          </span>
           <span class="info-value" id="created-at">—</span>
         </div>
-        <div>
-          <h4 style="margin:.6rem 0 .3rem;">Tags</h4>
+        <div class="info-row">
+          <span class="info-label">
+            <svg class="info-label-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3.5-7.1"></path><path d="M21 3v5h-5"></path></svg>
+            Last updated
+          </span>
+          <span class="info-value" id="updated-at">—</span>
+        </div>
+        <div class="info-row" id="github-link-row">
+          <span class="info-label">
+            <svg class="info-label-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.1.39-1.99 1.03-2.7-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5 0c1.9-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.71 1.03 1.6 1.03 2.7 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85v2.75c0 .26.18.58.69.48A10 10 0 0 0 12 2Z"></path></svg>
+            GitHub
+          </span>
+          <span class="info-value" id="github-link-value">—</span>
+        </div>
+        <div class="details-badge-group">
+          <h4>Type</h4>
+          <div id="addon-type-badges" class="tag-badges"></div>
+        </div>
+        <div class="details-badge-group" id="ai-usage-row">
+          <h4>AI usage</h4>
+          <div id="ai-usage-badges" class="tag-badges"></div>
+        </div>
+        <div class="details-badge-group">
+          <h4>Tags</h4>
           <div id="addon-tags" class="tag-badges"></div>
         </div>
       </div>
@@ -141,15 +272,43 @@
         </h3>
         <div class="author-row" id="creator-panel">
           <img id="author-avatar" class="author-avatar" src="/assets/Snale_Avatar.webp" alt="Author avatar">
-          <a id="author-name" class="author-link" href="#">—</a>
+          <div class="creator-name-col">
+            <a id="author-name" class="author-link" href="#">—</a>
+            <span id="author-role" class="creator-role hidden"></span>
+          </div>
         </div>
         <div id="creator-list" class="creator-list"></div>
+        <div id="pending-invite-list" class="creator-list"></div>
       </div>
-    </div>
-  </main>
+  </aside>
+
+  </div>
 
   <footer class="site-footer">
-    <small>Cubyz Hub - by iNiKKo © 2025-2026</small>
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="upload.html">Upload</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.63-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.36.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.7-.32 12.9.1 17.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1-.01-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0c.12.1.24.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.83 19.83 0 0 0 6.01-3.03.08.08 0 0 0 .03-.06c.5-4.83-.83-9-3.53-12.66a.06.06 0 0 0-.03-.03ZM8.02 14.6c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42Z"></path></svg>
+          Discord Server
+        </a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          Open Source
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
   </footer>
   <div id="imgModal" class="img-modal">
   <span id="imgModalClose" class="img-modal-close">✕</span>
@@ -159,10 +318,27 @@
   <button id="imgNext" class="img-nav right">❯</button>
 </div>
 
-  <script src="vendor/marked.umd.js"></script>
-  <script src="vendor/purify.min.js"></script>
-  <script src="dist/auth.js?v=nav-search-1"></script>
-  <script src="dist/compress.js?v=1"></script>
+  <div id="tagPopover" class="tag-popover hidden">
+    <div class="tag-popover-header">
+      <strong>Tags (up to 6)</strong>
+      <button type="button" id="tagPopoverClose" class="tag-popover-close">✕</button>
+    </div>
+    <div id="tag-chips" class="chips"></div>
+  </div>
+
+  <script src="vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="theme-toggle.js?v=20260919-17"></script>
+  <script src="toast.js?v=20260919-17"></script>
+  <script src="vendor/marked.umd.js?v=20260919-17"></script>
+  <script src="vendor/purify.min.js?v=20260919-17"></script>
+  <script src="markdown-editor.js?v=20260919-17"></script>
+  <script type="module" src="dist/auth.js?v=20260919-17"></script>
+  <script src="dist/compress.js?v=20260919-17"></script>
+  <script src="dist/image-cropper.js?v=20260919-17"></script>
+  <script type="module">
+    import { enhanceSelect } from './dist/custom-select.js?v=20260919-17';
+    window.enhanceSelect = enhanceSelect;
+  </script>
   <script>
     (function () {
       function fadeInImage(img) {
@@ -204,7 +380,8 @@
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)/g, "");
 
-          const newUrl = `/addon/${addonId}-${slug}`;
+          const prefix = data.addon.type === "mod" ? "/mod" : "/addon";
+          const newUrl = `${prefix}/${addonId}-${slug}`;
 
           if (window.location.pathname !== newUrl) {
             window.history.replaceState(null, "", newUrl);
@@ -225,6 +402,70 @@
         }
       }
 
+      function setExternalLinkLabel(el, text) {
+        el.textContent = "";
+        const label = document.createElement("span");
+        label.textContent = text;
+        const icon = document.createElement("span");
+        icon.className = "external-link-icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path></svg>';
+        el.append(label, icon);
+      }
+
+      function setVersionActionIcon(el, label) {
+        el.textContent = "";
+        el.title = label;
+        el.setAttribute("aria-label", label);
+        el.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3"></path><path d="M3 16v3a2 2 0 0 0 2 2"></path></svg>';
+      }
+
+      function setChangelogActionIcon(el, label) {
+        el.textContent = "";
+        el.title = label;
+        el.setAttribute("aria-label", label);
+        el.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 13h6"></path><path d="M9 17h6"></path></svg>';
+      }
+
+      const RELEASE_CHANNEL_LABELS = { release: "Release", beta: "Beta", alpha: "Alpha" };
+      const RELEASE_CHANNEL_LETTERS = { release: "R", beta: "B", alpha: "A" };
+      const RELEASE_CHANNEL_CYCLE = { release: "beta", beta: "alpha", alpha: "release" };
+
+      function renderChannelBadge(v, editable) {
+        const channel = RELEASE_CHANNEL_LABELS[v.release_channel] ? v.release_channel : "release";
+        const badge = document.createElement(editable ? "button" : "span");
+        if (editable) badge.type = "button";
+        badge.className = "version-channel-badge" + (editable ? "" : " version-channel-badge-static");
+        badge.dataset.channel = channel;
+        badge.textContent = RELEASE_CHANNEL_LETTERS[channel];
+        badge.title = editable ? `${RELEASE_CHANNEL_LABELS[channel]} — click to change` : RELEASE_CHANNEL_LABELS[channel];
+
+        if (editable) {
+          badge.onclick = async () => {
+            const currentChannel = RELEASE_CHANNEL_LABELS[badge.dataset.channel] ? badge.dataset.channel : "release";
+            const nextChannel = RELEASE_CHANNEL_CYCLE[currentChannel];
+            badge.dataset.channel = nextChannel;
+            badge.textContent = RELEASE_CHANNEL_LETTERS[nextChannel];
+            badge.title = `${RELEASE_CHANNEL_LABELS[nextChannel]} — click to change`;
+            v.release_channel = nextChannel;
+            try {
+              const res = await fetch(`/api/versions/${v.id}/update`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ releaseChannel: nextChannel })
+              });
+              const data = await res.json();
+              if (!data.ok) toast.error(data.error || "Failed to update release channel.");
+            } catch (e) {
+              console.error("Failed to update release channel:", e);
+              toast.error("Failed to update release channel.");
+            }
+          };
+        }
+
+        return badge;
+      }
+
       function isSafeImageUrl(src) {
         if (!src) return false;
         if (/^\s*data:/i.test(src)) return /^data:image\//i.test(src);
@@ -237,14 +478,26 @@
       }
 
       function parseCreators(value) {
-        if (!value) return [];
-        if (Array.isArray(value)) return value.filter(Boolean);
-        try {
-          const parsed = JSON.parse(value);
-          return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
-        } catch {
-          return [];
+        let list = [];
+        if (Array.isArray(value)) {
+          list = value;
+        } else if (value) {
+          try {
+            const parsed = JSON.parse(value);
+            list = Array.isArray(parsed) ? parsed : [];
+          } catch {
+            list = [];
+          }
         }
+        return list
+          .map((entry) => {
+            if (typeof entry === "string") return entry ? { username: entry, role: null } : null;
+            if (entry && typeof entry === "object" && entry.username) {
+              return { username: entry.username, role: entry.role || null };
+            }
+            return null;
+          })
+          .filter(Boolean);
       }
 
       function getUsersFromPage() {
@@ -300,7 +553,7 @@
             item.textContent = username;
             item.onclick = async (event) => {
               event.stopPropagation();
-              await addCreator(username);
+              await inviteCreator(username);
               closeCreatorMenu();
             };
             results.appendChild(item);
@@ -322,11 +575,14 @@
               return;
             }
 
+            const existingUsernames = (window.__addonCreators || []).map((c) => c.username);
+            const pendingUsernames = (window.__addonPendingInvites || []).map((i) => i.invited_username);
             const available = json.users.filter((username) => {
               return (
                 username &&
                 username !== window.__addonAuthor &&
-                !(window.__addonCreators || []).includes(username)
+                !existingUsernames.includes(username) &&
+                !pendingUsernames.includes(username)
               );
             });
 
@@ -358,35 +614,364 @@
       async function setCreators(creators) {
         if (!addonId) return;
         try {
-          const res = await fetch(`/api/addons/${addonId}/creators`, {
+          const fd = new FormData();
+          fd.append("creators", JSON.stringify(creators));
+          const res = await fetch(`/api/addons/${addonId}/update`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ creators }),
+            body: fd,
+            credentials: "include"
           });
           const data = await res.json();
           if (!data.ok) {
             throw new Error(data.error || "Failed to update creators.");
           }
           window.__addonCreators = creators;
-          await renderCreators({ author: window.__addonAuthor, author_id: window.__addonAuthor, creators });
+          await renderCreators({ author: window.__addonAuthor, author_id: window.__addonAuthor, creators, author_role: window.__addonAuthorRole });
         } catch (err) {
           console.error("Update creators failed:", err);
-          alert(err.message || "Failed to update creators.");
+          toast.error(err.message || "Failed to update creators.");
         }
       }
 
-      async function addCreator(username) {
+      async function inviteCreator(username) {
         if (!addonId) return;
-        const creators = Array.from(
-          new Set([...(window.__addonCreators || []), username])
-        );
-        await setCreators(creators);
+        try {
+          const res = await fetch(`/api/addons/${addonId}/creator-invites`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to send invite.");
+          window.__addonPendingInvites = [...(window.__addonPendingInvites || []), { id: data.inviteId, invited_username: username, role: null }];
+          renderPendingInvites();
+        } catch (err) {
+          console.error("Send creator invite failed:", err);
+          toast.error(err.message || "Failed to send invite.");
+        }
+      }
+
+      async function cancelCreatorInvite(inviteId) {
+        try {
+          const res = await fetch(`/api/creator-invites/${inviteId}`, { method: "DELETE", credentials: "include" });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to cancel invite.");
+          window.__addonPendingInvites = (window.__addonPendingInvites || []).filter((i) => i.id !== inviteId);
+          renderPendingInvites();
+        } catch (err) {
+          console.error("Cancel creator invite failed:", err);
+          toast.error(err.message || "Failed to cancel invite.");
+        }
+      }
+
+      function renderPendingInvites() {
+        const list = document.getElementById("pending-invite-list");
+        if (!list) return;
+        list.innerHTML = "";
+        const invites = window.__addonPendingInvites || [];
+        invites.forEach((invite) => {
+          const chip = document.createElement("div");
+          chip.className = "creator-chip creator-chip-pending";
+
+          const content = document.createElement("div");
+          content.className = "creator-chip-content";
+          const name = document.createElement("span");
+          name.textContent = invite.invited_username;
+          content.appendChild(name);
+          const pendingLabel = document.createElement("span");
+          pendingLabel.className = "creator-role";
+          pendingLabel.textContent = invite.role ? `${invite.role} - pending approval` : "Pending approval";
+          content.appendChild(pendingLabel);
+
+          const cancelBtn = document.createElement("button");
+          cancelBtn.type = "button";
+          cancelBtn.className = "creator-remove-btn";
+          cancelBtn.title = "Cancel invite";
+          cancelBtn.textContent = "✕";
+          cancelBtn.onclick = (event) => {
+            event.stopPropagation();
+            cancelCreatorInvite(invite.id);
+          };
+
+          chip.append(content, cancelBtn);
+          list.appendChild(chip);
+        });
       }
 
       async function removeCreator(username) {
         if (!addonId) return;
-        const creators = (window.__addonCreators || []).filter((c) => c !== username);
+        const creators = (window.__addonCreators || []).filter((c) => c.username !== username);
         await setCreators(creators);
+      }
+
+      async function setCreatorRole(username, role) {
+        if (!addonId) return;
+        const creators = (window.__addonCreators || []).map((c) =>
+          c.username === username ? { ...c, role: role || null } : c
+        );
+        await setCreators(creators);
+      }
+
+      async function setAuthorRole(role) {
+        if (!addonId) return;
+        try {
+          const fd = new FormData();
+          fd.append("authorRole", role || "");
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to update role.");
+          renderAuthorRole(role || "");
+        } catch (err) {
+          console.error("Update author role failed:", err);
+          toast.error(err.message || "Failed to update role.");
+        }
+      }
+
+      function renderAuthorRole(role) {
+        window.__addonAuthorRole = role || null;
+        const roleEl = document.getElementById("author-role");
+        if (!roleEl) return;
+        const isOwner = window.__currentUser && window.__currentUser === window.__addonAuthor;
+        roleEl.textContent = role || (isOwner ? "+ Add role" : "");
+        roleEl.classList.toggle("hidden", !role && !isOwner);
+        roleEl.classList.toggle("editable", isOwner);
+        roleEl.onclick = isOwner ? () => startEditingRole(roleEl, role, setAuthorRole) : null;
+      }
+
+      async function setGithubUrl(url) {
+        if (!addonId) return;
+        try {
+          const fd = new FormData();
+          fd.append("githubUrl", url || "");
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to update GitHub link.");
+          if (currentAddonData) currentAddonData.githubUrl = url || "";
+          renderGithubLink(url || "", currentAddonData);
+        } catch (err) {
+          console.error("Update GitHub link failed:", err);
+          toast.error(err.message || "Failed to update GitHub link.");
+        }
+      }
+
+      function renderGithubLink(url, addon) {
+        const row = document.getElementById("github-link-row");
+        const valueEl = document.getElementById("github-link-value");
+        if (!row || !valueEl) return;
+        const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+        const isMod = addon?.type === "mod";
+
+        row.classList.toggle("hidden", !url && !isOwner);
+        valueEl.innerHTML = "";
+
+        if (url) {
+          const link = document.createElement("a");
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer nofollow";
+          link.className = "info-link";
+          link.textContent = "View repository";
+          valueEl.appendChild(link);
+        }
+
+        if (isOwner) {
+          const editBtn = document.createElement("span");
+          editBtn.className = "creator-role editable";
+          editBtn.textContent = url ? "Edit" : "+ Add link";
+          editBtn.onclick = () => startEditingRole(editBtn, url, setGithubUrl, { maxLength: 300, placeholder: "https://github.com/..." });
+          valueEl.appendChild(editBtn);
+        } else if (!url) {
+          valueEl.textContent = "—";
+        }
+
+        if (isOwner && isMod) {
+          const modeBtn = document.createElement("span");
+          modeBtn.className = "creator-role editable";
+          modeBtn.textContent = addon.github_mode === "release"
+            ? "Switch to link-only (no Versions tab)"
+            : "Switch to auto-pull releases";
+          modeBtn.onclick = () => {
+            const targetMode = addon.github_mode === "release" ? "manual" : "release";
+            if (targetMode === "release" && !url) {
+              toast.error("Add a GitHub repo link above first, then switch this to auto-pull.");
+              return;
+            }
+            setGithubMode(targetMode);
+          };
+          valueEl.appendChild(modeBtn);
+        }
+      }
+
+      async function setGithubMode(mode) {
+        if (!addonId) return;
+        try {
+          const fd = new FormData();
+          fd.append("githubMode", mode);
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to update release mode.");
+          await fetchAddon();
+          await fetchVersions();
+        } catch (err) {
+          console.error("Update release mode failed:", err);
+          toast.error(err.message || "Failed to update release mode.");
+        }
+      }
+
+      function renderReleaseSettings(a) {
+        const box = document.getElementById("release-settings-box");
+        const modeValueEl = document.getElementById("release-mode-value");
+        if (!box) return;
+
+        const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+        const isMod = a.type === "mod";
+
+        box.classList.toggle("hidden", !isMod || !isOwner || a.github_mode !== "release");
+
+        if (isMod && isOwner && a.github_mode === "release") {
+          modeValueEl.innerHTML = "";
+
+          const statusLabel = document.createElement("span");
+          statusLabel.textContent = "Your GitHub releases (auto)";
+          modeValueEl.appendChild(statusLabel);
+
+          const toggleBtn = document.createElement("span");
+          toggleBtn.className = "creator-role editable";
+          toggleBtn.textContent = "Switch to manual (link only, no Versions tab)";
+          toggleBtn.onclick = () => setGithubMode("manual");
+          modeValueEl.appendChild(toggleBtn);
+        }
+      }
+
+      const AI_USAGE_LABELS = { none: "No AI", full: "AI" };
+      const AI_USAGE_CYCLE = { none: "full", full: "none" };
+
+      async function setAiUsage(value) {
+        if (!addonId) return;
+        try {
+          const fd = new FormData();
+          fd.append("aiUsage", value);
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to update AI usage.");
+          renderAiUsage(value);
+        } catch (err) {
+          console.error("Update AI usage failed:", err);
+          toast.error(err.message || "Failed to update AI usage.");
+        }
+      }
+
+      function renderAiUsage(value) {
+        const badgesEl = document.getElementById("ai-usage-badges");
+        if (!badgesEl) return;
+        const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+        const current = AI_USAGE_LABELS[value] ? value : "none";
+
+        badgesEl.innerHTML = "";
+        const badge = document.createElement("div");
+        badge.className = "tag-badge";
+        badge.textContent = AI_USAGE_LABELS[current];
+        badgesEl.appendChild(badge);
+
+        if (isOwner) {
+          const editBtn = document.createElement("span");
+          editBtn.className = "creator-role editable ai-usage-edit-btn";
+          editBtn.textContent = "Change";
+          editBtn.onclick = () => setAiUsage(AI_USAGE_CYCLE[current]);
+          badgesEl.appendChild(editBtn);
+        }
+      }
+
+      async function setLicense(license) {
+        if (!addonId) return;
+        try {
+          const fd = new FormData();
+          fd.append("license", license || "");
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "Failed to update license.");
+          renderLicense(license || "");
+        } catch (err) {
+          console.error("Update license failed:", err);
+          toast.error(err.message || "Failed to update license.");
+        }
+      }
+
+      function renderLicense(license) {
+        const row = document.getElementById("license-row");
+        const valueEl = document.getElementById("license-value");
+        if (!row || !valueEl) return;
+        const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+
+        row.classList.toggle("hidden", !license && !isOwner);
+        valueEl.innerHTML = "";
+
+        if (license) {
+          const text = document.createElement("span");
+          text.textContent = license;
+          valueEl.appendChild(text);
+        }
+
+        if (isOwner) {
+          const editBtn = document.createElement("span");
+          editBtn.className = "creator-role editable";
+          editBtn.textContent = license ? "Edit" : "+ Add license";
+          editBtn.onclick = () => startEditingRole(editBtn, license, setLicense, { maxLength: 60, placeholder: "e.g. MIT, GPL-3.0..." });
+          valueEl.appendChild(editBtn);
+        } else if (!license) {
+          valueEl.textContent = "—";
+        }
+      }
+
+      function startEditingRole(labelEl, currentRole, onSave, options = {}) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "creator-role-input";
+        input.maxLength = options.maxLength || 60;
+        input.value = currentRole || "";
+        input.placeholder = options.placeholder || "e.g. Textures, Coding...";
+
+        labelEl.replaceWith(input);
+        input.focus();
+        input.select();
+
+        let finished = false;
+        const finish = async (commit) => {
+          if (finished) return;
+          finished = true;
+          const value = input.value.trim();
+          input.replaceWith(labelEl);
+          if (commit && value !== (currentRole || "")) {
+            await onSave(value);
+          }
+        };
+
+        input.addEventListener("blur", () => finish(true));
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") { e.preventDefault(); finish(true); input.blur(); }
+          if (e.key === "Escape") { e.preventDefault(); finish(false); input.blur(); }
+        });
       }
 
       async function renderCreators(addon) {
@@ -422,6 +1007,9 @@
 
         window.__addonAuthor = author;
         window.__addonCreators = parseCreators(addon.creators || []);
+        window.__addonPendingInvites = addon.pendingCreatorInvites || [];
+        renderAuthorRole(addon.author_role || "");
+        renderPendingInvites();
 
         if (creatorList) {
           creatorList.innerHTML = "";
@@ -437,7 +1025,7 @@
 
 
               try {
-                const userRes = await fetch(`/api/users/${encodeURIComponent(creator)}`);
+                const userRes = await fetch(`/api/users/${encodeURIComponent(creator.username)}`);
                 const userData = await userRes.json();
                 if (userData.ok && userData.user && userData.user.avatarUrl) {
                   avatar.src = userData.user.avatarUrl;
@@ -453,9 +1041,22 @@
               const content = document.createElement("div");
               content.className = "creator-chip-content";
               const link = document.createElement("a");
-              link.href = `/profile/${encodeURIComponent(creator)}`;
-              link.textContent = creator;
+              link.href = `/profile/${encodeURIComponent(creator.username)}`;
+              link.textContent = creator.username;
               content.appendChild(link);
+
+              const roleEl = document.createElement("span");
+              roleEl.className = "creator-role";
+              roleEl.textContent = creator.role || (isOwner ? "+ Add role" : "");
+              if (!creator.role && !isOwner) roleEl.classList.add("hidden");
+              if (isOwner) {
+                roleEl.classList.add("editable");
+                roleEl.onclick = (event) => {
+                  event.stopPropagation();
+                  startEditingRole(roleEl, creator.role, (value) => setCreatorRole(creator.username, value));
+                };
+              }
+              content.appendChild(roleEl);
 
               chip.append(avatar, content);
 
@@ -467,7 +1068,7 @@
                 removeBtn.textContent = "✕";
                 removeBtn.onclick = async (event) => {
                   event.stopPropagation();
-                  await removeCreator(creator);
+                  await removeCreator(creator.username);
                 };
                 chip.appendChild(removeBtn);
               }
@@ -494,94 +1095,271 @@
         ADD_ATTR: ['src', 'alt', 'title']
       };
 
+      const TAG_OPTIONS_BY_TYPE = {
+        addon: ["Biomes", "Recipes", "Tools", "Items", "Textures", "QoL", "Structures"],
+        mod: ["Visual", "Gameplay", "Sound", "Overhaul"]
+      };
 
-      function createUserDropdown(user) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "user-menu-wrapper";
+      function makeEditable(el, { value, placeholder, maxLength, multiline, onCommit }) {
+        el.addEventListener('click', () => {
+          if (el.querySelector('input, textarea')) return;
+          const current = value();
+          const input = document.createElement(multiline ? 'textarea' : 'input');
+          if (!multiline) input.type = 'text';
+          else input.rows = 6;
+          input.className = 'inline-edit-input';
+          input.value = current || '';
+          input.placeholder = placeholder;
+          if (maxLength) input.maxLength = maxLength;
+          el.textContent = '';
+          el.appendChild(input);
+          input.focus();
+          if (!multiline) input.select();
 
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "auth-btn user-label user-dropdown-toggle";
-        button.title = "Account";
-        button.setAttribute("aria-haspopup", "menu");
-        button.setAttribute("aria-expanded", "false");
+          if (multiline) {
+            const autoGrow = () => {
+              input.style.height = 'auto';
+              input.style.height = `${input.scrollHeight}px`;
+            };
+            autoGrow();
+            input.addEventListener('input', autoGrow);
+          }
 
-        const userIcon = document.createElement("img");
-        userIcon.className = "user-icon";
-        const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
-        const userId = user.id || user.username;
-        const avatarPath = `/avatars/${userId}.webp?t=${Date.now()}`;
-        userIcon.src = avatarPath;
-        userIcon.onerror = () => {
-          userIcon.src = DEFAULT_AVATAR;
-        };
-        userIcon.alt = "User avatar";
-
-        const userName = document.createElement("span");
-        userName.className = "user-name";
-        userName.textContent = 'Account';
-
-        const arrow = document.createElement("span");
-        arrow.className = "user-dropdown-arrow";
-        arrow.textContent = "▾";
-
-        button.append(userIcon, userName, arrow);
-
-        const menu = document.createElement("div");
-        menu.className = "user-dropdown-menu";
-        menu.setAttribute("role", "menu");
-        menu.setAttribute("aria-hidden", "true");
-
-        const items = [
-          { label: "Profile", href: `/profile/${encodeURIComponent(user.username)}` },
-          { label: "Dashboard", href: "/dashboard.html" },
-          { label: "Logout", action: "logout" }
-        ];
-
-        items.forEach(item => {
-          const itemButton = document.createElement("button");
-          itemButton.type = "button";
-          itemButton.className = "user-dropdown-item";
-          itemButton.setAttribute("role", "menuitem");
-          itemButton.textContent = item.label;
-          if (item.href) itemButton.dataset.href = item.href;
-          if (item.action) itemButton.dataset.action = item.action;
-          menu.appendChild(itemButton);
+          let finished = false;
+          function finish(commit) {
+            if (finished) return;
+            finished = true;
+            const val = input.value.trim();
+            if (commit) onCommit(val);
+            else onCommit(current);
+          }
+          input.addEventListener('blur', () => finish(true));
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !multiline) { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); finish(false); input.blur(); }
+          });
         });
-
-        button.addEventListener("click", e => {
-          e.stopPropagation();
-          const isOpen = button.getAttribute("aria-expanded") === "true";
-          button.setAttribute("aria-expanded", isOpen ? "false" : "true");
-          menu.classList.toggle("visible", !isOpen);
-          menu.setAttribute("aria-hidden", isOpen ? "true" : "false");
-        });
-
-        wrapper.append(button, menu);
-        return wrapper;
       }
 
-      async function loadNavBar() {
+      async function updateAddonField(fields, onSuccess) {
+        if (!addonId) return;
+        const fd = new FormData();
+        Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
         try {
-          const res = await fetch("/api/auth/status");
-          const json = await res.json().catch(() => ({ ok: false }));
-          const nav = document.getElementById("nav-user");
-          if (!nav) return;
-          nav.innerHTML = "";
-
-          if (json && json.ok && json.user) {
-            nav.append(createUserDropdown(json.user));
+          const res = await fetch(`/api/addons/${addonId}/update`, {
+            method: "POST",
+            body: fd,
+            credentials: "include"
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.ok) {
+            if (onSuccess) onSuccess(data);
           } else {
-            const loginBtn = document.createElement("button");
-            loginBtn.className = "auth-btn";
-            loginBtn.textContent = "Login / Register";
-            loginBtn.onclick = () => (window.location.href = "/");
-
-            nav.append(loginBtn);
+            console.error("Field update failed:", data);
+            toast.error(data.error || "Update failed.");
           }
         } catch (err) {
-          console.error("Navbar load failed:", err);
+          console.error("Field update error:", err);
+          toast.error("Update failed.");
         }
+      }
+
+      marked.setOptions({ breaks: true });
+
+      function renderAddonLongDescription(el, text) {
+        if (!text) {
+          el.innerHTML = '<span class="addon-longdesc-placeholder">Click to add a detailed description — supports Markdown & HTML…</span>';
+          return;
+        }
+        let html;
+        if (looksLikeHTMLGlobal(text)) {
+          html = text;
+        } else if (looksLikeMarkdownGlobal(text)) {
+          html = marked.parse(text);
+        } else {
+          const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          html = escaped.replace(/\n/g, '<br>');
+        }
+        el.innerHTML = DOMPurify.sanitize(html, purifierConfig);
+      }
+
+      function looksLikeMarkdownGlobal(text) {
+        return (
+          text.includes("#") ||
+          text.includes("**") ||
+          text.includes("- ") ||
+          (text.includes("[") && text.includes("]("))  ||
+          /\|\s*-{3,}\s*\|/.test(text)
+        );
+      }
+
+      function looksLikeHTMLGlobal(text) {
+        return /<\/?[a-z][\s\S]*>/i.test(text);
+      }
+
+      function closeEditPopovers(except) {
+        const tagPopover = document.getElementById('tagPopover');
+        const compatPopover = document.getElementById('compatPopover');
+        [tagPopover, compatPopover].forEach(p => { if (p && p !== except) p.classList.add('hidden'); });
+      }
+
+      function positionPopoverNear(popover, anchorEl) {
+        popover.style.visibility = 'hidden';
+        popover.classList.remove('hidden');
+        const anchorRect = anchorEl.getBoundingClientRect();
+        const popoverRect = popover.getBoundingClientRect();
+        const margin = 8;
+
+        let top = anchorRect.bottom + margin;
+        if (top + popoverRect.height > window.innerHeight - margin) {
+          top = anchorRect.top - popoverRect.height - margin;
+        }
+        top = Math.max(margin, Math.min(top, window.innerHeight - popoverRect.height - margin));
+
+        let left = anchorRect.left;
+        left = Math.max(margin, Math.min(left, window.innerWidth - popoverRect.width - margin));
+
+        popover.style.top = `${top}px`;
+        popover.style.left = `${left}px`;
+        popover.style.visibility = '';
+      }
+      document.addEventListener('click', (e) => {
+        const tagPopover = document.getElementById('tagPopover');
+        const tagsEl = document.getElementById('addon-tags');
+        if (tagPopover && !tagPopover.classList.contains('hidden') && !tagPopover.contains(e.target) && tagsEl && !tagsEl.contains(e.target)) {
+          tagPopover.classList.add('hidden');
+        }
+      });
+
+      let ownerFieldEditingWired = false;
+      let currentAddonData = null;
+      function setupOwnerFieldEditing(a) {
+        currentAddonData = a;
+        if (ownerFieldEditingWired) return;
+        ownerFieldEditingWired = true;
+
+        const nameEl = document.getElementById('addon-name');
+        nameEl.classList.add('editable-text', 'editable-hint');
+        nameEl.title = 'Click to edit name';
+        makeEditable(nameEl, {
+          value: () => nameEl.textContent,
+          placeholder: 'Addon name',
+          maxLength: 120,
+          onCommit: (val) => {
+            const finalVal = val || currentAddonData.name || 'Unknown';
+            nameEl.textContent = finalVal;
+            if (val && val !== currentAddonData.name) {
+              updateAddonField({ name: val }, () => { currentAddonData.name = val; });
+            }
+          }
+        });
+
+        const shortEl = document.getElementById('addon-short-desc');
+        shortEl.classList.add('editable-text', 'editable-hint');
+        shortEl.title = 'Click to edit short description';
+        function renderShortDesc(val) {
+          shortEl.textContent = val || '';
+          if (!val) {
+            shortEl.innerHTML = '<span id="addon-short-desc-placeholder">Click to add a short description…</span>';
+          }
+        }
+        renderShortDesc(currentAddonData.description || '');
+        makeEditable(shortEl, {
+          value: () => currentAddonData.description || '',
+          placeholder: 'Short description',
+          maxLength: 60,
+          onCommit: (val) => {
+            renderShortDesc(val);
+            if (val !== (currentAddonData.description || '')) {
+              updateAddonField({ description: val }, () => { currentAddonData.description = val; });
+            }
+          }
+        });
+
+        const descEl = document.getElementById('addon-description');
+        descEl.classList.add('editable-text', 'editable-hint');
+        descEl.title = 'Click to edit long description';
+        attachMarkdownEditor(descEl, {
+          getValue: () => currentAddonData.longDescription || '',
+          placeholder: 'Detailed description - Supports HTML & MARKDOWN',
+          renderPreview: renderAddonLongDescription,
+          onSave: (val) => {
+            renderAddonLongDescription(descEl, val);
+            if (val !== (currentAddonData.longDescription || '')) {
+              updateAddonField({ longDescription: val }, () => { currentAddonData.longDescription = val; });
+            }
+          }
+        });
+
+        const tagsEl = document.getElementById('addon-tags');
+        tagsEl.classList.add('editable-hint');
+        tagsEl.title = 'Click to edit tags';
+        const tagPopover = document.getElementById('tagPopover');
+        const tagPopoverClose = document.getElementById('tagPopoverClose');
+        const tagChipsWrap = document.getElementById('tag-chips');
+
+        let currentTags = [];
+        try {
+          const parsed = JSON.parse(currentAddonData.tags || "[]");
+          currentTags = Array.isArray(parsed) ? parsed.map(String) : [];
+        } catch { currentTags = []; }
+
+        function renderTagBadges() {
+          tagsEl.innerHTML = '';
+          if (!currentTags.length) {
+            const ph = document.createElement('span');
+            ph.className = 'tag-badges-placeholder';
+            ph.textContent = 'Click to add tags…';
+            tagsEl.appendChild(ph);
+            return;
+          }
+          currentTags.forEach(t => {
+            const div = document.createElement('div');
+            div.className = 'tag-badge';
+            div.textContent = t;
+            tagsEl.appendChild(div);
+          });
+        }
+        renderTagBadges();
+
+        if (tagChipsWrap.children.length === 0) {
+          const tagOptions = TAG_OPTIONS_BY_TYPE[currentAddonData.type] || TAG_OPTIONS_BY_TYPE.addon;
+          tagOptions.forEach(t => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'chip';
+            b.textContent = t;
+            b.addEventListener('click', () => {
+              const idx = currentTags.indexOf(t);
+              if (idx !== -1) {
+                currentTags.splice(idx, 1);
+                b.classList.remove('active');
+              } else {
+                if (currentTags.length >= 6) { toast.error('Max 6 tags'); return; }
+                currentTags.push(t);
+                b.classList.add('active');
+              }
+              renderTagBadges();
+              updateAddonField(
+                { tags: JSON.stringify(currentTags) },
+                () => { currentAddonData.tags = JSON.stringify(currentTags); }
+              );
+            });
+            tagChipsWrap.appendChild(b);
+          });
+        }
+
+        tagsEl.addEventListener('click', () => {
+          [...tagChipsWrap.querySelectorAll('.chip')].forEach(chip => {
+            chip.classList.toggle('active', currentTags.includes(chip.textContent));
+          });
+          closeEditPopovers(tagPopover);
+          positionPopoverNear(tagPopover, tagsEl);
+        });
+        tagPopoverClose.addEventListener('click', () => {
+          tagPopover.classList.add('hidden');
+        });
+
       }
 
       async function fetchAddon() {
@@ -594,10 +1372,17 @@
           const a = data.addon;
 
           window.__addonAuthor = a.author;
+          window.__addonType = a.type || "addon";
+          window.__addonGithubMode = a.github_mode || "manual";
           document.title = `CubyzHub — ${a.name || "Addon"}`;
 
           const setMeta = (prop, value) => {
             let el = document.querySelector(`meta[property="${prop}"]`);
+            if (!el) return;
+            el.setAttribute("content", value || "");
+          };
+          const setMetaName = (name, value) => {
+            let el = document.querySelector(`meta[name="${name}"]`);
             if (!el) return;
             el.setAttribute("content", value || "");
           };
@@ -606,14 +1391,18 @@
           setMeta("og:description", a.description || "View this addon on CubyzHub");
           setMeta("og:image", isSafeImageUrl(a.iconUrl) ? a.iconUrl : "/assets/default_icon.png");
           setMeta("og:url", window.location.href);
+          setMetaName("description", a.description || "View this addon on CubyzHub");
 
           const bannerEl = document.getElementById("addon-banner");
           const iconEl = document.getElementById("addon-icon");
           const dlEl = document.getElementById("download-link");
 
+          const downloadCountEl = document.getElementById("downloadCount");
+          if (downloadCountEl) downloadCountEl.textContent = a.downloads ?? 0;
 
           document.querySelector(".addon-top")?.classList.add("fade-in");
-          document.querySelector(".addon-content")?.classList.add("fade-in");
+          document.querySelector(".left-column")?.classList.add("fade-in");
+          document.querySelector(".right-column")?.classList.add("fade-in");
 
           const banner = a.bannerUrl;
           bannerEl.src = isSafeImageUrl(banner) ? banner : "assets/default_banner.png";
@@ -664,11 +1453,11 @@
                     location.reload();
                   } else {
                     console.error("Upload failed:", data);
-                    alert(data.error || "Screenshot upload failed.");
+                    toast.error(data.error || "Screenshot upload failed.");
                   }
                 } catch (err) {
                   console.error("Upload error:", err);
-                  alert("Screenshot upload failed.");
+                  toast.error("Screenshot upload failed.");
                 }
               };
             } else {
@@ -696,18 +1485,35 @@
 
             iconEl.onclick = () => iconInput.click();
 
-            iconInput.onchange = async () => {
+            iconInput.onchange = () => {
               if (!iconInput.files[0]) return;
-              const compressedIcon = await compressImage(iconInput.files[0], 512, 512, 0.90);
-              const fd = new FormData();
-              fd.append("icon", compressedIcon);
+              const picked = iconInput.files[0];
+              iconInput.value = "";
+              openImageCropper(picked, 1, async (croppedIcon) => {
+                const compressedIcon = await compressImage(croppedIcon, 512, 512, 0.90);
+                const iconThumb = await compressImage(croppedIcon, 160, 160, 0.90);
+                const fd = new FormData();
+                fd.append("icon", compressedIcon);
+                fd.append("iconThumb", iconThumb);
 
-              await fetch(`/api/addons/${addonId}/update`, {
-                method: "POST",
-                body: fd
-              });
-
-              location.reload();
+                try {
+                  const res = await fetch(`/api/addons/${addonId}/update`, {
+                    method: "POST",
+                    body: fd,
+                    credentials: "include"
+                  });
+                  const data = await res.json().catch(() => ({}));
+                  if (res.ok && data.ok) {
+                    location.reload();
+                  } else {
+                    console.error("Icon update failed:", data);
+                    toast.error(data.error || "Icon update failed.");
+                  }
+                } catch (err) {
+                  console.error("Icon update error:", err);
+                  toast.error("Icon update failed.");
+                }
+              }, { outputWidth: 512, outputHeight: 512 });
             };
 
 
@@ -722,22 +1528,43 @@
 
             bannerEl.onclick = () => bannerInput.click();
 
-            bannerInput.onchange = async () => {
+            bannerInput.onchange = () => {
               if (!bannerInput.files[0]) return;
-              const compressedBanner = await compressImage(bannerInput.files[0], 1280, 720, 0.85);
-              const fd = new FormData();
-              fd.append("banner", compressedBanner);
+              const picked = bannerInput.files[0];
+              bannerInput.value = "";
+              openImageCropper(picked, 16 / 9, async (croppedBanner) => {
+                const compressedBanner = await compressImage(croppedBanner, 1280, 720, 0.85);
+                const bannerThumb = await compressImage(croppedBanner, 600, 260, 0.85);
+                const fd = new FormData();
+                fd.append("banner", compressedBanner);
+                fd.append("bannerThumb", bannerThumb);
 
-              await fetch(`/api/addons/${addonId}/update`, {
-                method: "POST",
-                body: fd
-              });
-
-              location.reload();
+                try {
+                  const res = await fetch(`/api/addons/${addonId}/update`, {
+                    method: "POST",
+                    body: fd,
+                    credentials: "include"
+                  });
+                  const data = await res.json().catch(() => ({}));
+                  if (res.ok && data.ok) {
+                    location.reload();
+                  } else {
+                    console.error("Banner update failed:", data);
+                    toast.error(data.error || "Banner update failed.");
+                  }
+                } catch (err) {
+                  console.error("Banner update error:", err);
+                  toast.error("Banner update failed.");
+                }
+              }, { outputWidth: 1280, outputHeight: 720 });
             };
           }
 
           document.getElementById("addon-name").textContent = a.name || "Unknown";
+          const shortDescEl = document.getElementById("addon-short-desc");
+          if (shortDescEl) {
+            shortDescEl.textContent = a.description || "";
+          }
           const authorProfileEl = document.getElementById("author-name");
           if (authorProfileEl) {
             authorProfileEl.textContent = a.author || "Unknown";
@@ -764,25 +1591,84 @@
 
           await renderCreators(a);
 
-          document.getElementById("addon-version").textContent = a.version || "—";
-          document.getElementById("compatibility").textContent = a.compatibility || "—";
-          document.getElementById("created-at").textContent = a.created_at ? new Date(a.created_at).toLocaleDateString() : "—";
+          const createdAtEl = document.getElementById("created-at");
+          if (a.created_at) {
+            createdAtEl.textContent = formatSidebarRelativeDate(a.created_at);
+            createdAtEl.title = parseServerDate(a.created_at).toLocaleDateString("en-GB");
+          } else {
+            createdAtEl.textContent = "—";
+          }
 
-          if (isSafeUrl(a.fileUrl)) {
+          const updatedAtEl = document.getElementById("updated-at");
+          if (a.updated_at) {
+            updatedAtEl.textContent = formatSidebarRelativeDate(a.updated_at);
+            updatedAtEl.title = parseServerDate(a.updated_at).toLocaleDateString("en-GB");
+          } else {
+            updatedAtEl.textContent = "—";
+          }
 
-  dlEl.href = `/api/addons/${addonId}/download`;
+          renderGithubLink(a.githubUrl || "", a);
+          renderLicense(a.license || "");
+          renderReleaseSettings(a);
+          renderAiUsage(a.ai_usage);
+
+          const versionsTabBtn = document.querySelector('.tab-bar button[data-tab="versions"]');
+          const showVersionsTab = a.type !== "mod" || a.github_mode === "release";
+          if (versionsTabBtn) versionsTabBtn.classList.toggle("hidden", !showVersionsTab);
+
+          if (a.type === "mod") {
+  dlEl.target = "_blank";
+  dlEl.rel = "noopener noreferrer nofollow";
   dlEl.removeAttribute("onclick");
-} else {
-  dlEl.href = "#";
-  dlEl.removeAttribute("onclick");
-}
+  dlEl.onclick = null;
 
-dlEl.onclick = (e) => {
-  if (!window.__currentUser) {
-    e.preventDefault();
-    alert("You must be logged in to download addons.");
+  if (a.github_mode === "release") {
+    const latest = a.githubLatestRelease;
+    const asset = latest?.assets?.[0];
+    const link = asset?.downloadUrl || latest?.htmlUrl || a.githubUrl;
+    if (asset) {
+      dlEl.textContent = "Download";
+    } else {
+      setExternalLinkLabel(dlEl, "View release");
+    }
+    if (isSafeUrl(link)) {
+      dlEl.href = link;
+      dlEl.classList.remove("btn-disabled");
+    } else {
+      dlEl.href = "#";
+      dlEl.classList.add("btn-disabled");
+    }
+  } else {
+    setExternalLinkLabel(dlEl, "View on GitHub");
+    if (isSafeUrl(a.githubUrl)) {
+      dlEl.href = a.githubUrl;
+      dlEl.classList.remove("btn-disabled");
+    } else {
+      dlEl.href = "#";
+      dlEl.classList.add("btn-disabled");
+    }
   }
-};
+} else {
+  dlEl.textContent = "Download";
+  dlEl.removeAttribute("target");
+  dlEl.removeAttribute("rel");
+  dlEl.classList.remove("btn-disabled");
+
+  if (isSafeUrl(a.fileUrl)) {
+    dlEl.href = `/api/addons/${addonId}/download`;
+    dlEl.removeAttribute("onclick");
+  } else {
+    dlEl.href = "#";
+    dlEl.removeAttribute("onclick");
+  }
+
+  dlEl.onclick = (e) => {
+    if (!window.__currentUser) {
+      e.preventDefault();
+      toast.error("You must be logged in to download addons.");
+    }
+  };
+}
 
           const longDesc = a.longDescription || "No description available.";
 
@@ -832,6 +1718,15 @@ dlEl.onclick = (e) => {
 
           }
 
+          const typeBadgesEl = document.getElementById("addon-type-badges");
+          if (typeBadgesEl) {
+            typeBadgesEl.innerHTML = "";
+            const div = document.createElement("div");
+            div.className = "tag-badge tag-badge-type" + (a.type === "mod" ? " tag-badge-type-mod" : "");
+            div.textContent = a.type === "mod" ? "MOD" : "ADDON";
+            typeBadgesEl.appendChild(div);
+          }
+
           const shotsEl = document.getElementById("screenshots");
           shotsEl.innerHTML = "";
           try {
@@ -877,11 +1772,11 @@ delBtn.onclick = async (e) => {
     if (res.ok && data.ok) {
       wrapper.remove();
     } else {
-      alert(data.error || "Failed to delete screenshot.");
+      toast.error(data.error || "Failed to delete screenshot.");
     }
   } catch (err) {
     console.error("Delete screenshot failed:", err);
-    alert("Failed to delete screenshot.");
+    toast.error("Failed to delete screenshot.");
   }
 };
 
@@ -896,99 +1791,308 @@ delBtn.onclick = async (e) => {
           } catch (e) {
             console.warn("Could not load screenshots:", e);
           }
+
+          if (isOwner) {
+            setupOwnerFieldEditing(a);
+          }
         } catch (err) {
           console.error("Failed to fetch addon:", err);
         }
       }
 
+      const DEFAULT_COMMENT_AVATAR = "/assets/Snale_Avatar.webp";
+      let commentsPage = 1;
+      let commentsTotalPages = 1;
+
+      function renderCommentsPagination() {
+        const el = document.getElementById("comments-pagination");
+        if (!el) return;
+        if (commentsTotalPages <= 1) {
+          el.innerHTML = "";
+          el.hidden = true;
+          return;
+        }
+        el.hidden = false;
+
+        function pageBtn(page, label, opts = {}) {
+          const disabled = opts.disabled ? "disabled" : "";
+          const active = page === commentsPage ? " active" : "";
+          return `<button type="button" class="page-btn${active}" data-page="${page}" ${disabled}>${label}</button>`;
+        }
+
+        const parts = [];
+        parts.push(pageBtn(commentsPage - 1, "‹ Prev", { disabled: commentsPage <= 1 }));
+        const pageNumbers = new Set([1, commentsTotalPages, commentsPage, commentsPage - 1, commentsPage + 1]);
+        let prev = null;
+        for (let p = 1; p <= commentsTotalPages; p++) {
+          if (!pageNumbers.has(p)) continue;
+          if (prev !== null && p - prev > 1) parts.push('<span class="page-ellipsis">…</span>');
+          parts.push(pageBtn(p, String(p)));
+          prev = p;
+        }
+        parts.push(pageBtn(commentsPage + 1, "Next ›", { disabled: commentsPage >= commentsTotalPages }));
+        el.innerHTML = parts.join("");
+      }
+
+      document.getElementById("comments-pagination")?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".page-btn");
+        if (!btn || btn.disabled) return;
+        const page = parseInt(btn.dataset.page, 10);
+        if (!page || page < 1 || page > commentsTotalPages || page === commentsPage) return;
+        commentsPage = page;
+        fetchComments();
+        document.getElementById("comments-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      async function deleteComment(commentId) {
+        if (!confirm("Delete this comment?")) return;
+        try {
+          const res = await fetch(`/api/comments/${commentId}`, {
+            method: "DELETE",
+            credentials: "include"
+          });
+          const data = await res.json();
+          if (data.ok) {
+            fetchComments();
+          } else {
+            toast.error(data.error || "Failed to delete comment.");
+          }
+        } catch (err) {
+          console.error("Delete comment failed:", err);
+          toast.error("Failed to delete comment.");
+        }
+      }
+
+      function renderCommentEl(c, { isReply = false, onReply = null } = {}) {
+        if (c.username) window.__addonPageUsers.add(c.username);
+        const div = document.createElement("div");
+        div.className = isReply ? "comment comment-reply" : "comment";
+
+        const avatar = document.createElement("img");
+        avatar.className = "comment-avatar";
+        avatar.alt = "";
+        avatar.src = isSafeImageUrl(c.avatarUrl) ? c.avatarUrl : DEFAULT_COMMENT_AVATAR;
+        avatar.onerror = () => { avatar.src = DEFAULT_COMMENT_AVATAR; };
+
+        let avatarEl = avatar;
+        if (c.username) {
+          const avatarLink = document.createElement("a");
+          avatarLink.className = "comment-avatar-link";
+          avatarLink.href = `/profile/${encodeURIComponent(c.username)}`;
+          avatarLink.appendChild(avatar);
+          avatarEl = avatarLink;
+        }
+
+        const body = document.createElement("div");
+        body.className = "comment-body";
+
+        const head = document.createElement("div");
+        head.className = "comment-head";
+
+        const author = c.username ? document.createElement("a") : document.createElement("span");
+        author.className = "comment-author";
+        if (c.username) author.href = `/profile/${encodeURIComponent(c.username)}`;
+        author.textContent = c.username || "Anonymous";
+
+        const date = document.createElement("span");
+        date.className = "comment-date";
+        date.textContent = c.created_at ? formatSidebarRelativeDate(c.created_at) : "";
+        date.title = c.created_at ? parseServerDate(c.created_at).toLocaleString("en-GB") : "";
+
+        head.append(author, date);
+
+        const content = document.createElement("div");
+        content.className = "comment-content";
+        content.textContent = c.content || "";
+
+        body.append(head, content);
+
+        const actions = document.createElement("div");
+        actions.className = "comment-actions";
+
+        if (onReply && window.__currentUser) {
+          const replyBtn = document.createElement("button");
+          replyBtn.className = "comment-reply-btn";
+          replyBtn.type = "button";
+          replyBtn.textContent = "Reply";
+          replyBtn.onclick = () => onReply(c);
+          actions.appendChild(replyBtn);
+        }
+
+        const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
+        const isCommentAuthor = window.__currentUser && c.username && window.__currentUser === c.username;
+        if (isOwner || isCommentAuthor) {
+          const delBtn = document.createElement("button");
+          delBtn.className = "comment-delete-btn";
+          delBtn.type = "button";
+          delBtn.textContent = "Delete";
+          delBtn.onclick = (e) => { e.stopPropagation(); deleteComment(c.id); };
+          actions.appendChild(delBtn);
+        }
+
+        if (actions.children.length) body.appendChild(actions);
+        div.append(avatarEl, body);
+        return div;
+      }
+
+      function openReplyComposer(parentComment, container) {
+        const existing = container.querySelector(".comment-reply-composer");
+        if (existing) { existing.remove(); return; }
+
+        const composer = document.createElement("div");
+        composer.className = "comment-reply-composer";
+
+        const avatar = document.createElement("img");
+        avatar.className = "comment-avatar";
+        avatar.alt = "";
+        avatar.src = isSafeImageUrl(window.__currentUserAvatar) ? window.__currentUserAvatar : DEFAULT_COMMENT_AVATAR;
+        avatar.onerror = () => { avatar.src = DEFAULT_COMMENT_AVATAR; };
+
+        const body = document.createElement("div");
+        body.className = "comment-form-body";
+
+        const ta = document.createElement("textarea");
+        ta.placeholder = `Reply to ${parentComment.username || "this comment"}…`;
+        ta.maxLength = 200;
+
+        const charCount = document.createElement("span");
+        charCount.className = "comment-char-count";
+        charCount.textContent = "0/200";
+
+        const row = document.createElement("div");
+        row.className = "comment-reply-composer-actions";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.className = "btn btn-ghost btn-sm";
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.onclick = () => composer.remove();
+
+        const submitBtn = document.createElement("button");
+        submitBtn.type = "button";
+        submitBtn.className = "comment-btn";
+        submitBtn.textContent = "Reply";
+        submitBtn.onclick = async () => {
+          const content = ta.value.trim();
+          if (!content) return toast.error("Please write a reply.");
+          try {
+            const res = await fetch(`/api/comments/${addonId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content, replyTo: parentComment.id }),
+            });
+            const data = await res.json();
+            if (data.ok) {
+              fetchComments();
+            } else {
+              toast.error(data.error || "Failed to post reply.");
+            }
+          } catch (err) {
+            console.error("Post reply failed:", err);
+            toast.error("Failed to post reply.");
+          }
+        };
+
+        row.append(charCount, cancelBtn, submitBtn);
+        body.append(ta, row);
+        composer.append(avatar, body);
+        container.appendChild(composer);
+        setupCharCounter(ta, charCount, 200);
+        ta.focus();
+      }
+
       async function fetchComments() {
         if (!addonId) return;
         try {
-          const cRes = await fetch(`/api/comments/${addonId}`);
+          const cRes = await fetch(`/api/comments/${addonId}?page=${commentsPage}`);
           const cData = await cRes.json();
           const list = document.getElementById("comments-list");
           list.innerHTML = "";
           window.__addonPageUsers = new Set();
+
+          commentsTotalPages = cData.ok ? (cData.totalPages || 1) : 1;
+          commentsPage = cData.ok ? (cData.page || 1) : 1;
+
           if (cData.ok && Array.isArray(cData.comments) && cData.comments.length) {
             cData.comments.forEach((c) => {
-              if (c.username) window.__addonPageUsers.add(c.username);
-              const div = document.createElement("div");
-              div.className = "comment";
-              div.style.position = "relative";
+              const thread = document.createElement("div");
+              thread.className = "comment-thread";
 
-              const author = document.createElement("div");
-              author.className = "comment-author";
-              author.textContent = c.username || "Anonymous";
+              const topEl = renderCommentEl(c, {
+                onReply: (comment) => openReplyComposer(comment, thread),
+              });
+              thread.appendChild(topEl);
 
-              const content = document.createElement("div");
-              content.textContent = c.content || "";
-
-              const date = document.createElement("div");
-              date.className = "comment-date";
-              date.textContent = c.created_at ? new Date(c.created_at).toLocaleString() : "";
-
-              div.append(author, content, date);
-
-              const isOwner = window.__currentUser && window.__addonAuthor && window.__currentUser === window.__addonAuthor;
-
-              if (isOwner) {
-                const delBtn = document.createElement("button");
-                delBtn.textContent = "✕";
-                delBtn.title = "Delete comment";
-                delBtn.style.position = "absolute";
-                delBtn.style.top = "6px";
-                delBtn.style.right = "6px";
-                delBtn.style.background = "transparent";
-                delBtn.style.border = "none";
-                delBtn.style.color = "#aaa";
-                delBtn.style.cursor = "pointer";
-
-                delBtn.onmouseenter = () => delBtn.style.color = "#ff5555";
-                delBtn.onmouseleave = () => delBtn.style.color = "#aaa";
-
-                delBtn.onclick = async (e) => {
-                  e.stopPropagation();
-                  if (!confirm("Delete this comment?")) return;
-
-                  try {
-                    const res = await fetch(`/api/comments/${c.id}`, {
-                      method: "DELETE"
-                    });
-
-                    const data = await res.json();
-
-                    if (data.ok) {
-                      div.remove();
-                    } else {
-                      alert(data.error || "Failed to delete comment.");
-                    }
-                  } catch (err) {
-                    console.error("Delete comment failed:", err);
-                    alert("Failed to delete comment.");
-                  }
-                };
-
-                div.appendChild(delBtn);
+              if (Array.isArray(c.replies) && c.replies.length) {
+                const repliesWrap = document.createElement("div");
+                repliesWrap.className = "comment-replies";
+                c.replies.forEach((r) => {
+                  repliesWrap.appendChild(renderCommentEl(r, { isReply: true }));
+                });
+                thread.appendChild(repliesWrap);
               }
 
-              list.appendChild(div);
+              list.appendChild(thread);
             });
           } else {
-            list.innerHTML = "<p>No comments yet.</p>";
+            list.innerHTML = '<p class="comments-empty">No comments yet.</p>';
+          }
+
+          renderCommentsPagination();
+
+          const count = cData.ok ? (cData.total ?? cData.comments?.length ?? 0) : 0;
+          const badge = document.getElementById("comments-count-badge");
+          if (badge) {
+            if (count > 0) {
+              badge.textContent = count > 99 ? "99+" : String(count);
+              badge.classList.remove("hidden");
+            } else {
+              badge.classList.add("hidden");
+            }
           }
         } catch (err) {
           console.error("Failed to fetch comments:", err);
         }
       }
 
+      function setupCharCounter(textarea, counterEl, limit) {
+        const update = () => {
+          const len = textarea.value.length;
+          counterEl.textContent = `${len}/${limit}`;
+          counterEl.classList.toggle("comment-char-count-limit", len >= limit);
+        };
+        textarea.addEventListener("input", update);
+        update();
+      }
+
       function setupCommentForm() {
         const postBtn = document.getElementById("post-comment");
+        const form = document.getElementById("comment-form");
+        const loginPrompt = document.getElementById("comment-login-prompt");
+        const formAvatar = document.getElementById("comment-form-avatar");
+        const charCount = document.getElementById("comment-char-count");
+        const commentTextEl = document.getElementById("comment-text");
+        if (commentTextEl && charCount) setupCharCounter(commentTextEl, charCount, 200);
+
+        if (window.__currentUser) {
+          form?.classList.remove("hidden");
+          loginPrompt?.classList.add("hidden");
+          if (formAvatar) {
+            formAvatar.src = isSafeImageUrl(window.__currentUserAvatar) ? window.__currentUserAvatar : DEFAULT_COMMENT_AVATAR;
+            formAvatar.hidden = false;
+            formAvatar.onerror = () => { formAvatar.src = DEFAULT_COMMENT_AVATAR; };
+          }
+        } else {
+          form?.classList.add("hidden");
+          loginPrompt?.classList.remove("hidden");
+        }
+
         if (!postBtn) return;
 
         postBtn.addEventListener("click", async () => {
           const ta = document.getElementById("comment-text");
           const content = ta?.value.trim();
-          if (!content) return alert("Please write a comment.");
+          if (!content) return toast.error("Please write a comment.");
 
           try {
             const res = await fetch(`/api/comments/${addonId}`, {
@@ -999,15 +2103,125 @@ delBtn.onclick = async (e) => {
             const data = await res.json();
             if (data.ok) {
               ta.value = "";
+              ta.dispatchEvent(new Event("input"));
+              commentsPage = 1;
               fetchComments();
             } else {
-              alert(" " + (data.error || "Failed to post comment."));
+              toast.error(" " + (data.error || "Failed to post comment."));
             }
           } catch (err) {
             console.error("Post comment failed:", err);
-            alert("Failed to post comment.");
+            toast.error("Failed to post comment.");
           }
         });
+      }
+
+      function parseServerDate(value) {
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)) {
+          return new Date(value.replace(" ", "T") + "Z");
+        }
+        return new Date(value);
+      }
+
+      function formatVersionDate(isoString) {
+        const date = parseServerDate(isoString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr = Math.floor(diffMin / 60);
+
+        if (diffMin < 1) return "Just now";
+        if (diffMin < 60) return `${diffMin}m ago`;
+        if (diffHr < 24 && date.getDate() === now.getDate()) return `${diffHr}h ago`;
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const dayDiff = Math.round((startOfToday - startOfDate) / 86400000);
+
+        if (dayDiff === 0) return "Today";
+        if (dayDiff === 1) return "Yesterday";
+        if (dayDiff > 1 && dayDiff < 7) return `${dayDiff}d ago`;
+
+        return date.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+      }
+
+      function formatSidebarRelativeDate(isoString) {
+        const date = parseServerDate(isoString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHr / 24);
+
+        if (diffMin < 1) return "Just now";
+        if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
+        if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? "" : "s"} ago`;
+        if (diffDay === 1) return "Yesterday";
+        if (diffDay < 7) return `${diffDay} days ago`;
+
+        const diffWeek = Math.floor(diffDay / 7);
+        if (diffWeek < 5) return `${diffWeek} week${diffWeek === 1 ? "" : "s"} ago`;
+
+        const diffMonth = Math.floor(diffDay / 30);
+        if (diffMonth < 12) return `${diffMonth} month${diffMonth === 1 ? "" : "s"} ago`;
+
+        const diffYear = Math.floor(diffDay / 365);
+        if (diffYear < 3) return `${diffYear} year${diffYear === 1 ? "" : "s"} ago`;
+
+        return date.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+      }
+
+      (function setupVersionFileDropzone() {
+        const dropzone = document.getElementById("new-file-dropzone");
+        const fileInput = document.getElementById("new-file-input");
+        const hint = dropzone?.querySelector(".version-file-dropzone-hint");
+        const nameEl = document.getElementById("new-file-name");
+        if (!dropzone || !fileInput) return;
+
+        function showFile(file) {
+          if (!file) {
+            hint.classList.remove("hidden");
+            nameEl.classList.add("hidden");
+            nameEl.textContent = "";
+            return;
+          }
+          hint.classList.add("hidden");
+          nameEl.textContent = file.name;
+          nameEl.classList.remove("hidden");
+        }
+
+        fileInput.addEventListener("change", () => showFile(fileInput.files[0]));
+
+        dropzone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+        dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+        dropzone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropzone.classList.remove("dragover");
+          const file = e.dataTransfer.files[0];
+          if (!file) return;
+          if (!file.name.toLowerCase().endsWith(".zip")) {
+            toast.error("Please drop a .zip file.");
+            return;
+          }
+          fileInput.files = e.dataTransfer.files;
+          showFile(file);
+        });
+      })();
+
+      let gameVersionsCache = null;
+      async function getGameVersions() {
+        if (gameVersionsCache) return gameVersionsCache;
+        try {
+          const res = await fetch("/api/game/versions");
+          const data = await res.json();
+          gameVersionsCache = data.ok && Array.isArray(data.versions) ? data.versions : [];
+        } catch {
+          gameVersionsCache = [];
+        }
+        return gameVersionsCache;
       }
 
       async function fetchVersions() {
@@ -1018,130 +2232,585 @@ delBtn.onclick = async (e) => {
           const vList = document.getElementById("versions-list");
           vList.innerHTML = "";
 
+          const compatEl = document.getElementById("compatibility");
+          if (compatEl) {
+            const distinctCompat = [...new Set(
+              (vData.versions || []).map((v) => v.compatibility).filter(Boolean)
+            )];
+            compatEl.innerHTML = "";
+            if (distinctCompat.length) {
+              distinctCompat.forEach((c) => {
+                const chip = document.createElement("span");
+                chip.className = "tag";
+                chip.textContent = c;
+                compatEl.appendChild(chip);
+              });
+            } else {
+              compatEl.textContent = "—";
+            }
+          }
+
           let currentUser = null;
           let addonAuthor = null;
+          let aRes = null;
           try {
             const s = await fetch("/api/auth/status").then(r => r.json());
             if (s.ok) currentUser = s.user?.username;
           } catch {}
 
           try {
-            const aRes = await fetch(`/api/addons/${addonId}`).then(r => r.json());
+            aRes = await fetch(`/api/addons/${addonId}`).then(r => r.json());
             if (aRes.ok) addonAuthor = aRes.addon.author;
           } catch {}
 
           const uploadBox = document.getElementById("version-upload-box");
-          if (uploadBox && currentUser && addonAuthor && currentUser === addonAuthor) {
+          const isOwner = currentUser && addonAuthor && currentUser === addonAuthor;
+          const isGithubRelease = window.__addonType === "mod" && window.__addonGithubMode === "release";
+          if (uploadBox && isOwner && window.__addonType !== "mod") {
             uploadBox.style.display = "flex";
+            const compatSelect = document.getElementById("new-version-compat");
+            if (compatSelect && !compatSelect.dataset.loaded) {
+              try {
+                const res = await fetch("/api/game/versions");
+                const data = await res.json();
+                if (data.ok && Array.isArray(data.versions)) {
+                  data.versions.forEach((v) => {
+                    const opt = document.createElement("option");
+                    opt.value = v;
+                    opt.textContent = v;
+                    compatSelect.appendChild(opt);
+                  });
+                  compatSelect.dataset.loaded = "1";
+                  if (window.enhanceSelect) window.enhanceSelect(compatSelect);
+                }
+              } catch (err) {
+                console.error("Failed to load game versions:", err);
+              }
+            }
           }
 
-          if (vData.ok && Array.isArray(vData.versions) && vData.versions.length) {
-            vData.versions.forEach((v) => {
-              const li = document.createElement("li");
-              li.className = "version-row";
+          function renderVersionRow(v, isActive) {
+            const li = document.createElement("li");
+            li.className = "version-row";
 
-              if (v.fileUrl === document.getElementById("download-link").getAttribute("href")) {
-                li.classList.add("active-version");
+            if (isActive) {
+              li.classList.add("active-version");
+            }
+
+            const main = document.createElement("div");
+            main.className = "version-row-main";
+
+            const channelCol = document.createElement("span");
+            channelCol.className = "version-channel-col";
+            channelCol.appendChild(renderChannelBadge(v, isOwner));
+            main.appendChild(channelCol);
+
+            const info = document.createElement("div");
+            info.className = "version-info";
+
+            const tagCol = document.createElement("span");
+            tagCol.className = "version-tag-col";
+            info.appendChild(tagCol);
+
+            const tag = document.createElement("span");
+            tag.className = "version-tag";
+            tag.textContent = v.version || "unknown";
+            tag.title = v.version || "unknown";
+            tagCol.appendChild(tag);
+
+            if (isOwner) {
+              tag.classList.add("editable-hint");
+              tag.title = "Click to rename this version";
+
+              const versionEditIcon = document.createElement("span");
+              versionEditIcon.className = "version-tag-edit-icon";
+              versionEditIcon.setAttribute("aria-hidden", "true");
+              versionEditIcon.textContent = "✎";
+              tag.insertAdjacentElement("afterend", versionEditIcon);
+
+              const versionInput = document.createElement("input");
+              versionInput.type = "text";
+              versionInput.className = "version-tag-inline-input";
+              versionInput.maxLength = 20;
+              versionInput.hidden = true;
+              versionEditIcon.insertAdjacentElement("afterend", versionInput);
+
+              function openVersionEditor() {
+                versionInput.value = v.version || "";
+                tag.hidden = true;
+                versionEditIcon.hidden = true;
+                versionInput.hidden = false;
+                versionInput.focus();
+                versionInput.select();
               }
 
-              const info = document.createElement("div");
-              info.className = "version-info";
+              async function closeVersionEditor() {
+                versionInput.hidden = true;
+                tag.hidden = false;
+                versionEditIcon.hidden = false;
+                const newValue = versionInput.value.trim();
 
-const download = document.createElement("a");
-download.className = "version-download";
-download.textContent = "Download";
-if (isSafeUrl(v.fileUrl)) {
-  // Route through your new backend endpoint instead of linking directly to the file!
-  download.href = `/api/versions/download/${v.id}`;
-  download.removeAttribute("target"); // Let the browser stream it cleanly in the same tab
-} else {
-  download.href = "#";
-}
+                if (!newValue || newValue === (v.version || "")) return;
 
-download.onclick = (e) => {
-  if (!window.__currentUser) {
-    e.preventDefault();
-    alert("You must be logged in to download addons.");
-  }
-};
+                tag.textContent = newValue;
+                v.version = newValue;
+                try {
+                  const res = await fetch(`/api/versions/${v.id}/update`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ version: newValue })
+                  });
+                  const data = await res.json();
+                  if (!data.ok) {
+                    toast.error(data.error || "Failed to update version.");
+                    await fetchVersions();
+                  }
+                } catch (e) {
+                  console.error("Failed to update version number:", e);
+                  toast.error("Failed to update version.");
+                  await fetchVersions();
+                }
+              }
 
-              const tag = document.createElement("span");
-              tag.className = "version-tag";
-              tag.textContent = v.version || "unknown";
+              tag.onclick = openVersionEditor;
+              versionEditIcon.onclick = openVersionEditor;
+              versionInput.addEventListener("blur", closeVersionEditor);
+              versionInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") versionInput.blur();
+                if (e.key === "Escape") {
+                  versionInput.value = v.version || "";
+                  versionInput.blur();
+                }
+              });
+            }
 
-              const date = document.createElement("span");
-              date.className = "version-date";
-              date.textContent = v.created_at
-                ? new Date(v.created_at).toLocaleString()
-                : "";
+            const compat = document.createElement("span");
+            compat.className = "version-compat-badge";
+            compat.textContent = v.compatibility || "—";
+            info.appendChild(compat);
 
-              info.appendChild(tag);
-              info.appendChild(date);
-              li.appendChild(info);
-              li.appendChild(download);
+            if (isOwner) {
+              compat.classList.add("editable-hint");
+              compat.title = "Click to change the game version this file targets";
 
-              // show delete button only for owner
-              if (currentUser && addonAuthor && currentUser === addonAuthor) {
-                const delBtn = document.createElement("button");
-                delBtn.textContent = "✕";
-                delBtn.className = "version-delete-btn";
-                delBtn.title = "Delete version";
+              const select = document.createElement("select");
+              select.className = "version-compat-inline-select";
+              select.hidden = true;
+              compat.insertAdjacentElement("afterend", select);
 
-                delBtn.onclick = async () => {
-                  if (!confirm("Delete this version?")) return;
+              let wrapper = null;
+              let trigger = null;
 
+              getGameVersions().then((options) => {
+                options.forEach((opt) => {
+                  const o = document.createElement("option");
+                  o.value = opt;
+                  o.textContent = opt;
+                  if (opt === v.compatibility) o.selected = true;
+                  select.appendChild(o);
+                });
+                if (window.enhanceSelect) window.enhanceSelect(select);
+                wrapper = select.nextElementSibling;
+                trigger = wrapper?.querySelector(".custom-select-trigger");
+                if (wrapper) wrapper.hidden = true;
+
+                if (trigger) {
+                  trigger.addEventListener("blur", closeEditor);
+                  document.addEventListener("click", (e) => {
+                    if (!wrapper.hidden && !wrapper.contains(e.target) && e.target !== compat) closeEditor();
+                  });
+                } else {
+                  select.addEventListener("blur", closeEditor);
+                }
+              });
+
+              function openEditor() {
+                compat.hidden = true;
+                if (wrapper) wrapper.hidden = false;
+                if (!trigger) {
+                  select.focus();
+                  return;
+                }
+                setTimeout(() => {
+                  if (trigger.getAttribute("aria-expanded") !== "true") trigger.click();
+                }, 0);
+              }
+
+              async function closeEditor() {
+                const newValue = select.value;
+                if (wrapper) wrapper.hidden = true;
+                compat.hidden = false;
+                compat.textContent = newValue || "—";
+
+                if (newValue !== (v.compatibility || "")) {
+                  v.compatibility = newValue;
                   try {
-                    const res = await fetch("/api/versions/delete", {
+                    const res = await fetch(`/api/versions/${v.id}/update`, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ versionIds: [v.id] })
+                      body: JSON.stringify({ compatibility: newValue })
                     });
-
                     const data = await res.json();
-
-                    if (data.ok) {
-                      // Refresh everything to reflect new active version
-                      await fetchAddon();
-                      await fetchVersions();
-                    } else {
-                      alert(data.error || "Failed to delete version.");
-                    }
+                    if (!data.ok) toast.error(data.error || "Failed to update version.");
                   } catch (e) {
-                    console.error("Delete failed:", e);
-                    alert("Failed to delete version.");
+                    console.error("Failed to update version compatibility:", e);
+                    toast.error("Failed to update version.");
                   }
-                };
-
-                li.appendChild(delBtn);
+                }
               }
 
+              compat.onclick = openEditor;
+              select.addEventListener("change", closeEditor);
+            }
+
+            const date = document.createElement("span");
+            date.className = "version-date";
+            date.textContent = v.created_at ? formatVersionDate(v.created_at) : "";
+            info.appendChild(date);
+
+            const downloads = document.createElement("span");
+            downloads.className = "version-downloads";
+            downloads.textContent = String(v.downloads || 0);
+            info.appendChild(downloads);
+
+            main.appendChild(info);
+
+            const actions = document.createElement("div");
+            actions.className = "version-row-actions";
+
+            if (v.changelog || isOwner) {
+              const changelogBtn = document.createElement("button");
+              changelogBtn.className = "btn btn-ghost btn-sm btn-icon-only version-changelog-toggle";
+              changelogBtn.type = "button";
+              setChangelogActionIcon(changelogBtn, v.changelog ? "View changelog" : "Add changelog");
+              actions.appendChild(changelogBtn);
+            }
+
+            const download = document.createElement("a");
+            download.className = "btn btn-primary btn-sm btn-icon-only";
+            if (window.__addonType === "mod") {
+              setVersionActionIcon(download, "View release");
+              download.target = "_blank";
+              download.rel = "noopener noreferrer nofollow";
+              download.onclick = null;
+              if (isSafeUrl(v.release_url)) {
+                download.href = v.release_url;
+              } else {
+                download.href = "#";
+                download.classList.add("btn-disabled");
+              }
+            } else {
+              setVersionActionIcon(download, "Download");
+              if (isSafeUrl(v.fileUrl)) {
+                download.href = `/api/versions/download/${v.id}`;
+                download.removeAttribute("target");
+              } else {
+                download.href = "#";
+              }
+
+              download.onclick = (e) => {
+                if (!window.__currentUser) {
+                  e.preventDefault();
+                  toast.error("You must be logged in to download addons.");
+                }
+              };
+            }
+            actions.appendChild(download);
+
+            if (isOwner) {
+              const delBtn = document.createElement("button");
+              delBtn.textContent = "✕";
+              delBtn.className = "btn btn-ghost btn-sm version-delete-btn";
+              delBtn.title = "Delete version";
+
+              delBtn.onclick = async () => {
+                if (!confirm("Delete this version?")) return;
+
+                try {
+                  const res = await fetch("/api/versions/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ versionIds: [v.id] })
+                  });
+
+                  const data = await res.json();
+
+                  if (data.ok) {
+                    await fetchAddon();
+                    await fetchVersions();
+                  } else {
+                    toast.error(data.error || "Failed to delete version.");
+                  }
+                } catch (e) {
+                  console.error("Delete failed:", e);
+                  toast.error("Failed to delete version.");
+                }
+              };
+
+              actions.appendChild(delBtn);
+            }
+
+            main.appendChild(actions);
+            li.appendChild(main);
+
+            if (v.changelog || isOwner) {
+              const changelogBtn = actions.querySelector(".version-changelog-toggle");
+
+              const changelogBody = document.createElement("div");
+              changelogBody.className = "version-changelog-body hidden";
+              changelogBody.textContent = v.changelog || "";
+              li.appendChild(changelogBody);
+
+              let changelogTextarea = null;
+              let changelogSaveBtn = null;
+
+              function renderChangelogView() {
+                changelogBody.innerHTML = "";
+                changelogBody.textContent = v.changelog || "";
+                changelogTextarea = null;
+                changelogSaveBtn = null;
+                setChangelogActionIcon(changelogBtn, v.changelog ? "View changelog" : "Add changelog");
+              }
+
+              function openChangelogEditor() {
+                changelogBody.classList.remove("hidden");
+                changelogBody.innerHTML = "";
+
+                changelogTextarea = document.createElement("textarea");
+                changelogTextarea.className = "version-changelog-edit-textarea";
+                changelogTextarea.placeholder = "What changed in this version? (optional)";
+                changelogTextarea.value = v.changelog || "";
+                changelogBody.appendChild(changelogTextarea);
+
+                const editActions = document.createElement("div");
+                editActions.className = "version-changelog-edit-actions";
+
+                changelogSaveBtn = document.createElement("button");
+                changelogSaveBtn.type = "button";
+                changelogSaveBtn.className = "btn btn-primary btn-sm";
+                changelogSaveBtn.textContent = "Save";
+                editActions.appendChild(changelogSaveBtn);
+
+                const cancelBtn = document.createElement("button");
+                cancelBtn.type = "button";
+                cancelBtn.className = "btn btn-ghost btn-sm";
+                cancelBtn.textContent = "Cancel";
+                editActions.appendChild(cancelBtn);
+
+                changelogBody.appendChild(editActions);
+                changelogTextarea.focus();
+
+                cancelBtn.onclick = () => {
+                  renderChangelogView();
+                  if (!v.changelog) changelogBody.classList.add("hidden");
+                };
+
+                changelogSaveBtn.onclick = async () => {
+                  const newValue = changelogTextarea.value.trim();
+                  changelogSaveBtn.disabled = true;
+                  try {
+                    const res = await fetch(`/api/versions/${v.id}/update`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ changelog: newValue })
+                    });
+                    const data = await res.json();
+                    if (!data.ok) {
+                      toast.error(data.error || "Failed to save changelog.");
+                      return;
+                    }
+                    v.changelog = newValue;
+                    changelogBody.classList.remove("hidden");
+                    renderChangelogView();
+                  } catch (e) {
+                    console.error("Failed to save changelog:", e);
+                    toast.error("Failed to save changelog.");
+                  } finally {
+                    changelogSaveBtn.disabled = false;
+                  }
+                };
+              }
+
+              changelogBtn.onclick = () => {
+                if (changelogTextarea) return;
+                if (isOwner) {
+                  openChangelogEditor();
+                  return;
+                }
+                changelogBody.classList.toggle("hidden");
+                changelogBtn.classList.toggle("version-changelog-toggle-open", !changelogBody.classList.contains("hidden"));
+              };
+            }
+
+            return li;
+          }
+
+          function renderGithubReleaseRow(release, isLatest) {
+            const li = document.createElement("li");
+            li.className = "version-row";
+            if (isLatest) li.classList.add("active-version");
+
+            const main = document.createElement("div");
+            main.className = "version-row-main";
+
+            const info = document.createElement("div");
+            info.className = "version-info";
+
+            const tag = document.createElement("span");
+            tag.className = "version-tag";
+            tag.textContent = release.name || release.tag || "unknown";
+            info.appendChild(tag);
+
+            const date = document.createElement("span");
+            date.className = "version-date";
+            date.textContent = release.publishedAt ? formatVersionDate(release.publishedAt) : "";
+            info.appendChild(date);
+
+            main.appendChild(info);
+
+            const actions = document.createElement("div");
+            actions.className = "version-row-actions";
+
+            const asset = release.assets?.[0];
+            const download = document.createElement("a");
+            download.className = "btn btn-primary btn-sm btn-icon-only";
+            download.target = "_blank";
+            download.rel = "noopener noreferrer nofollow";
+            setVersionActionIcon(download, asset ? "Download" : "View release");
+            const link = asset?.downloadUrl || release.htmlUrl;
+            if (isSafeUrl(link)) {
+              download.href = link;
+            } else {
+              download.href = "#";
+              download.classList.add("btn-disabled");
+            }
+            actions.appendChild(download);
+
+            main.appendChild(actions);
+            li.appendChild(main);
+            return li;
+          }
+
+          const loadMoreBtn = document.getElementById("versions-load-more");
+          const tableHeader = document.getElementById("versions-table-header");
+          const filterBar = document.getElementById("versions-filter-bar");
+          const filterEmpty = document.getElementById("versions-filter-empty");
+          const compatFilter = document.getElementById("versions-filter-compat");
+          const channelFilter = document.getElementById("versions-filter-channel");
+          const VERSIONS_PAGE_SIZE = 6;
+
+          if (isGithubRelease) {
+            if (filterBar) filterBar.hidden = true;
+            if (tableHeader) tableHeader.hidden = true;
+            loadMoreBtn.classList.add("hidden");
+            const releases = Array.isArray(aRes?.addon?.githubReleases) ? aRes.addon.githubReleases : [];
+            if (releases.length) {
+              releases.forEach((r, i) => vList.appendChild(renderGithubReleaseRow(r, i === 0)));
+            } else {
+              const li = document.createElement("li");
+              li.className = "version-empty";
+              li.textContent = "No releases found on GitHub yet.";
               vList.appendChild(li);
-            });
+            }
+          } else if (vData.ok && Array.isArray(vData.versions) && vData.versions.length) {
+            if (tableHeader) tableHeader.hidden = false;
+            const allVersions = vData.versions;
+            const activeVersionId = allVersions[0].id;
+
+            if (filterBar) {
+              filterBar.hidden = false;
+              const distinctCompat = [...new Set(allVersions.map((v) => v.compatibility).filter(Boolean))];
+              const existingOptions = new Set([...compatFilter.options].map((o) => o.value));
+              distinctCompat.forEach((c) => {
+                if (existingOptions.has(c)) return;
+                const opt = document.createElement("option");
+                opt.value = c;
+                opt.textContent = c;
+                compatFilter.appendChild(opt);
+              });
+              if (!compatFilter.dataset.enhanced) {
+                if (window.enhanceSelect) window.enhanceSelect(compatFilter);
+                if (window.enhanceSelect) window.enhanceSelect(channelFilter);
+                compatFilter.dataset.enhanced = "1";
+                compatFilter.addEventListener("change", renderFiltered);
+                channelFilter.addEventListener("change", renderFiltered);
+              }
+            }
+
+            let shown = 0;
+            let filteredVersions = allVersions;
+
+            function applyFilters() {
+              const compatValue = compatFilter.value;
+              const channelValue = channelFilter.value;
+              filteredVersions = allVersions.filter((v) => {
+                if (compatValue && v.compatibility !== compatValue) return false;
+                if (channelValue && (v.release_channel || "release") !== channelValue) return false;
+                return true;
+              });
+            }
+
+            function renderNextBatch() {
+              const next = filteredVersions.slice(shown, shown + VERSIONS_PAGE_SIZE);
+              next.forEach((v) => vList.appendChild(renderVersionRow(v, v.id === activeVersionId)));
+              shown += next.length;
+              loadMoreBtn.classList.toggle("hidden", shown >= filteredVersions.length);
+            }
+
+            function renderFiltered() {
+              applyFilters();
+              vList.innerHTML = "";
+              shown = 0;
+              if (filteredVersions.length) {
+                filterEmpty.classList.add("hidden");
+                renderNextBatch();
+              } else {
+                filterEmpty.classList.remove("hidden");
+                loadMoreBtn.classList.add("hidden");
+              }
+            }
+
+            loadMoreBtn.onclick = renderNextBatch;
+            renderFiltered();
           } else {
+            if (filterBar) filterBar.hidden = true;
+            if (tableHeader) tableHeader.hidden = true;
             const li = document.createElement("li");
             li.className = "version-empty";
             li.textContent = "No previous versions available.";
             vList.appendChild(li);
+            loadMoreBtn.classList.add("hidden");
           }
 
-          // Setup version upload handler
+          const newVersionChannelBtn = document.getElementById("new-version-channel");
+          let newVersionChannel = "release";
+          if (newVersionChannelBtn) {
+            newVersionChannelBtn.onclick = () => {
+              newVersionChannel = RELEASE_CHANNEL_CYCLE[newVersionChannel];
+              newVersionChannelBtn.dataset.channel = newVersionChannel;
+              newVersionChannelBtn.textContent = RELEASE_CHANNEL_LETTERS[newVersionChannel];
+              newVersionChannelBtn.title = `${RELEASE_CHANNEL_LABELS[newVersionChannel]} — click to change`;
+            };
+          }
+
           const uploadBtn = document.getElementById("upload-version-btn");
           if (uploadBtn) {
             uploadBtn.onclick = async () => {
               const version = document.getElementById("new-version-input").value.trim();
               const fileInput = document.getElementById("new-file-input");
 
-              if (!fileInput.files.length) {
-                return alert("Please select a file.");
-              }
+              if (!fileInput.files.length) return toast.error("Please select a file.");
+              if (!version) return toast.error("You must enter a version.");
 
-              if (!version) {
-                return alert("You must enter a version when uploading a file.");
-              }
+              const compat = document.getElementById("new-version-compat").value;
+              const changelog = document.getElementById("new-version-changelog").value.trim();
 
               const fd = new FormData();
               fd.append("file", fileInput.files[0]);
               fd.append("version", version);
+              if (compat) fd.append("compatibility", compat);
+              if (changelog) fd.append("changelog", changelog);
+              fd.append("releaseChannel", newVersionChannel);
 
               try {
                 const res = await fetch(`/api/addons/${addonId}/update`, {
@@ -1154,11 +2823,11 @@ download.onclick = (e) => {
                 if (data.ok) {
                   location.reload();
                 } else {
-                  alert(data.error || "Upload failed.");
+                  toast.error(data.error || "Upload failed.");
                 }
               } catch (e) {
                 console.error("Upload failed:", e);
-                alert("Upload failed.");
+                toast.error("Upload failed.");
               }
             };
           }
@@ -1170,13 +2839,10 @@ download.onclick = (e) => {
 
 
 async function setupStarSystem() {
-  console.log("STAR SYSTEM INIT");
-
   let addonId = new URLSearchParams(window.location.search).get("id");
 
-  // FIX: support /addon/:id-slug URLs
   if (!addonId) {
-    const match = window.location.pathname.match(/^\/addon\/(\d+)-/);
+    const match = window.location.pathname.match(/^\/(?:addon|mod)\/(\d+)-/);
     if (match) addonId = match[1];
   }
 
@@ -1230,10 +2896,8 @@ async function setupStarSystem() {
   await refreshStars();
 
   likeBtn.addEventListener("click", async () => {
-    console.log("LIKE CLICK");
-
     if (!user) {
-      alert("You must be logged in to like addons.");
+      toast.error("You must be logged in to like addons.");
       return;
     }
 
@@ -1323,19 +2987,28 @@ async function setupStarSystem() {
   });
 }
       window.addEventListener("DOMContentLoaded", async () => {
-        // Owner detection: get current user before loading addon
         let currentUser = null;
         try {
           const s = await fetch("/api/auth/status").then(r => r.json());
-          if (s.ok) currentUser = s.user?.username;
+          if (s.ok) {
+            currentUser = s.user?.username;
+            window.__currentUserAvatar = s.user?.avatarUrl || null;
+          }
         } catch {}
         window.__currentUser = currentUser;
-        loadNavBar();
         fetchAddon();
         fetchComments();
         fetchVersions();
         setupCommentForm();
         setupStarSystem();
+
+        if (window.location.hash === "#comments") {
+          const commentsTabBtn = document.querySelector('.tab-bar button[data-tab="comments"]');
+          if (commentsTabBtn) {
+            commentsTabBtn.click();
+            commentsTabBtn.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
       });
 
     })();

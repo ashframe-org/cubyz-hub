@@ -1,0 +1,569 @@
+{
+  "_comment": "Machine-readable companion to cubyz-addon-migration-guide.md. Source: PixelGuys/Cubyz releases + GitHub rename detection + the game's own assets/cubyz/{blocks,items,biomes}/_migrations.zig.zon manifests, researched 2026-09-17. Do not hand-edit without updating the .md alongside it.",
+  "versions": [
+    {
+      "version": "0.0.0",
+      "released": "2025-10-05",
+      "breaking": false
+    },
+    {
+      "version": "0.0.1",
+      "released": "2025-11-08",
+      "breaking": false
+    },
+    {
+      "version": "0.1.0",
+      "released": "2025-12-31",
+      "breaking": false
+    },
+    {
+      "version": "0.1.1",
+      "released": "2026-01-01",
+      "breaking": false
+    },
+    {
+      "version": "0.2.0",
+      "released": "2026-04-03",
+      "breaking": true
+    },
+    {
+      "version": "0.3.0",
+      "released": "2026-07-04",
+      "breaking": true
+    },
+    {
+      "version": "unreleased",
+      "released": null,
+      "breaking": true,
+      "note": "Merged to master after 0.3.0, not yet in a tagged release. Provisional - re-verify once shipped."
+    }
+  ],
+  "steps": [
+    {
+      "from": "0.1.1",
+      "to": "0.2.0",
+      "folder_renames": [
+        {
+          "old": "assets/cubyz/entity/",
+          "new": "assets/cubyz/entities/",
+          "note": "singular to plural; models/ and textures/ subpaths preserved"
+        }
+      ],
+      "id_renames": {
+        "block": [
+          {
+            "old": [
+              "baobab_planks"
+            ],
+            "new": "planks/baobab"
+          },
+          {
+            "old": [
+              "birch_planks"
+            ],
+            "new": "planks/birch"
+          },
+          {
+            "old": [
+              "mahogany_planks"
+            ],
+            "new": "planks/mahogany"
+          },
+          {
+            "old": [
+              "oak_planks"
+            ],
+            "new": "planks/oak"
+          },
+          {
+            "old": [
+              "palm_planks"
+            ],
+            "new": "planks/palm"
+          },
+          {
+            "old": [
+              "pine_planks"
+            ],
+            "new": "planks/pine"
+          },
+          {
+            "old": [
+              "willow_planks"
+            ],
+            "new": "planks/willow"
+          },
+          {
+            "old": [
+              "baobab_fence"
+            ],
+            "new": "fence/baobab"
+          },
+          {
+            "old": [
+              "birch_fence"
+            ],
+            "new": "fence/birch"
+          },
+          {
+            "old": [
+              "mahogany_fence"
+            ],
+            "new": "fence/mahogany"
+          },
+          {
+            "old": [
+              "oak_fence"
+            ],
+            "new": "fence/oak"
+          },
+          {
+            "old": [
+              "palm_fence"
+            ],
+            "new": "fence/palm"
+          },
+          {
+            "old": [
+              "pine_fence"
+            ],
+            "new": "fence/pine"
+          },
+          {
+            "old": [
+              "willow_fence"
+            ],
+            "new": "fence/willow"
+          },
+          {
+            "old": [
+              "baobab_branch"
+            ],
+            "new": "branch/baobab"
+          },
+          {
+            "old": [
+              "birch_branch"
+            ],
+            "new": "branch/birch"
+          },
+          {
+            "old": [
+              "mahogany_branch"
+            ],
+            "new": "branch/mahogany"
+          },
+          {
+            "old": [
+              "oak_branch"
+            ],
+            "new": "branch/oak"
+          },
+          {
+            "old": [
+              "pine_branch"
+            ],
+            "new": "branch/pine"
+          },
+          {
+            "old": [
+              "willow_branch"
+            ],
+            "new": "branch/willow"
+          },
+          {
+            "old": [
+              "cactus_arm"
+            ],
+            "new": "branch/cactus"
+          },
+          {
+            "old": [
+              "glimmergill_branch"
+            ],
+            "new": "branch/glimmergill"
+          },
+          {
+            "old": [
+              "toadstool_branch"
+            ],
+            "new": "branch/toadstool"
+          },
+          {
+            "old": [
+              "bolete_branch"
+            ],
+            "new": "branch/bolete"
+          },
+          {
+            "old": [
+              "candy_cane/block"
+            ],
+            "new": "candy_cane_block"
+          },
+          {
+            "old": [
+              "candy_cane/branch"
+            ],
+            "new": "branch/candy_cane"
+          }
+        ],
+        "biome": [
+          {
+            "old": [
+              "flatland"
+            ],
+            "new": "development/flat"
+          }
+        ]
+      },
+      "field_renames": [],
+      "removed_fields": [],
+      "unresolved": []
+    },
+    {
+      "from": "0.2.0",
+      "to": "0.3.0",
+      "folder_renames": [],
+      "id_renames": {
+        "block": [
+          {
+            "old": [
+              "baobab_log",
+              "baobab_top"
+            ],
+            "new": "log/baobab",
+            "merge": true
+          },
+          {
+            "old": [
+              "birch_log",
+              "birch_top"
+            ],
+            "new": "log/birch",
+            "merge": true
+          },
+          {
+            "old": [
+              "mahogany_log",
+              "mahogany_top"
+            ],
+            "new": "log/mahogany",
+            "merge": true
+          },
+          {
+            "old": [
+              "oak_log",
+              "oak_top"
+            ],
+            "new": "log/oak",
+            "merge": true
+          },
+          {
+            "old": [
+              "pine_log",
+              "pine_top"
+            ],
+            "new": "log/pine",
+            "merge": true
+          },
+          {
+            "old": [
+              "willow_log",
+              "willow_top"
+            ],
+            "new": "log/willow",
+            "merge": true
+          },
+          {
+            "old": [
+              "slate/base"
+            ],
+            "new": "slate/smooth"
+          },
+          {
+            "old": [
+              "slate/cobble"
+            ],
+            "new": "slate/rough"
+          },
+          {
+            "old": [
+              "marble/base"
+            ],
+            "new": "marble/smooth"
+          },
+          {
+            "old": [
+              "glacite/base"
+            ],
+            "new": "glacite/smooth"
+          },
+          {
+            "old": [
+              "basalt/base"
+            ],
+            "new": "basalt/smooth"
+          },
+          {
+            "old": [
+              "voidstone/base"
+            ],
+            "new": "voidstone/smooth"
+          },
+          {
+            "old": [
+              "pyrolite/base"
+            ],
+            "new": "pyrolite/rough"
+          },
+          {
+            "old": [
+              "terracotta/base"
+            ],
+            "new": "terracotta/smooth"
+          },
+          {
+            "old": [
+              "sandstone/base"
+            ],
+            "new": "sandstone/rough"
+          },
+          {
+            "old": [
+              "ferrock/base"
+            ],
+            "new": "ferrock/smooth"
+          },
+          {
+            "old": [
+              "limestone/base"
+            ],
+            "new": "limestone/smooth"
+          },
+          {
+            "old": [
+              "nimbusite/base"
+            ],
+            "new": "nimbusite/smooth"
+          }
+        ],
+        "biome": [
+          {
+            "old": [
+              "jungle"
+            ],
+            "new": "jungle/base"
+          },
+          {
+            "old": [
+              "island"
+            ],
+            "new": "ocean/temperate/island/base"
+          },
+          {
+            "old": [
+              "island_shelf"
+            ],
+            "new": "ocean/temperate/island/shelf"
+          },
+          {
+            "old": [
+              "cave/cave"
+            ],
+            "new": "cave/slate/base"
+          },
+          {
+            "old": [
+              "tall_mountain/peak"
+            ],
+            "new": "tall_mountain/summit1"
+          }
+        ]
+      },
+      "field_renames": [],
+      "removed_fields": [],
+      "block_entity_renames": [
+        {
+          "old": "chest",
+          "new": "cubyz:chest"
+        },
+        {
+          "old": "sign",
+          "new": "cubyz:sign"
+        }
+      ],
+      "block_entity_renames_source": "0.3.0 changelog: block entities now use mod:name-style namespaced ids. Verified in Cubyz src/block_entity.zig: 0.2.0 declares pub const id = \"chest\"/\"sign\"; 0.3.0 declares @\"cubyz:chest\"/@\"cubyz:sign\", and the vanilla block refs change from .blockEntity = .chest to .blockEntity = \"cubyz:chest\". Only these two engine-side entity types exist (addons cannot add new ones), so the namespace is always cubyz:.",
+      "unresolved": []
+    },
+    {
+      "from": "0.3.0",
+      "to": "unreleased",
+      "provisional": true,
+      "folder_renames": [
+        {
+          "old": "entityModels/",
+          "new": "entity_models/",
+          "source_pr": 3338
+        }
+      ],
+      "id_renames": {},
+      "tag_renames": [
+        {
+          "old": ".voidStone",
+          "new": ".voidstone",
+          "source_pr": 3353
+        }
+      ],
+      "field_renames": [
+        {
+          "scope": "biome",
+          "old": ".properties",
+          "new": ".climate",
+          "source_pr": 3599
+        }
+      ],
+      "removed_fields": [
+        {
+          "scope": "block",
+          "old_path": ".onUpdate.drops",
+          "replacement": "merge list into top-level .drops, then delete .onUpdate.drops",
+          "source_pr": 3532
+        }
+      ],
+      "additive_fields": [
+        {
+          "scope": "item/material",
+          "field": ".colorTexture",
+          "note": "Optional. Old .colors/.outlineColorLight/.outlineColorShadow still work if absent - no migration required.",
+          "source_pr": 3403
+        }
+      ],
+      "unresolved": []
+    }
+  ],
+  "version_detection_signals": {
+    "_comment": "Heuristics for auto-detecting which version an imported addon targets. The folder_exists/block_id_exists/biome_field_exists/block_tag_exists entries and the block_field_exists/block_drops_field_exists entries added below are implemented in app-io.js's detectSourceVersion() (path-based) and detectVersionFromContent() (content-based fallback, used when path detection is inconclusive - true for the large majority of real addons per a 33-addon site audit, since most use entirely custom ids with no vanilla overrides). Content-based signals only support version FLOORS (implies_min_version) or CEILINGS (implies_max_version) for 0.3.0/unreleased currently - earlier-version positive signals (0.1.0, 0.2.0) are documented here but not yet wired into the detector, since a 'floor' signal for an early version isn't very useful without also ruling out every later version, which these markers don't do on their own.",
+    "signals": [
+      {
+        "check": "folder_exists",
+        "path": "entity_models/",
+        "implies_min_version": "unreleased"
+      },
+      {
+        "check": "folder_exists",
+        "path": "entityModels/",
+        "implies_version_range": [
+          "0.2.0",
+          "0.3.0"
+        ]
+      },
+      {
+        "check": "folder_exists",
+        "path": "entities/",
+        "implies_min_version": "0.2.0"
+      },
+      {
+        "check": "folder_exists",
+        "path": "entity/",
+        "implies_max_version": "0.1.1"
+      },
+      {
+        "check": "block_id_exists",
+        "id": "log/oak",
+        "implies_min_version": "0.3.0"
+      },
+      {
+        "check": "block_id_exists",
+        "id": "oak_log",
+        "implies_max_version": "0.2.0"
+      },
+      {
+        "check": "block_id_exists",
+        "id": "planks/oak",
+        "implies_min_version": "0.2.0"
+      },
+      {
+        "check": "block_id_exists",
+        "id": "oak_planks",
+        "implies_max_version": "0.1.1"
+      },
+      {
+        "check": "biome_field_exists",
+        "field": ".climate",
+        "implies_min_version": "unreleased"
+      },
+      {
+        "check": "biome_field_exists",
+        "field": ".properties",
+        "implies_max_version": "0.3.0"
+      },
+      {
+        "check": "block_tag_exists",
+        "tag": ".voidstone",
+        "implies_min_version": "unreleased"
+      },
+      {
+        "check": "block_tag_exists",
+        "tag": ".voidStone",
+        "implies_max_version": "0.3.0"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".selectionCapabilities",
+        "implies_min_version": "0.3.0",
+        "confidence": "high",
+        "source": "confirmed via exhaustive git diff, PixelGuys/Cubyz research agent - replaces .selectable/.replacable at 0.2.0->0.3.0"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".replaceable",
+        "implies_min_version": "0.3.0",
+        "confidence": "high",
+        "source": "typo-fix rename .replacable -> .replaceable at 0.2.0->0.3.0, confirmed via exhaustive git diff"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".replacable",
+        "implies_max_version": "0.2.0",
+        "confidence": "high",
+        "source": "old spelling, pre-0.3.0 - see .replaceable above"
+      },
+      {
+        "check": "block_drops_field_exists",
+        "field": ".allowedToolTags",
+        "implies_min_version": "0.3.0",
+        "confidence": "high",
+        "source": "new sub-field inside .drops entries at 0.2.0->0.3.0, confirmed via exhaustive git diff"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".texture_top",
+        "implies_min_version": "0.3.0",
+        "confidence": "high",
+        "source": "new directional texture field at 0.2.0->0.3.0, confirmed via exhaustive git diff (log/pillar blocks)"
+      },
+      {
+        "check": "biome_field_exists",
+        "field": ".tags",
+        "implies_min_version": "0.3.0",
+        "confidence": "high",
+        "source": "new sibling field to .properties at 0.2.0->0.3.0, confirmed via exhaustive git diff - NOTE: .properties itself is NOT renamed until the unreleased step (confirmed still used verbatim in 0.3.0 source), only .tags is new"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".onUpdate",
+        "implies_min_version": "0.1.0",
+        "confidence": "high",
+        "source": "new at 0.0.1->0.1.0 (decay/leaf mechanic), confirmed via exhaustive git diff - presence only proves 0.1.0+, cannot distinguish 0.1.0 from later versions on its own"
+      },
+      {
+        "check": "block_field_exists",
+        "field": ".decayProhibitor",
+        "implies_min_version": "0.1.0",
+        "confidence": "high",
+        "source": "new at 0.0.1->0.1.0, confirmed via exhaustive git diff"
+      }
+    ]
+  }
+}

@@ -1,0 +1,131 @@
+<div class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+    <h2 style="margin: 0;">Item Creator</h2>
+    <div style="display: flex; align-items: center; gap: 8px; position: relative; width: 300px;">
+        <label style="margin: 0; font-size: 13px; color: var(--text-muted); white-space: nowrap;">Load Preset:</label>
+        <div style="position: relative; flex: 1;">
+            <input type="text" id="itemPresetSelectorSearch" value="None" readonly style="cursor: pointer; padding: 6px 12px; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text); border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box;" onfocus="document.getElementById('itemPresetDropdown').style.display='block'">
+            <div id="itemPresetDropdown" class="dropdown-options" style="display: none; position: absolute; top: 100%; right: 0; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1001; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('itemPresetSelectorSearch').value='Amber'; window.loadItemPreset('amber'); document.getElementById('itemPresetDropdown').style.display='none';">Amber</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('itemPresetSelectorSearch').value='Ruby'; window.loadItemPreset('ruby'); document.getElementById('itemPresetDropdown').style.display='none';">Ruby</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('itemPresetSelectorSearch').value='Iron Ingot'; window.loadItemPreset('iron'); document.getElementById('itemPresetDropdown').style.display='none';">Iron Ingot</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="itemId">Item ID<span class="hint-text">(Filename)</span></label>
+            <input type="text" id="itemId" value="ruby_ingot" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+        <div class="form-group col-3">
+            <label for="itemStackSize">Max Stack Size</label>
+            <input type="number" id="itemStackSize" value="120" min="1" max="65535">
+            <span class="field-explanation">Standard max is 120 slots.</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="itemFoodValue">Food Saturation Value</label>
+            <input type="number" id="itemFoodValue" value="0.0" step="0.1" min="0" placeholder="0.0">
+            <span class="field-explanation">Nutritional value restored when consumed.</span>
+        </div>
+        <div class="form-group col texture-select-wrapper" style="position: relative;">
+            <label for="itemBlockPlacementSearch">Places Block Variant <span class="hint-text">(Optional)</span></label>
+            <input type="text" id="itemBlockPlacementSearch" autocomplete="off" placeholder="e.g. cubyz:torch" onfocus="window.showBlockDropdown('itemBlockPlacementDropdown', 'itemBlockPlacementSearch')" oninput="window.filterDropdown('itemBlockPlacementSearch', 'itemBlockPlacementDropdown')">
+            <div id="itemBlockPlacementDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            <span class="field-explanation">Links this inventory item to a placeable map block.</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Item Tags <span class="hint-text">Arbitrary markers.</span></label>
+        <div id="itemTagsContainer" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 4px; min-height: 38px; align-items: center;">
+            <input type="text" id="itemTagTextInput" placeholder="Type a custom marker..." autocomplete="off" style="border: none; background: transparent; color: var(--text); outline: none; flex: 1; min-width: 150px; padding: 0;">
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-left: 4px;">
+            <span style="color: var(--text-muted);">Common addon conventions:</span>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'material')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ material</button>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'metal')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ metal</button>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'precious')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ precious</button>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'ore')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ ore</button>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'food')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ food</button>
+            <button type="button" onclick="window.addDynamicTagPill('itemTagsContainer', 'itemTagTextInput', 'fluidPlaceable')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ fluidPlaceable</button>
+        </div>
+    </div>
+
+    <div id="materialStatsWrapper" style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border);">Material Stats</h3>
+        <div class="row">
+            <div class="form-group col">
+                <label for="matDurability">Durability</label>
+                <input type="number" id="matDurability" value="250" step="1">
+            </div>
+            <div class="form-group col">
+                <label for="matSwingSpeed">Swing Speed</label>
+                <input type="number" id="matSwingSpeed" value="1.0" step="0.1">
+            </div>
+            <div class="form-group col">
+                <label for="matTexRoughness">Texture Roughness</label>
+                <input type="number" id="matTexRoughness" value="0.0" min="0" max="1" step="0.05">
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="form-group col">
+                <label for="matMassDamage">Mass Damage</label>
+                <input type="number" id="matMassDamage" value="2.0" step="0.1">
+            </div>
+            <div class="form-group col">
+                <label for="matHardnessDamage">Hardness Damage</label>
+                <input type="number" id="matHardnessDamage" value="2.0" step="0.1">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="matColorBase">Material Color</label>
+            <div style="background: var(--panel-bg); padding: 12px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+                <input type="color" id="matColorBase" value="#9c9c9c" style="width: 60px; height: 40px; cursor: pointer; border: none; background: transparent;">
+                <span class="field-explanation" style="color: var(--text-muted); margin: 0;">This will be the colour of your material while crafting tools.</span>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>Material Traits & Modifiers</label>
+            <div class="row" style="gap: 15px; align-items: center; margin-top: 5px;">
+                <div style="flex: 1; position: relative;">
+                    <input type="hidden" id="matModifierType" value="none">
+                    <input type="text" id="matModifierTypeSearch" value="None / Standard Material" readonly style="cursor: pointer; padding: 10px; background: var(--panel-bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; width: 100%; box-sizing: border-box;" onfocus="document.getElementById('matModifierDropdown').style.display='block'">
+                    <div id="matModifierDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='none'; document.getElementById('matModifierTypeSearch').value='None / Standard Material'; document.getElementById('matModifierDropdown').style.display='none';">None / Standard Material</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='durable'; document.getElementById('matModifierTypeSearch').value='durable (Increases tool durability)'; document.getElementById('matModifierDropdown').style.display='none';">durable (Increases tool durability)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='fragile'; document.getElementById('matModifierTypeSearch').value='fragile (Decreases tool durability)'; document.getElementById('matModifierDropdown').style.display='none';">fragile (Decreases tool durability)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='heavy'; document.getElementById('matModifierTypeSearch').value='heavy (Increases swing execution time)'; document.getElementById('matModifierDropdown').style.display='none';">heavy (Increases swing execution time)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='light'; document.getElementById('matModifierTypeSearch').value='light (Decreases swing execution time)'; document.getElementById('matModifierDropdown').style.display='none';">light (Decreases swing execution time)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='powerful'; document.getElementById('matModifierTypeSearch').value='powerful (Increases raw base weapon damage)'; document.getElementById('matModifierDropdown').style.display='none';">powerful (Increases raw base weapon damage)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('matModifierType').value='weak'; document.getElementById('matModifierTypeSearch').value='weak (Decreases raw base weapon damage)'; document.getElementById('matModifierDropdown').style.display='none';">weak (Decreases raw base weapon damage)</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; width: 200px; height: 38px;">
+                    <label for="matModifierStrength" style="margin:0; font-weight:normal; white-space:nowrap;">Strength:</label>
+                    <input type="number" id="matModifierStrength" value="1.0" step="0.1" style="width: 100%; border-radius: 4px; height: 100%; background: var(--panel-bg); border: 1px solid var(--border);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Texture Configuration</h3>
+    <div class="row">
+        <div class="form-group col texture-select-wrapper" style="position: relative;">
+            <label for="itemTextureSearch">Item Sprite Texture</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <img id="thumb_itemTextureSearch" class="dropdown-thumb-pre" style="width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; background: #000; border: 1px solid var(--border); border-radius: 4px; display: none;">
+                <input type="text" id="itemTextureSearch" autocomplete="off" placeholder="" onfocus="showDropdown('itemTextureDropdown')" oninput="filterDropdown('itemTextureSearch', 'itemTextureDropdown')">
+            </div>
+            <div id="itemTextureDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="handleCustomTexture(this, 'itemTextureSearch')"></label>
+        </div>
+    </div>
+</div>

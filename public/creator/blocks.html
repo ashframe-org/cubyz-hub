@@ -1,0 +1,403 @@
+<div class="panel">
+   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+    <h2 style="margin: 0;">Block Creator</h2>
+    <div style="display: flex; align-items: center; gap: 8px; position: relative; width: 300px;">
+        <label style="margin: 0; font-size: 13px; color: var(--text-muted); white-space: nowrap;">Load Preset:</label>
+        <div style="position: relative; flex: 1;">
+            <input type="text" id="blockPresetSelectorSearch" value="None" readonly style="cursor: pointer; padding: 6px 12px; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text); border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box;" onfocus="document.getElementById('blockPresetDropdown').style.display='block'">
+            <div id="blockPresetDropdown" class="dropdown-options" style="display: none; position: absolute; top: 100%; right: 0; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1001; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockPresetSelectorSearch').value='Tree Log'; window.loadBlockPreset('log'); document.getElementById('blockPresetDropdown').style.display='none';">Tree Log</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockPresetSelectorSearch').value='Leaves'; window.loadBlockPreset('leaves'); document.getElementById('blockPresetDropdown').style.display='none';">Leaves</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockPresetSelectorSearch').value='Ore'; window.loadBlockPreset('ore'); document.getElementById('blockPresetDropdown').style.display='none';">Ore</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockPresetSelectorSearch').value='Stone'; window.loadBlockPreset('stone'); document.getElementById('blockPresetDropdown').style.display='none';">Stone</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockPresetSelectorSearch').value='Dirt'; window.loadBlockPreset('dirt'); document.getElementById('blockPresetDropdown').style.display='none';">Dirt</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="blockId">Block ID<span class="hint-text">(Filename)</span></label>
+            <input type="text" id="blockId" placeholder="ruby_ore" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+        <div class="form-group col">
+            <label for="blockHealth">Block Health</label>
+            <input type="number" id="blockHealth" placeholder="1" value="1">
+        </div>
+        <div class="form-group col">
+            <label for="blockResistance">Blast Resistance</label>
+            <input type="number" id="blockResistance" placeholder="0" value="0" step="0.1">
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="form-group col-6" style="position: relative;">
+        <label for="blockRotation">Render Mode</label>
+        <input type="hidden" id="blockRotation" value="cubyz:stairs">
+        <input type="text" id="blockRotationSearch" value="3D Block (cubyz:stairs)" readonly style="cursor: pointer; background-color: var(--panel-bg);" onfocus="document.getElementById('blockRotationDropdown').style.display='block'">
+        <div id="blockRotationDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:stairs'; document.getElementById('blockRotationSearch').value='Sub-Block Shape / Stairs (cubyz:stairs)'; window.handleRotationChange('cubyz:stairs'); document.getElementById('blockRotationDropdown').style.display='none';">Sub-Block Shape / Stairs (cubyz:stairs)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:ore'; document.getElementById('blockRotationSearch').value='Placable Ore (cubyz:ore)'; window.handleRotationChange('cubyz:ore'); document.getElementById('blockRotationDropdown').style.display='none';">Placable Ore (cubyz:ore)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:decayable'; document.getElementById('blockRotationSearch').value='Decayable / Leaf (cubyz:decayable)'; window.handleRotationChange('cubyz:decayable'); document.getElementById('blockRotationDropdown').style.display='none';">Decayable / Leaf (cubyz:decayable)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:carpet'; document.getElementById('blockRotationSearch').value='Flat Layer / Carpet (cubyz:carpet)'; window.handleRotationChange('cubyz:carpet'); document.getElementById('blockRotationDropdown').style.display='none';">Flat Layer / Carpet (cubyz:carpet)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:direction'; document.getElementById('blockRotationSearch').value='Directional Log (cubyz:direction)'; window.handleRotationChange('cubyz:direction'); document.getElementById('blockRotationDropdown').style.display='none';">Directional Log (cubyz:direction)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:hanging'; document.getElementById('blockRotationSearch').value='Hanging / Vine (cubyz:hanging)'; window.handleRotationChange('cubyz:hanging'); document.getElementById('blockRotationDropdown').style.display='none';">Hanging / Vine (cubyz:hanging)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:no_rotation'; document.getElementById('blockRotationSearch').value='Fixed / No Rotation (cubyz:no_rotation)'; window.handleRotationChange('cubyz:no_rotation'); document.getElementById('blockRotationDropdown').style.display='none';">Fixed / No Rotation (cubyz:no_rotation)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:planar'; document.getElementById('blockRotationSearch').value='Faces Player on Placement (cubyz:planar)'; window.handleRotationChange('cubyz:planar'); document.getElementById('blockRotationDropdown').style.display='none';">Faces Player on Placement (cubyz:planar)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:torch'; document.getElementById('blockRotationSearch').value='Wall/Floor Torch (cubyz:torch)'; window.handleRotationChange('cubyz:torch'); document.getElementById('blockRotationDropdown').style.display='none';">Wall/Floor Torch (cubyz:torch)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:texture_pile'; document.getElementById('blockRotationSearch').value='Random Texture Variant (cubyz:texture_pile)'; window.handleRotationChange('cubyz:texture_pile'); document.getElementById('blockRotationDropdown').style.display='none';">Random Texture Variant (cubyz:texture_pile)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:branch'; document.getElementById('blockRotationSearch').value='Connecting Branch (cubyz:branch)'; window.handleRotationChange('cubyz:branch'); document.getElementById('blockRotationDropdown').style.display='none';">Connecting Branch (cubyz:branch)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:log'; document.getElementById('blockRotationSearch').value='Tree Trunk / Log (cubyz:log)'; window.handleRotationChange('cubyz:log'); document.getElementById('blockRotationDropdown').style.display='none';">Tree Trunk / Log (cubyz:log)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:fence'; document.getElementById('blockRotationSearch').value='Fence / Wall (cubyz:fence)'; window.handleRotationChange('cubyz:fence'); document.getElementById('blockRotationDropdown').style.display='none';">Fence / Wall (cubyz:fence)</div>
+            <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('blockRotation').value='cubyz:sign'; document.getElementById('blockRotationSearch').value='Sign / Lantern Mount (cubyz:sign)'; window.handleRotationChange('cubyz:sign'); document.getElementById('blockRotationDropdown').style.display='none';">Sign / Lantern Mount (cubyz:sign)</div>
+        </div>
+    </div>
+</div>
+
+    <div class="row" style="background: var(--panel-bg); padding: 12px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px; gap: 30px; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+            <input type="checkbox" id="blockCollide" checked> Collide (Solid block)
+        </label>
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+            <input type="checkbox" id="blockTransparent"> Transparent
+        </label>
+        <div style="display: flex; align-items: center; gap: 20px; flex: 1; min-width: 280px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="emittedLightColor" style="margin: 0; font-weight: normal; white-space: nowrap; font-size: 13px;">Emitted Light Color:</label>
+                <input type="color" id="emittedLightColor" value="#000000" style="width: 45px; height: 28px; border: none; cursor: pointer; background: transparent; padding: 0;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="absorbedLightColor" style="margin: 0; font-weight: normal; white-space: nowrap; font-size: 13px;">Absorbed Light Color:</label>
+                <input type="color" id="absorbedLightColor" value="#ffffff" style="width: 45px; height: 28px; border: none; cursor: pointer; background: transparent; padding: 0;">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Block Tags <span class="hint-text">Arbitrary markers.</span></label>
+        <div id="blockTagsContainer" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 4px; min-height: 38px; align-items: center;">
+            <input type="text" id="tagTextInput" placeholder="Type a custom marker..." autocomplete="off" style="border: none; background: transparent; color: var(--text); outline: none; flex: 1; min-width: 150px; padding: 0;">
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-left: 4px;">
+            <span style="color: var(--text-muted);">Common addon conventions:</span>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'mineable')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ mineable</button>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'choppable')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ choppable</button>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'diggable')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ diggable</button>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'cuttable')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ cuttable</button>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'leaf')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ leaf</button>
+            <button type="button" onclick="window.addDynamicTagPill('blockTagsContainer', 'tagTextInput', 'fluid')" style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">+ fluid</button>
+        </div>
+    </div>
+
+    <div class="form-group" style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 20px;">
+        <label style="font-weight: bold; margin-bottom: 10px; display: block; font-size: 15px; color: #fff;">Engine Physics & Generation Parameters</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: var(--panel-bg); padding: 12px; border-radius: 4px; border: 1px solid #2d2d2d; margin-bottom: 15px;">
+            <label title="Can be overwritten by fluids or gases" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockReplaceable"> Replaceable <span class="hint-text">(Grass)</span>
+            </label>
+            <label title="Leaves/foliage logic: block vanishes if support is removed" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockDegradable"> Degradable <span class="hint-text">(Leaf decay)</span>
+            </label>
+            <label title="Allows light/vision to pass through" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockViewThrough"> View Through
+            </label>
+            <label title="Always render what is behind this block" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockAlwaysViewThrough"> Always View Through
+            </label>
+            <label title="Renders back side of the texture" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockHasBackFace"> Render Backfaces
+            </label>
+            <label title="Allows engine to spawn ores inside this block" style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer;">
+                <input type="checkbox" id="blockAllowOres"> Allow Ore Veins
+            </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;">
+            <div>
+                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Friction</label>
+                <input type="number" id="blockFriction" value="20" step="0.5" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                <span class="field-explanation">Controls movement speed (Higher = Slower)</span>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Bounciness</label>
+                <input type="number" id="blockBounciness" value="0.0" step="0.05" min="0" max="1" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                <span class="field-explanation">How much entities bounce (0 = No bounce)</span>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Density</label>
+                <input type="number" id="blockDensity" value="1.2" step="0.1" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                <span class="field-explanation">Used for float/sink buoyancy math</span>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Terminal Vel.</label>
+                <input type="number" id="blockTerminalVelocity" value="90" step="1" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                <span class="field-explanation">Maximum speed when falling through this block</span>
+            </div>
+            <div>
+                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Mobility</label>
+                <input type="number" id="blockMobility" value="1.0" step="0.1" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                <span class="field-explanation">How easily fluids push or sweep the block away</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group" style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 20px;">
+        <label style="font-weight: bold; margin-bottom: 4px; display: block; font-size: 16px; color: #fff;">Block Logic</label>
+        <p class="field-explanation" style="margin: 0 0 15px 0; font-size: 12px; color: var(--text-muted);">Add logic to your block.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div id="touchFeatureWrapper" style="background: var(--panel-bg); padding: 12px; border-radius: 4px; border: 1px solid #2d2d2d;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Walking on the block:</label>
+                <div class="texture-select-wrapper" style="position: relative;">
+                    <input type="hidden" id="simpleTouchPreset" value="none">
+                    <input type="text" id="simpleTouchPresetSearch" value="Does nothing." readonly style="cursor: pointer;" onfocus="document.getElementById('simpleTouchDropdown').style.display='block'">
+                    <div id="simpleTouchDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;">
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleTouchPreset').value='none'; document.getElementById('simpleTouchPresetSearch').value='Does nothing.'; window.handleSimpleTouchChange('none'); document.getElementById('simpleTouchDropdown').style.display='none';">Does nothing.</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleTouchPreset').value='damage'; document.getElementById('simpleTouchPresetSearch').value='Hurts the player (like Spikes/Lava)'; window.handleSimpleTouchChange('damage'); document.getElementById('simpleTouchDropdown').style.display='none';">Hurts the player (like Spikes/Lava)</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleTouchPreset').value='heal'; document.getElementById('simpleTouchPresetSearch').value='Heals the player (like a Healing Pad)'; window.handleSimpleTouchChange('heal'); document.getElementById('simpleTouchDropdown').style.display='none';">Heals the player (like a Healing Pad)</div>
+                    </div>
+                </div>
+                <div id="simpleTouchSettings" style="display: none; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
+                    <label style="font-size: 11px; color: var(--text-muted);">Amount of damage per second:</label>
+                    <input type="number" id="logicTouchDps" step="0.1" value="0.6" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; margin-bottom: 8px; box-sizing: border-box;">
+                    <label style="font-size: 11px; color: var(--text-muted);">Damage Element Type:</label>
+                    <select id="logicTouchTypeVariant" style="width: 100%; padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); border-radius: 4px;">
+                        <option value="heat">Heat/Fire</option>
+                        <option value="heal">Healing</option>
+                        <option value="void">Void/Abyss</option>
+                    </select>
+                </div>
+            </div>
+            <div id="envFeatureWrapper" style="background: var(--panel-bg); padding: 12px; border-radius: 4px; border: 1px solid #2d2d2d;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Environmental rules:</label>
+                <div class="texture-select-wrapper" style="position: relative;">
+                    <input type="hidden" id="simpleEnvPreset" value="none">
+                    <input type="text" id="simpleEnvPresetSearch" value="Default" readonly style="cursor: pointer;" onfocus="document.getElementById('simpleEnvDropdown').style.display='block'">
+                    <div id="simpleEnvDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleEnvPreset').value='none'; document.getElementById('simpleEnvPresetSearch').value='Default'; window.handleSimpleEnvChange('none'); document.getElementById('simpleEnvDropdown').style.display='none';">Default</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleEnvPreset').value='support'; document.getElementById('simpleEnvPresetSearch').value='Breaks if ground below is gone'; window.handleSimpleEnvChange('support'); document.getElementById('simpleEnvDropdown').style.display='none';">Breaks if ground below is gone</div>
+                        <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('simpleEnvPreset').value='decay'; document.getElementById('simpleEnvPresetSearch').value='Decays into air if away from logs'; window.handleSimpleEnvChange('decay'); document.getElementById('simpleEnvDropdown').style.display='none';">Decays into air if away from logs</div>
+                    </div>
+                </div>
+
+                <div id="simpleDecaySettings" style="display: none; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
+                    <label style="font-size: 11px; color: var(--text-muted);">Turns into when decaying:</label>
+                    <input type="text" id="decayReplacement" value="cubyz:air" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; margin-bottom: 8px; box-sizing: border-box;">
+                    <label style="font-size: 11px; color: var(--text-muted);">Supported by what log/block name:</label>
+                    <input type="text" id="decayPrevention" value="cubyz:oak_log" style="padding: 6px; background: var(--panel-bg); color: var(--text); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+        </div>
+        <label style="display: flex; align-items: center; gap: 8px; margin-top: 15px; font-size: 12px; color: var(--text-muted); cursor: pointer; width: fit-content;">
+            <input type="checkbox" id="toggleAdvancedLogic" onchange="document.getElementById('advancedLogicGrid').style.display = this.checked ? 'grid' : 'none';">
+            Show Advanced Logic (untested not ready for public use)
+        </label>
+        <div id="advancedLogicGrid" style="display: none; margin-top: 15px; background: #1a1a1b; padding: 12px; border: 1px solid var(--border); border-radius: 4px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div class="form-group">
+                <label for="logicTouchType">Raw Touch Type</label>
+                <select id="logicTouchType" style="background:var(--panel-bg); width: 100%; color: var(--text);"><option value="none">none</option><option value="hurt">hurt</option></select>
+            </div>
+            <div class="form-group">
+                <label for="logicUpdateType">Raw Update Hook</label>
+                <select id="logicUpdateType" style="background:var(--panel-bg); width: 100%; color: var(--text);">
+                    <option value="none">none</option><option value="check_support_blocks">check_support_blocks</option><option value="decay">decay</option><option value="vine_decay">vine_decay</option><option value="replace_block">replace_block</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="logicInteractType">(.onInteract)</label>
+                <select id="logicInteractType" onchange="document.getElementById('advInteractWindowWrapper').style.display = (this.value === 'open_window') ? 'block' : 'none';" style="background:var(--panel-bg); width: 100%; color: var(--text);">
+                    <option value="none">none</option>
+                    <option value="open_chest">open_chest</option>
+                    <option value="edit_sign">edit_sign</option>
+                    <option value="open_window">open_window</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="logicTickType">(.onTick)</label>
+                <select id="logicTickType" onchange="document.getElementById('advTickReplaceWrapper').style.display = (this.value === 'replace_block') ? 'block' : 'none';" style="background:var(--panel-bg); width: 100%; color: var(--text);">
+                    <option value="none">none</option><option value="check_support_blocks">check_support_blocks</option><option value="decay">decay</option><option value="vine_decay">vine_decay</option><option value="replace_block">replace_block</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="logicBreakType">(.onBreak)</label>
+                <select id="logicBreakType" onchange="document.getElementById('advBreakReplaceWrapper').style.display = (this.value === 'replace_block') ? 'block' : 'none';" style="background:var(--panel-bg); width: 100%; color: var(--text);">
+                    <option value="none">none</option><option value="replace_block">replace_block</option>
+                </select>
+            </div>
+            <div id="advInteractWindowWrapper" class="form-group col-12" style="display:none;">
+                <label for="interactWindowName">UI Window Layout Layout ID</label>
+                <input type="text" id="interactWindowName" value="crafting_table" placeholder="e.g. chest, crafting_table, sign_editor">
+            </div>
+            <div id="advUpdateReplaceWrapper" class="form-group col-12" style="display:none;">
+                <label for="updateReplaceBlockSearch">Update Block Mutation Variant Target</label>
+                <input type="text" id="updateReplaceBlockSearch" placeholder="cubyz:air">
+            </div>
+            <div id="advTickReplaceWrapper" class="form-group col-12" style="display:none;">
+                <label for="tickReplaceBlockSearch">Tick Block Mutation Variant Target</label>
+                <input type="text" id="tickReplaceBlockSearch" placeholder="cubyz:air">
+            </div>
+            <div id="advBreakReplaceWrapper" class="form-group col-12" style="display:none;">
+                <label for="breakReplaceBlockSearch">Break Replacement Spawn Block</label>
+                <input type="text" id="breakReplaceBlockSearch" placeholder="cubyz:air">
+            </div>
+            <input type="text" id="decayTickReplacement" value="cubyz:air" style="display:none;">
+            <input type="text" id="decayTickPrevention" value=".log" style="display:none;">
+            <select id="logicTouchMode" style="display:none;"><option value="damage">damage</option><option value="heal">heal</option></select>
+        </div>
+    </div>
+
+    <div class="form-group" style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 4px; cursor: pointer;">
+            <input type="checkbox" id="dropAuto" checked onchange="window.toggleDropInput(this)"> Use Automatic Drops (.auto)
+        </label>
+        <p class="field-explanation">Leave this checked if you want the block to drop itself when a player breaks it.</p>
+        <div id="customDropWrapper" class="texture-select-wrapper" style="display: none; position: relative; margin-top: 10px;">
+            <label for="dropSearch">Mining Drop Item Selection</label>
+            <input type="text" id="dropSearch" autocomplete="off" placeholder="Search item/block lists..." onfocus="showDropdown('dropDropdown')" oninput="window.filterDropdown('dropSearch', 'dropDropdown')">
+            <div id="dropDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+        </div>
+    </div>
+
+    <div class="form-group" style="background: var(--panel-bg); padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 20px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 4px; cursor: pointer;">
+            <input type="checkbox" id="hasItemIcon" onchange="window.toggleItemIconInput(this)"> Set Fallback Inventory Item Icon
+        </label>
+        <p class="field-explanation">Check this box if you want this block to look like a flat 2D sprite in your hand and inventory.</p>
+        <div id="itemIconWrapper" class="texture-select-wrapper" style="display: none; position: relative; margin-top: 10px;">
+            <label for="itemIconSearch">2D Inventory Icon Texture</label>
+            <input type="text" id="itemIconSearch" autocomplete="off" placeholder="Search item textures..." onfocus="showDropdown('itemIconDropdown')" oninput="filterDropdown('itemIconSearch', 'itemIconDropdown')">
+            <div id="itemIconDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" onchange="window.handleCustomBlockTexture(this, 'topSearch')">
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-top: 25px; border-top: 1px solid #2d2d2d; padding-top: 20px;">
+        <div>
+            <h3>Texture Configuration</h3>
+            <div class="row">
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="topSearch">Base Texture (Default/Back)</label>
+                    <input type="text" id="topSearch" autocomplete="off" placeholder="" onfocus="showDropdown('topDropdown')" oninput="filterDropdown('topSearch', 'topDropdown')">
+                    <div id="topDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'topSearch')"></label>
+                </div>
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="frontSearch">Front Texture <span class="hint-text">(Optional)</span></label>
+                    <input type="text" id="frontSearch" autocomplete="off" placeholder="" onfocus="showDropdown('frontDropdown')" oninput="filterDropdown('frontSearch', 'frontDropdown')">
+                    <div id="frontDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'frontSearch')"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="leftSearch">Left Texture <span class="hint-text">(Optional)</span></label>
+                    <input type="text" id="leftSearch" autocomplete="off" placeholder="" onfocus="showDropdown('leftDropdown')" oninput="filterDropdown('leftSearch', 'leftDropdown')">
+                    <div id="leftDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'leftSearch')"></label>
+                </div>
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="rightSearch">Right Texture <span class="hint-text">(Optional)</span></label>
+                    <input type="text" id="rightSearch" autocomplete="off" placeholder="" onfocus="showDropdown('rightDropdown')" oninput="filterDropdown('rightSearch', 'rightDropdown')">
+                    <div id="rightDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'rightSearch')"></label>
+                </div>
+            </div>
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="upSearch">Top Texture <span class="hint-text">(Optional)</span></label>
+                    <input type="text" id="upSearch" autocomplete="off" placeholder="" onfocus="showDropdown('upDropdown')" oninput="filterDropdown('upSearch', 'upDropdown')">
+                    <div id="upDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'upSearch')"></label>
+                </div>
+                <div class="form-group col texture-select-wrapper" style="position: relative;">
+                    <label for="bottomSearch">Bottom Texture <span class="hint-text">(Optional)</span></label>
+                    <input type="text" id="bottomSearch" autocomplete="off" placeholder="" onfocus="showDropdown('bottomDropdown')" oninput="filterDropdown('bottomSearch', 'bottomDropdown')">
+                    <div id="bottomDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+                    <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">+ Add custom PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'bottomSearch')"></label>
+                </div>
+            </div>
+            <button type="button" class="btn-secondary" onclick="const grid = document.getElementById('advTextureGrid'); grid.style.display = grid.style.display === 'none' ? 'grid' : 'none'; if(grid.style.display === 'grid') { window.rebuildAdvancedDropdowns(); } window.initDropdownClearButtons();" style="margin-top: 15px; width: 100%; background: var(--panel-bg); border: 1px solid var(--border-color); font-size: 13px;">Toggle Advanced Model Texture Slots (6-15)</button>
+            <div id="advTextureGrid" style="display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; padding: 12px; background: #1a1a1b; border: 1px solid var(--border); border-radius: 4px;">
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 6</label>
+                    <input type="text" id="tex6" placeholder="" autocomplete="off" onfocus="showDropdown('tex6Dropdown')" oninput="filterDropdown('tex6', 'tex6Dropdown')">
+                    <div id="tex6Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex6')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 7</label>
+                    <input type="text" id="tex7" placeholder="" autocomplete="off" onfocus="showDropdown('tex7Dropdown')" oninput="filterDropdown('tex7', 'tex7Dropdown')">
+                    <div id="tex7Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex7')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 8</label>
+                    <input type="text" id="tex8" placeholder="" autocomplete="off" onfocus="showDropdown('tex8Dropdown')" oninput="filterDropdown('tex8', 'tex8Dropdown')">
+                    <div id="tex8Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex8')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 9</label>
+                    <input type="text" id="tex9" placeholder="" autocomplete="off" onfocus="showDropdown('tex9Dropdown')" oninput="filterDropdown('tex9', 'tex9Dropdown')">
+                    <div id="tex9Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex9')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 10</label>
+                    <input type="text" id="tex10" placeholder="" autocomplete="off" onfocus="showDropdown('tex10Dropdown')" oninput="filterDropdown('tex10', 'tex10Dropdown')">
+                    <div id="tex10Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex10')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 11</label>
+                    <input type="text" id="tex11" placeholder="" autocomplete="off" onfocus="showDropdown('tex11Dropdown')" oninput="filterDropdown('tex11', 'tex11Dropdown')">
+                    <div id="tex11Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex11')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 12</label>
+                    <input type="text" id="tex12" placeholder="" autocomplete="off" onfocus="showDropdown('tex12Dropdown')" oninput="filterDropdown('tex12', 'tex12Dropdown')">
+                    <div id="tex12Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex12')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 13</label>
+                    <input type="text" id="tex13" placeholder="" autocomplete="off" onfocus="showDropdown('tex13Dropdown')" oninput="filterDropdown('tex13', 'tex13Dropdown')">
+                    <div id="tex13Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex13')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 14</label>
+                    <input type="text" id="tex14" placeholder="" autocomplete="off" onfocus="showDropdown('tex14Dropdown')" oninput="filterDropdown('tex14', 'tex14Dropdown')">
+                    <div id="tex14Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex14')"></label>
+                </div>
+                <div class="form-group texture-select-wrapper" style="margin-bottom:0;">
+                    <label style="font-size:11px; color:var(--text-muted);">Texture Slot 15</label>
+                    <input type="text" id="tex15" placeholder="" autocomplete="off" onfocus="showDropdown('tex15Dropdown')" oninput="filterDropdown('tex15', 'tex15Dropdown')">
+                    <div id="tex15Dropdown" class="dropdown-options"></div>
+                    <label class="file-input-label" style="color: var(--accent);">+ Add PNG <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'tex15')"></label>
+                </div>
+            </div>
+        </div>
+        <div style="background: #151516; border: 1px solid #2d2d2d; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: fit-content; margin-top: 30px;">
+            <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px;">Texture Layout Map</div>
+            <div class="block-layout-cross-grid">
+                <div></div><div class="layout-face-box"><img id="view_up"><span class="face-lbl">Top</span></div><div></div>
+                <div class="layout-face-box"><img id="view_left"><span class="face-lbl">Left</span></div><div class="layout-face-box"><img id="view_front"><span class="face-lbl">Front</span></div><div class="layout-face-box"><img id="view_right"><span class="face-lbl">Right</span></div>
+                <div></div><div class="layout-face-box"><img id="view_bottom"><span class="face-lbl">Bottom</span></div><div></div>
+                <div></div><div class="layout-face-box"><img id="view_back"><span class="face-lbl">Back</span></div><div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hint-text { font-size: 0.85em; color: var(--text-muted); font-weight: normal; margin-left: 5px; }
+.tag-desc { font-size: 0.85em; color: var(--text-muted); font-style: italic; font-weight: normal; }
+.field-explanation { margin: 4px 0 0 4px; font-size: 0.88em; color: #b0b0b0; line-height: 1.4; }
+.block-layout-cross-grid { display: grid; grid-template-columns: repeat(3, 70px); grid-template-rows: repeat(4, 70px); gap: 6px; }
+.layout-face-box { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 4px; position: relative; overflow: hidden; width: 70px; height: 70px; }
+.layout-face-box img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; display: none; }
+.layout-face-box .face-lbl { position: absolute; bottom: 2px; left: 0; right: 0; text-align: center; font-size: 9px; color: #fff; background: rgba(0,0,0,0.6); padding: 1px 0; font-weight: bold; text-transform: uppercase; }
+</style>

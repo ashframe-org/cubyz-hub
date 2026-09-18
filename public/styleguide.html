@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Style Guide - Cubyz Hub</title>
+  <meta name="description" content="Internal component showcase for CubyzHub styling. Not linked anywhere." />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("cubyzhub-theme") !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="dist/buttons.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/style.css?v=20260919-17">
+  <link rel="stylesheet" href="addon.css?v=20260919-17">
+  <link rel="stylesheet" href="servers.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/ashframe-theme.css?v=20260919-17" />
+  <style>
+    .sg-wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 4rem; }
+    .sg-lede { color: var(--text-muted); max-width: 70ch; }
+    .sg-section { margin: 2.5rem 0; }
+    .sg-section > h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .sg-item { margin: 1.2rem 0; }
+    .sg-item > code { display: inline-block; font-size: 0.8rem; color: var(--text-muted); background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.15rem 0.5rem; margin-bottom: 0.6rem; }
+    .sg-row { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+    .sg-col { display: flex; flex-direction: column; gap: 0.7rem; max-width: 560px; }
+    .sg-note { font-size: 0.85rem; color: var(--text-muted); }
+    .sg-demo-narrow { max-width: 420px; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions">
+      <span class="sg-note">Style guide (unlisted page)</span>
+      <button type="button" class="theme-toggle-btn" id="sgThemeToggle" aria-label="Toggle theme" title="Toggle theme">&#9789;</button>
+    </div>
+  </header>
+
+  <main class="sg-wrap">
+    <h1>Component showcase</h1>
+    <p class="sg-lede">Every element below is the real site CSS with sample markup. Nothing here calls the backend or navigates anywhere - hover, focus and toggle states all work, actions do nothing. Use the theme toggle (top right) to compare both themes. To restyle something, find its <code>class</code> label, then edit that selector in the CSS.</p>
+
+    <section class="sg-section" id="sg-buttons">
+      <h2>Buttons</h2>
+      <div class="sg-item">
+        <code>.btn (base, looks like ghost)</code>
+        <div class="sg-row"><button type="button" class="btn">Base</button></div>
+      </div>
+      <div class="sg-item">
+        <code>.btn .btn-primary</code>
+        <div class="sg-row"><button type="button" class="btn btn-primary">Primary action</button></div>
+      </div>
+      <div class="sg-item">
+        <code>.btn .btn-danger</code>
+        <div class="sg-row"><button type="button" class="btn btn-danger">Delete thing</button></div>
+      </div>
+      <div class="sg-item">
+        <code>.btn .btn-ghost / .btn-ghost .btn-sm</code>
+        <div class="sg-row">
+          <button type="button" class="btn btn-ghost">Ghost</button>
+          <button type="button" class="btn btn-ghost btn-sm">Ghost small</button>
+          <button type="button" class="btn btn-primary btn-sm">Primary small</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.btn (disabled) / .btn-primary (disabled)</code>
+        <div class="sg-row">
+          <button type="button" class="btn" disabled>Disabled</button>
+          <button type="button" class="btn btn-primary" disabled>Disabled</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.follow-btn / .follow-btn.following</code>
+        <div class="sg-row">
+          <button type="button" class="follow-btn">Follow</button>
+          <button type="button" class="follow-btn following">Following</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.comment-btn</code>
+        <div class="sg-row"><button type="button" class="comment-btn">Post comment</button></div>
+      </div>
+      <div class="sg-item">
+        <code>.filters-btn / .filters-btn.active</code>
+        <div class="sg-row">
+          <button type="button" class="filters-btn">Filters</button>
+          <button type="button" class="filters-btn active">Filters (active)</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.page-btn / .page-btn.active / .page-btn:disabled</code>
+        <div class="sg-row">
+          <button type="button" class="page-btn">1</button>
+          <button type="button" class="page-btn active">2</button>
+          <button type="button" class="page-btn" disabled>…</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.version-delete-btn / .screenshot-delete-btn / .file-input-label</code>
+        <div class="sg-row">
+          <button type="button" class="version-delete-btn" aria-label="Delete version">Delete</button>
+          <button type="button" class="screenshot-delete-btn" aria-label="Delete screenshot">×</button>
+          <label class="file-input-label">Choose file<input type="file" hidden /></label>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.notif-bell-toggle / .theme-toggle-btn</code>
+        <div class="sg-row">
+          <button type="button" class="notif-bell-toggle" aria-label="Notifications">&#9825;<span class="notif-bell-badge">3</span></button>
+          <button type="button" class="theme-toggle-btn" aria-label="Toggle theme">&#9789;</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-inputs">
+      <h2>Inputs &amp; selects</h2>
+      <div class="sg-item">
+        <code>input[type=text] / .search-input / textarea / select.sort-select</code>
+        <div class="sg-col sg-demo-narrow">
+          <input type="text" placeholder="Plain text input" />
+          <input type="text" class="search-input" placeholder="Search addons…" />
+          <select class="sort-select"><option>Newest</option><option>Most liked</option></select>
+          <textarea rows="3" placeholder="A textarea"></textarea>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.custom-select-trigger.sort-select (trigger carries the select's skin)</code>
+        <div class="sg-row">
+          <span id="sortSelect-wrapper"><button type="button" class="custom-select-trigger sort-select">Newest ▾</button></span>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.view-toggle + .view-toggle-btn(.active)</code>
+        <div class="sg-row">
+          <div class="view-toggle">
+            <button type="button" class="view-toggle-btn active">Grid</button>
+            <button type="button" class="view-toggle-btn">List</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-chips">
+      <h2>Chips, tags &amp; badges</h2>
+      <div class="sg-item">
+        <code>.filter-chip / .filter-chip.active / .chip / .chip.active</code>
+        <div class="sg-row">
+          <button type="button" class="filter-chip">Vanilla</button>
+          <button type="button" class="filter-chip active">Active filter</button>
+          <button type="button" class="chip">Choice</button>
+          <button type="button" class="chip active">Chosen</button>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.tag / .tag-badge / .addon-row-badge (+ -new)</code>
+        <div class="sg-row">
+          <span class="tag">adventure</span>
+          <span class="tag-badge">v0.3.x</span>
+          <span class="addon-row-badge">release</span>
+          <span class="addon-row-badge addon-row-badge-new">new</span>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.version-channel-badge / .tab-count-badge / .server-status-badge</code>
+        <div class="sg-row">
+          <span class="version-channel-badge">R</span>
+          <span class="tab-count-badge">4</span>
+          <span class="server-status-badge server-status-online">Online - 3 players</span>
+          <span class="server-status-badge server-status-offline">Offline</span>
+          <span class="server-card-version">v0.3.0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-tabs">
+      <h2>Tabs &amp; pagination</h2>
+      <div class="sg-item">
+        <code>.tab-bar + .tab-bar-btn(.active)</code>
+        <div class="tab-bar">
+          <button type="button" class="tab-bar-btn active">Description</button>
+          <button type="button" class="tab-bar-btn">Versions</button>
+          <button type="button" class="tab-bar-btn">Comments <span class="tab-count-badge">4</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-cards">
+      <h2>Cards</h2>
+      <div class="sg-item">
+        <code>.addon-card &gt; .addon-banner + .addon-icon + .addon-info</code>
+        <div class="sg-row">
+          <a class="addon-card" href="#" onclick="return false" aria-label="Open Sample Addon" style="max-width:300px">
+            <img class="addon-banner" src="/assets/default_banner.png" alt="banner" />
+            <div class="addon-icon"><img src="/assets/default_icon.png" alt="Sample Addon" /></div>
+            <div class="addon-info">
+              <h3 class="addon-title">Sample Addon</h3>
+              <p class="addon-author">by someone</p>
+              <p class="addon-description">A short description of what this addon does.</p>
+              <div class="addon-tags"><span class="tag">adventure</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.addon-row</code>
+        <div class="sg-col">
+          <div class="addon-row">
+            <img class="addon-row-icon" src="/assets/default_icon.png" alt="" />
+            <div class="addon-row-main">
+              <div class="addon-row-title">Sample Row</div>
+              <div class="addon-row-meta">by someone · v1.0</div>
+            </div>
+            <span class="addon-row-badge">release</span>
+          </div>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.server-card (+ .server-status-online)</code>
+        <div class="sg-col">
+          <a class="server-card" href="#" onclick="return false">
+            <img class="server-card-icon" src="/assets/default_icon.png" alt="" />
+            <div class="server-card-main">
+              <div class="server-card-title-row">
+                <span class="server-card-title">Sample Server</span>
+                <span class="server-card-owner">By someone</span>
+              </div>
+              <p class="server-card-desc">A friendly survival server.</p>
+              <span class="server-card-ip">play.example.net</span>
+            </div>
+            <div class="server-card-stats">
+              <span class="server-status-badge server-status-online">Online - 3 players</span>
+              <div class="server-card-tags"><span class="server-card-version">v0.3.0</span></div>
+              <button type="button" class="server-card-like"><span class="server-card-like-icon">❤</span><span class="server-card-like-count">12</span></button>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-versions">
+      <h2>Version rows &amp; comments</h2>
+      <div class="sg-item">
+        <code>li.version-row(.active-version) &gt; .version-row-main + .version-row-actions</code>
+        <div class="sg-col">
+          <ul id="versions-list">
+            <li class="version-row active-version">
+              <div class="version-row-main">
+                <span class="version-channel-col"><span class="version-channel-badge">R</span></span>
+                <div class="version-info"><span class="version-tag-col"><span class="version-tag">1.2.0</span></span></div>
+              </div>
+              <div class="version-row-actions">
+                <button type="button" class="btn btn-primary btn-sm">Download</button>
+                <button type="button" class="version-delete-btn">Delete</button>
+              </div>
+            </li>
+            <li class="version-row">
+              <div class="version-row-main">
+                <span class="version-channel-col"><span class="version-channel-badge">R</span></span>
+                <div class="version-info"><span class="version-tag-col"><span class="version-tag">1.1.0</span></span></div>
+              </div>
+              <div class="version-row-actions">
+                <button type="button" class="btn btn-primary btn-sm">Download</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sg-item">
+        <code>.comment-thread &gt; .comment (+ .comment-replies &gt; .comment-reply)</code>
+        <div class="sg-col">
+          <div class="comment-thread">
+            <div class="comment">
+              <img class="comment-avatar" src="/assets/default_icon.png" alt="" />
+              <div class="comment-body">
+                <div class="comment-head">
+                  <a class="comment-author" href="#" onclick="return false">someone</a>
+                  <span class="comment-date">2h ago</span>
+                </div>
+                <div class="comment-content">This addon is great, but the textures clash with vanilla.</div>
+              </div>
+            </div>
+            <div class="comment-replies">
+              <div class="comment comment-reply">
+                <img class="comment-avatar" src="/assets/default_icon.png" alt="" />
+                <div class="comment-body">
+                  <div class="comment-head">
+                    <a class="comment-author" href="#" onclick="return false">author</a>
+                    <span class="comment-date">1h ago</span>
+                  </div>
+                  <div class="comment-content">Thanks - fixed in 1.2.0!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section" id="sg-toasts">
+      <h2>Toasts</h2>
+      <div class="sg-item">
+        <code>toast.info / toast.success / toast.error (preview only - no backend)</code>
+        <div class="sg-row">
+          <button type="button" class="btn btn-ghost btn-sm" id="sgToastInfo">Info toast</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="sgToastSuccess">Success toast</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="sgToastError">Error toast</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="toast.js?v=20260919-17"></script>
+  <script>
+    document.getElementById("sgThemeToggle").addEventListener("click", function () {
+      var root = document.documentElement;
+      var next = root.getAttribute("data-theme") === "ashframe" ? "default" : "ashframe";
+      if (next === "default") root.removeAttribute("data-theme");
+      else root.setAttribute("data-theme", "ashframe");
+      try { localStorage.setItem("cubyzhub-theme", next); } catch (_) {}
+    });
+    document.getElementById("sgToastInfo").addEventListener("click", function () {
+      window.toast.info("This is what neutral info toasts look like.");
+    });
+    document.getElementById("sgToastSuccess").addEventListener("click", function () {
+      window.toast.success("Saved - this is the success style.");
+    });
+    document.getElementById("sgToastError").addEventListener("click", function () {
+      window.toast.error("Something failed - this is the error style. Hover pauses me.");
+    });
+  </script>
+</body>
+</html>

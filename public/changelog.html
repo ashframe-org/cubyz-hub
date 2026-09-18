@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("cubyzhub-theme");
+        if (saved !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
+  <title>Changelog - Cubyz Hub</title>
+  <meta name="description" content="See what's new on CubyzHub - recent site updates and improvements.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="/dist/buttons.css?v=20260919-17" />
+  <link rel="stylesheet" href="/dist/style.css?v=20260919-17" />
+  <link rel="stylesheet" href="/changelog.css?v=20260919-17" />
+  <link rel="stylesheet" href="/dist/ashframe-theme.css?v=20260919-17" />
+</head>
+
+<body>
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main class="changelog-page">
+    <section class="changelog-hero">
+      <h2>Changelog</h2>
+      <p class="muted">Updates and changes to Cubyz Hub.</p>
+    </section>
+
+    <section id="changelog-composer" class="changelog-composer hidden">
+      <h3 id="changelog-composer-heading">Post an update</h3>
+      <div class="field">
+        <label>Title</label>
+        <input id="changelog-title-input" type="text" maxlength="120" placeholder="e.g. Activity status is here">
+      </div>
+      <div class="field">
+        <label>Details</label>
+        <textarea id="changelog-body-input" maxlength="4000" rows="5" placeholder="What changed? Supports Markdown & HTML."></textarea>
+      </div>
+      <div class="changelog-composer-row">
+        <div class="field">
+          <label>Date <span class="changelog-composer-hint-inline">(optional, defaults to today - DD/MM/YYYY)</span></label>
+          <input type="text" id="changelog-date-input" placeholder="DD/MM/YYYY" inputmode="numeric" maxlength="10">
+        </div>
+        <div class="field">
+          <label>Tag <span class="changelog-composer-hint-inline">(optional)</span></label>
+          <select id="changelog-tag-select">
+            <option value="">None</option>
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="changelog-screenshots-field">
+        <label>Screenshots</label>
+        <div id="changelog-composer-screenshots" class="changelog-screenshots"></div>
+        <button type="button" id="changelog-add-screenshot-btn" class="btn btn-ghost btn-sm">+ Add screenshot</button>
+        <p class="changelog-composer-hint-inline" id="changelog-screenshots-hint">Save as a draft or publish first, then add screenshots.</p>
+      </div>
+      <label class="changelog-composer-test-row" id="changelog-notify-row">
+        <input type="checkbox" id="changelog-notify-checkbox" checked>
+        <span>Notify everyone when this goes public</span>
+      </label>
+      <p id="changelog-composer-error" class="field-error" hidden></p>
+      <div class="changelog-composer-actions">
+        <button id="changelog-post-btn" class="btn btn-primary btn-sm">Publish now</button>
+        <button id="changelog-draft-btn" type="button" class="btn btn-ghost btn-sm">Save as draft</button>
+        <button id="changelog-cancel-edit-btn" type="button" class="btn btn-ghost btn-sm hidden">Cancel edit</button>
+      </div>
+      <p class="changelog-composer-hint">A draft stays private until you hit Publish on it later - publishing sends the update notification at that point.</p>
+    </section>
+
+    <div id="changelog-filter-bar" class="changelog-filter-bar hidden">
+      <button type="button" class="changelog-filter-btn active" data-filter="">All</button>
+      <button type="button" class="changelog-filter-btn" data-filter="major">Major</button>
+      <button type="button" class="changelog-filter-btn" data-filter="minor">Minor</button>
+    </div>
+
+    <section id="changelog-list" class="changelog-list"></section>
+    <div id="changelog-empty" class="empty-state hidden">
+      <h3>No updates yet</h3>
+      <p class="muted">Check back later.</p>
+    </div>
+  </main>
+
+  <div id="changelog-modal" class="changelog-modal-overlay hidden">
+    <div class="changelog-modal-box">
+      <button type="button" id="changelog-modal-close" class="changelog-modal-close" aria-label="Close">&times;</button>
+      <div class="changelog-modal-capture-actions">
+        <button type="button" id="changelog-modal-capture-btn" class="btn btn-ghost btn-sm hidden">Copy as image</button>
+        <button type="button" id="changelog-modal-download-btn" class="btn btn-ghost btn-sm hidden">Download image</button>
+      </div>
+      <div id="changelog-modal-capture-area">
+        <div class="changelog-modal-header">
+          <h3 id="changelog-modal-title"></h3>
+          <span id="changelog-modal-date" class="changelog-entry-date"></span>
+        </div>
+        <div id="changelog-modal-body" class="changelog-entry-body addon-longdesc"></div>
+        <div id="changelog-modal-screenshots" class="changelog-screenshots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="changelog-img-modal" class="img-modal">
+    <span id="changelog-img-modal-close" class="img-modal-close">✕</span>
+    <button id="changelog-img-prev" class="img-nav left">❮</button>
+    <img id="changelog-img-modal-content" class="img-modal-content">
+    <button id="changelog-img-next" class="img-nav right">❯</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="upload.html">Upload</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.63-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.36.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.7-.32 12.9.1 17.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1-.01-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0c.12.1.24.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.83 19.83 0 0 0 6.01-3.03.08.08 0 0 0 .03-.06c.5-4.83-.83-9-3.53-12.66a.06.06 0 0 0-.03-.03ZM8.02 14.6c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42Z"></path></svg>
+          Discord Server
+        </a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          Open Source
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
+  </footer>
+
+  <script src="/vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="/vendor/marked.umd.js?v=20260919-17"></script>
+  <script src="/vendor/purify.min.js?v=20260919-17"></script>
+  <script src="/vendor/html2canvas.min.js"></script>
+  <script src="/dist/compress.js?v=20260919-17"></script>
+  <script src="/theme-toggle.js?v=20260919-17"></script>
+  <script src="toast.js?v=20260919-17"></script>
+  <script src="/dist/changelog.js?v=20260919-17"></script>
+  <script type="module" src="/dist/auth.js?v=20260919-17"></script>
+</body>
+
+</html>

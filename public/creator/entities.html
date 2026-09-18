@@ -1,0 +1,110 @@
+<div class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 style="margin: 0;">Entity Creator (BETA)</h2>
+    </div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="entityId">Entity ID<span class="hint-text">(Filename)</span></label>
+            <input type="text" id="entityId" placeholder="snale" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+
+        <div class="form-group col">
+            <label for="entityHeight">Height</label>
+            <input type="number" id="entityHeight" value="2.0" step="0.1" min="0.1">
+            <span class="field-explanation">The entity's height in blocks.</span>
+        </div>
+
+        <div class="form-group col" style="position: relative;">
+            <label for="entityCoordSystem">Coordinate System</label>
+            <input type="hidden" id="entityCoordSystem" value=".right_handed_z_up">
+            <input type="text" id="entityCoordSystemSearch" value="Right-Handed Z-Up (CUBERT)" readonly style="cursor: pointer;" onfocus="document.getElementById('entityCoordSystemDropdown').style.display='block'">
+            <div id="entityCoordSystemDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('entityCoordSystem').value='.right_handed_z_up'; document.getElementById('entityCoordSystemSearch').value='Right-Handed Z-Up (Default)'; document.getElementById('entityCoordSystemDropdown').style.display='none';">Right-Handed Z-Up (CUBERT)</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('entityCoordSystem').value='.left_handed_y_up'; document.getElementById('entityCoordSystemSearch').value='Left-Handed Y-Up'; document.getElementById('entityCoordSystemDropdown').style.display='none';">Left-Handed Y-Up (SNALE)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+        <div class="form-group col texture-select-wrapper" style="position: relative;">
+            <label for="entityModelSearch">Model</label>
+            <input type="text"
+                id="entityModelSearch"
+                autocomplete="off"
+                placeholder="Select model..."
+                onfocus="window.showRecipeDropdown('entityModelDropdown', 'entityModelSearch', 'entity_models')"
+                oninput="window.filterDropdown('entityModelSearch', 'entityModelDropdown')">
+
+            <div id="entityModelDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+
+            <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">
+                + Add Custom GLB
+                <input type="file" accept=".glb" style="display:none" onchange="window.handleCustomEntityModel(this, 'entityModelSearch')">
+            </label>
+        </div>
+
+        <div class="form-group col texture-select-wrapper" style="position: relative;">
+            <label for="entityTextureSearch">Texture</label>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <img id="thumb_entityTextureSearch" class="dropdown-thumb-pre" style="width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; background: #000; border: 1px solid var(--border); border-radius: 4px; display: none;">
+
+                <input type="text"
+                    id="entityTextureSearch"
+                    autocomplete="off"
+                    placeholder="Select texture..."
+                    onfocus="window.showRecipeDropdown('entityTextureDropdown', 'entityTextureSearch', 'entity_textures')"
+                    oninput="window.filterDropdown('entityTextureSearch', 'entityTextureDropdown')">
+            </div>
+
+            <div id="entityTextureDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 200px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+
+            <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">
+                + Add Custom PNG
+                <input type="file" accept=".png" style="display:none" onchange="window.handleCustomEntityTexture(this, 'entityTextureSearch')">
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 20px;">
+        <label>Tags <span class="hint-text">(Arbitrary)</span></label>
+
+        <div id="entityTagsContainer"
+            style="display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 4px; min-height: 38px; align-items: center;">
+
+            <input type="text"
+                id="entityTagTextInput"
+                placeholder="Add a tag..."
+                autocomplete="off"
+                style="border: none; background: transparent; color: var(--text); outline: none; flex: 1; min-width: 150px; padding: 0;">
+        </div>
+
+        <div style="margin-top: 6px; font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-left: 4px;">
+            <span style="color: var(--text-muted);">Quick Add:</span>
+
+            <button type="button"
+                onclick="window.addDynamicTagPill('entityTagsContainer', 'entityTagTextInput', 'playerModel')"
+                style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                + playerModel
+            </button>
+
+            <button type="button"
+                onclick="window.addDynamicTagPill('entityTagsContainer', 'entityTagTextInput', 'living')"
+                style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                + living
+            </button>
+
+            <button type="button"
+                onclick="window.addDynamicTagPill('entityTagsContainer', 'entityTagTextInput', 'ambient')"
+                style="background: transparent; border: 1px solid var(--border); color: var(--accent); padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                + ambient
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.hint-text { font-size: 0.85em; color: var(--text-muted); font-weight: normal; margin-left: 5px; }
+.field-explanation { margin: 4px 0 0 4px; font-size: 0.88em; color: #b0b0b0; line-height: 1.4; }
+</style>

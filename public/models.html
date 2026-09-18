@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("cubyzhub-theme");
+        if (saved !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
+
+  <title>Models - Cubyz Hub</title>
+  <meta name="description" content="Browse and upload community-made Cubyz models and skins.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="preload" href="dist/style.css?v=20260919-17" as="style">
+  <link rel="stylesheet" href="dist/buttons.css?v=20260919-17" />
+  <link rel="stylesheet" href="dist/style.css?v=20260919-17" />
+  <link rel="stylesheet" href="dist/ashframe-theme.css?v=20260919-17" />
+  <link rel="stylesheet" href="models.css?v=20260919-17" />
+  <style>
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title bbh-sans-hegarty-regular"><a href="/">Cubyz Hub</a></h1>
+
+    <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+
+    <div class="models-section-title">
+      <span>// Official models</span>
+      <span>Curated</span>
+    </div>
+    <div id="model-official-grid" class="model-grid"></div>
+
+    <section class="toolbar">
+      <div class="filter-bar">
+
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            id="modelSearchBar"
+            class="search-input"
+            type="text"
+            placeholder="Search models…"
+            autocomplete="off"
+          >
+        </div>
+
+        <select id="modelSortSelect" class="sort-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="votes">Most votes</option>
+        </select>
+
+        <select id="modelTypeSelect" class="sort-select">
+          <option value="">All types</option>
+          <option value="full_model">Full models</option>
+          <option value="skin_only">Skins</option>
+        </select>
+
+      </div>
+    </section>
+
+    <div class="models-section-title">
+      <span>Community creations</span>
+    </div>
+    <section
+      id="model-container"
+      class="model-grid"
+      aria-live="polite"
+    ></section>
+
+    <section id="model-empty-state" class="empty-state" style="display:none;">
+      <p>No models found yet.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="upload.html">Upload</a>
+        <a href="/models">Models</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.63-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.36.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.7-.32 12.9.1 17.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1-.01-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0c.12.1.24.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.83 19.83 0 0 0 6.01-3.03.08.08 0 0 0 .03-.06c.5-4.83-.83-9-3.53-12.66a.06.06 0 0 0-.03-.03ZM8.02 14.6c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42Z"></path></svg>
+          Discord Server
+        </a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          Open Source
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
+  </footer>
+
+  <div id="authModal" class="auth-modal">
+    <div
+      class="auth-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authTitle"
+    >
+
+      <h2 id="authTitle">Login</h2>
+
+      <form id="authForm">
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          required
+          maxlength="20"
+          autocomplete="username"
+        >
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          required
+          autocomplete="current-password"
+        >
+
+        <div id="authError" class="auth-error" hidden></div>
+
+        <button type="submit" id="authSubmit">Login</button>
+
+        <div class="auth-divider" id="authDivider">or</div>
+
+        <p class="auth-toggle auth-passkey-row" id="authPasskeyRow">
+          <button type="button" id="passkeyLoginBtn" class="btn btn-ghost btn-sm">Sign in with a passkey</button>
+        </p>
+
+        <div class="auth-footer-links">
+          <a href="#" id="toggleAuth">Create an account</a>
+          <span id="authForgotWrap" class="auth-forgot-group">
+            <span class="auth-footer-sep" aria-hidden="true">·</span>
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+          </span>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <div id="modelViewerModal" class="blur-overlay" aria-hidden="true">
+    <div class="modal-box model-viewer-modal-box">
+      <div class="modal-header model-viewer-header">
+        <div class="model-viewer-header-text">
+          <h3 id="modelViewerTitle">Model</h3>
+          <div class="model-viewer-header-meta">
+            <span id="modelViewerSubtitle" class="model-card-subtitle"></span>
+            <span class="model-viewer-header-sep" aria-hidden="true">&bull;</span>
+            <span>By <a id="modelViewerAuthor" class="model-author-link" href="#"></a></span>
+            <button type="button" id="modelViewerVoteBtn" class="title-likes like-btn">
+              <span class="like-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21s-6.7-4.35-9.3-8.1C1 10.1 1.8 6.6 4.9 5.2c2.2-1 4.4-.2 5.6 1.4a1 1 0 0 0 1.6 0c1.2-1.6 3.4-2.4 5.6-1.4 3.1 1.4 3.9 4.9 2.2 7.7C18.7 16.65 12 21 12 21Z"></path></svg>
+              </span>
+              <span id="modelViewerVoteCount">0</span>
+            </button>
+          </div>
+        </div>
+        <button type="button" id="modelViewerClose" class="btn btn-ghost btn-sm" aria-label="Close">✕</button>
+      </div>
+
+      <div class="model-viewer-body">
+        <div class="model-viewer-canvas-wrap">
+          <div id="modelViewerCanvas" class="model-viewer-canvas"></div>
+          <p class="model-viewer-hint">Drag to rotate &bull; Scroll to zoom</p>
+        </div>
+
+        <div class="model-viewer-info">
+          <p id="modelViewerDescription" class="model-viewer-description"></p>
+
+          <div class="model-viewer-downloads">
+            <a id="modelViewerTextureLink" class="btn btn-primary" download>Download Texture</a>
+            <a id="modelViewerMeshLink" class="btn btn-ghost hidden" download>Download Mesh</a>
+          </div>
+
+          <div id="modelViewerRemixesSection" class="model-viewer-remixes hidden">
+            <span class="model-viewer-remixes-label">Remixes</span>
+            <div id="modelViewerRemixesStrip" class="model-viewer-remixes-strip"></div>
+          </div>
+
+          <a id="modelViewerRemixBtn" class="btn btn-primary model-viewer-remix-btn hidden" href="/uploadmodel.html">Create a Remix</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="theme-toggle.js?v=20260919-17"></script>
+  <script src="toast.js?v=20260919-17"></script>
+  <script src="vendor/three-r128.min.js"></script>
+  <script src="vendor/GLTFLoader-r128.js"></script>
+  <script type="module" src="dist/models.js?v=20260919-17"></script>
+
+  <script type="module" src="./dist/auth.js?v=20260919-17"></script>
+
+</body>
+</html>

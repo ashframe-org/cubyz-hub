@@ -1,0 +1,141 @@
+<div class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 style="margin: 0;">Particle Creator (ALPHA)</h2>
+    </div>
+
+    <div class="row">
+        <div class="form-group col">
+            <label for="particleId">Particle ID<span class="hint-text">(Filename)</span></label>
+            <input type="text" id="particleId" placeholder="smoke_puff" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+
+        <div class="form-group col texture-select-wrapper" style="position: relative;">
+            <label for="particleTextureSearch">Particle Texture</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <img id="thumb_particleTextureSearch" class="dropdown-thumb-pre" style="width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; background: #000; border: 1px solid var(--border); border-radius: 4px; display: none;">
+                <input type="text" id="particleTextureSearch" placeholder="cubyz:fire_spark" autocomplete="off" onfocus="window.showRecipeDropdown('particleTextureDropdown', 'particleTextureSearch', 'particle_textures')" oninput="window.filterDropdown('particleTextureSearch', 'particleTextureDropdown')">
+            </div>
+            <div id="particleTextureDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; max-height: 180px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000;"></div>
+            <label class="file-input-label" style="display: block; margin-top: 5px; cursor: pointer; color: var(--accent);">
+                + Add Custom PNG
+                <input type="file" accept=".png" style="display:none" onchange="window.handleCustomTexture(this, 'particleTextureSearch')">
+            </label>
+        </div>
+
+        <div class="form-group col" style="display: flex; flex-direction: column; justify-content: center; padding-top: 15px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="particleHasEmission" onchange="document.getElementById('emissionWarning').style.display = this.checked ? 'block' : 'none'">
+                Enable Emission Texture (_emission)
+            </label>
+            <span id="emissionWarning" style="display: none; color: #ffbc00; font-size: 11px; margin-top: 4px; line-height: 1.3;">
+            </span>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 25px; border-bottom: 1px solid #333; padding-bottom: 5px; color: var(--text-muted);">
+        Particle Settings (Min / Max)
+    </h3>
+
+    <div class="row">
+        <div class="form-group col">
+            <label>Spawn Speed</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleSpeedMin" value="1.0" step="0.1" placeholder="Min">
+                <input type="number" id="particleSpeedMax" value="1.5" step="0.1" placeholder="Max">
+            </div>
+        </div>
+
+        <div class="form-group col">
+            <label>Lifetime (Seconds)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleLifeMin" value="0.75" step="0.05" placeholder="Min">
+                <input type="number" id="particleLifeMax" value="1.0" step="0.05" placeholder="Max">
+            </div>
+        </div>
+
+        <div class="form-group col">
+            <label>Density</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleDensityMin" value="2.0" step="0.1" placeholder="Min">
+                <input type="number" id="particleDensityMax" value="3.0" step="0.1" placeholder="Max">
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px;">
+        <div class="form-group col">
+            <label>Rotation Speed (°/s)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleRotVelMin" value="20" step="5" placeholder="Min">
+                <input type="number" id="particleRotVelMax" value="60" step="5" placeholder="Max">
+            </div>
+        </div>
+
+        <div class="form-group col">
+            <label>Drag</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleDragMin" value="0.5" step="0.05" placeholder="Min">
+                <input type="number" id="particleDragMax" value="0.6" step="0.05" placeholder="Max">
+            </div>
+        </div>
+
+        <div class="form-group col" style="display: flex; align-items: center; gap: 20px; padding-top: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="particleRandomRotate" checked>
+                Random Rotation
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="particleCollides" checked>
+                Collides with World
+            </label>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 25px; border-bottom: 1px solid #333; padding-bottom: 5px; color: var(--text-muted);">
+        Spawn Shape &amp; Direction
+    </h3>
+
+    <div class="row">
+        <div class="form-group col" style="position: relative;">
+            <label for="particleSpawnShape">Spawn Shape</label>
+            <input type="hidden" id="particleSpawnShape" value="point">
+            <input type="text" id="particleSpawnShapeSearch" value="Point" readonly style="cursor: pointer;" onfocus="document.getElementById('particleSpawnShapeDropdown').style.display='block'">
+            <div id="particleSpawnShapeDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleSpawnShape').value='point'; document.getElementById('particleSpawnShapeSearch').value='Point'; window.toggleParticleShapeFields('point'); document.getElementById('particleSpawnShapeDropdown').style.display='none';">Point</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleSpawnShape').value='sphere'; document.getElementById('particleSpawnShapeSearch').value='Sphere'; window.toggleParticleShapeFields('sphere'); document.getElementById('particleSpawnShapeDropdown').style.display='none';">Sphere</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleSpawnShape').value='cube'; document.getElementById('particleSpawnShapeSearch').value='Cube'; window.toggleParticleShapeFields('cube'); document.getElementById('particleSpawnShapeDropdown').style.display='none';">Cube</div>
+            </div>
+        </div>
+
+        <div id="shapeParamWrapper" class="form-group col" style="display: none;">
+        </div>
+
+        <div class="form-group col" style="position: relative;">
+            <label for="particleDirectionMode">Spawn Direction</label>
+            <input type="hidden" id="particleDirectionMode" value="spread">
+            <input type="text" id="particleDirectionModeSearch" value="Spread" readonly style="cursor: pointer;" onfocus="document.getElementById('particleDirectionModeDropdown').style.display='block'">
+            <div id="particleDirectionModeDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleDirectionMode').value='spread'; document.getElementById('particleDirectionModeSearch').value='Spread'; window.toggleParticleDirectionFields('spread'); document.getElementById('particleDirectionModeDropdown').style.display='none';">Spread</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleDirectionMode').value='scatter'; document.getElementById('particleDirectionModeSearch').value='Random'; window.toggleParticleDirectionFields('scatter'); document.getElementById('particleDirectionModeDropdown').style.display='none';">Random</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('particleDirectionMode').value='direction'; document.getElementById('particleDirectionModeSearch').value='Fixed Direction'; window.toggleParticleDirectionFields('direction'); document.getElementById('particleDirectionModeDropdown').style.display='none';">Fixed Direction</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="directionVectorWrapper" class="row" style="display: none; margin-top: 15px;">
+        <div class="form-group col">
+            <label>Direction (X, Y, Z)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="particleDirX" value="0.0" step="0.1" placeholder="X">
+                <input type="number" id="particleDirY" value="0.0" step="0.1" placeholder="Y">
+                <input type="number" id="particleDirZ" value="1.0" step="0.1" placeholder="Z">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hint-text { font-size: 0.85em; color: var(--text-muted); font-weight: normal; margin-left: 5px; }
+.field-explanation { margin: 4px 0 0 4px; font-size: 0.88em; color: #b0b0b0; line-height: 1.4; }
+</style>

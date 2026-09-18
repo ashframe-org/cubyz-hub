@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark">
+  <style>html { background: #101010; }</style>
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("cubyzhub-theme");
+        if (saved !== "default") {
+          document.documentElement.setAttribute("data-theme", "ashframe");
+        }
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "ashframe");
+      }
+    })();
+  </script>
+  <title>Paint a Model - Cubyz Hub</title>
+  <meta name="description" content="Paint a custom skin for a Cubyz model or upload your own.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="dist/buttons.css?v=20260919-17" />
+  <link rel="stylesheet" href="dist/style.css?v=20260919-17" />
+  <link rel="stylesheet" href="uploadmodel.css?v=20260919-17">
+  <link rel="stylesheet" href="dist/ashframe-theme.css?v=20260919-17" />
+</head>
+
+<body class="no-nav-search">
+
+  <header class="site-header">
+    <h1 class="site-title"><a href="/">Cubyz Hub</a></h1>
+    <div class="header-actions nav-user" id="nav-user"></div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" data-theme-trigger aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main class="um-main">
+    <div class="um-card">
+      <div class="um-steps">
+        <div id="umStep1Indicator" class="step active">1. Choose base</div>
+        <div id="umStep2Indicator" class="step">2. Paint</div>
+        <div id="umStep3Indicator" class="step">3. Save</div>
+      </div>
+
+      <section id="umStep1" class="um-panel">
+        <h2 id="umStep1Title">Choose a base model</h2>
+        <p class="muted" id="umStep1Subtitle">Pick one of the official Cubyz models to reskin, or upload your own full custom model below.</p>
+
+        <div id="umBaseGrid" class="um-base-grid"></div>
+
+        <div class="um-divider"><span>or</span></div>
+
+        <div class="um-custom-toggle-row">
+          <button type="button" id="umCustomModelToggle" class="btn btn-ghost">Upload a full custom model (.glb) instead</button>
+        </div>
+
+        <div id="umCustomModelBox" class="um-custom-model-box hidden">
+          <label class="um-file-row">
+            <span>.glb model file <em>required</em></span>
+            <input type="file" id="umCustomGlbInput" accept=".glb">
+          </label>
+          <label class="um-file-row">
+            <span>.png texture file <em>required</em></span>
+            <input type="file" id="umCustomTextureInput" accept=".png">
+          </label>
+          <div id="umCustomModelError" class="field-error" hidden></div>
+          <div class="form-actions">
+            <button type="button" id="umCustomModelNext" class="btn btn-primary">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="umStep2" class="um-panel hidden">
+        <h2>Paint your texture</h2>
+
+        <div class="um-paint-status-row">
+          <span id="umPaintStatus" class="um-paint-status">Updating 3D view…</span>
+        </div>
+
+        <div class="um-paint-split">
+          <div class="um-preview-wrap">
+            <div id="umPreviewCanvasContainer" class="um-preview-canvas"></div>
+            <p class="um-preview-hint">Drag to rotate &bull; Scroll to zoom</p>
+          </div>
+
+          <div class="um-paint-area">
+            <div class="um-toolbar">
+              <div class="um-tool-group">
+                <button type="button" id="umToolPaint" class="um-tool-btn active" title="Paint (brush)">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"></path><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"></path></svg>
+                </button>
+                <button type="button" id="umToolEyedropper" class="um-tool-btn" title="Pick a color from the texture">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 22 1-1h3l9-9"></path><path d="M3 21v-3l9-9"></path><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3L12 9l-3-3z"></path></svg>
+                </button>
+                <button type="button" id="umToolPan" class="um-tool-btn" title="Pan (drag to scroll)">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9V7a2 2 0 0 1 4 0v2"></path><path d="M9 8V6a2 2 0 1 1 4 0v2"></path><path d="M13 8.5V7a2 2 0 1 1 4 0v5"></path><path d="M17 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-4.53a1.94 1.94 0 0 1 2.83-2.64L6 13"></path></svg>
+                </button>
+              </div>
+
+              <div class="um-tool-group">
+                <button type="button" id="umZoomIn" class="um-tool-btn" title="Zoom in (Ctrl+scroll)">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </button>
+                <button type="button" id="umZoomOut" class="um-tool-btn" title="Zoom out (Ctrl+scroll)">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </button>
+              </div>
+
+              <div class="um-tool-group um-tool-group-inline">
+                <input type="color" id="umPaintColor" value="#5BA65B" title="Brush color">
+              </div>
+
+              <div class="um-tool-group um-tool-group-inline">
+                <label for="umBrushSize" class="um-inline-label">Size:</label>
+                <input type="range" id="umBrushSize" min="1" max="8" value="1">
+              </div>
+
+              <div class="um-tool-group um-tool-group-end">
+                <label class="um-inline-label um-grid-toggle-label">
+                  <input type="checkbox" id="umShowGridToggle" checked>
+                  Grid
+                </label>
+                <button type="button" id="umUndoBtn" class="btn btn-ghost btn-sm" title="Undo (Ctrl+Z)">Undo</button>
+                <button type="button" id="umResetBtn" class="btn btn-ghost btn-sm">Reset</button>
+              </div>
+            </div>
+
+            <div id="umCanvasScrollContainer" class="um-canvas-scroll-container">
+              <div class="um-canvas-wrapper" id="umPaintAreaContainer">
+                <canvas id="umTexturePainter" class="um-pixel-canvas"></canvas>
+                <canvas id="umGridOverlayCanvas" class="um-pixel-canvas um-grid-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="umBackToStep1" class="btn btn-ghost">Back</button>
+          <button type="button" id="umToStep3" class="btn btn-primary">Next</button>
+        </div>
+      </section>
+
+      <section id="umStep3" class="um-panel hidden">
+        <h2>Title and description</h2>
+
+        <div class="um-details-form">
+          <label>
+            <span>Title</span>
+            <input type="text" id="umTitleInput" placeholder="My Custom Skin" maxlength="80">
+          </label>
+          <label>
+            <span>Description (optional)</span>
+            <textarea id="umDescriptionInput" placeholder="Tell people about your creation…" maxlength="500"></textarea>
+          </label>
+          <div id="umDetailsError" class="field-error" hidden></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="umBackToStep2" class="btn btn-ghost">Back</button>
+          <button type="button" id="umSaveDraftBtn" class="btn btn-ghost">Save Draft</button>
+          <button type="button" id="umPublishBtn" class="btn btn-primary">Publish</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3>CubyzHub</h3>
+        <a href="/addons">Explore</a>
+        <a href="upload.html">Upload</a>
+        <a href="/models">Models</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="site-footer-col">
+        <h3>Community</h3>
+        <a href="https://discord.gg/QsjZnQzEsc" target="_blank" rel="noopener noreferrer">Discord Server</a>
+        <a href="https://github.com/ashframe-org" target="_blank" rel="noopener noreferrer">Open Source</a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-row">
+      <p class="site-footer-blurb">CubyzHub is a community-run platform for Cubyz addons and mods, not an official Cubyz service.</p>
+      <span class="site-footer-credit">Cubyz Hub &middot; by iNiKKo &copy; 2025-2026</span>
+    </div>
+  </footer>
+
+  <script src="vendor/simplewebauthn-browser.umd.min.js"></script>
+  <script src="theme-toggle.js?v=20260919-17"></script>
+  <script src="toast.js?v=20260919-17"></script>
+  <script src="vendor/three-r128.min.js"></script>
+  <script src="vendor/GLTFLoader-r128.js"></script>
+  <script type="module" src="dist/uploadmodel.js?v=20260919-17"></script>
+  <script type="module" src="./dist/auth.js?v=20260919-17"></script>
+
+</body>
+</html>

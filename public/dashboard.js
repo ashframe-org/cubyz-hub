@@ -1,5 +1,17 @@
-function showToast(msg, { error = false, duration = 2000 } = {}) {
+function parseServerDate(value) {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)) {
+    return new Date(value.replace(" ", "T") + "Z");
+  }
+  return new Date(value);
+}
+
+function showToast(msg, { error = false, duration } = {}) {
+  if (typeof window.toast === "function") {
+    (error ? window.toast.error : window.toast.info)(msg, duration ? { duration } : undefined);
+    return;
+  }
   const area = document.getElementById("toastArea");
+  if (!area) return;
   const t = document.createElement("div");
   t.className = "toast" + (error ? " error" : "");
   t.textContent = msg;
@@ -9,78 +21,15 @@ function showToast(msg, { error = false, duration = 2000 } = {}) {
   setTimeout(() => {
     t.classList.remove("show");
     setTimeout(() => t.remove(), 250);
-  }, duration);
+  }, typeof duration === "number" ? duration : 2000);
 }
 
-
-
-async function loadNavUser() {
-  try {
-    const res = await fetch("/api/auth/status", { credentials: "include" });
-    const j = await res.json().catch(() => ({ ok: false }));
-    const navs = document.querySelectorAll("#nav-user");
-    if (!navs || navs.length === 0) return;
-
-    navs.forEach((n, i) => {
-      if (i > 0) n.remove();
-    });
-
-    const nav = navs[0];
-    nav.innerHTML = "";
-
-    if (j.ok && j.user) {
-      const sp = document.createElement("button");
-      sp.className = "auth-btn user-label";
-      sp.title = "Dashboard";
-      sp.onclick = () => (window.location.href = "/dashboard.html");
-
-      const icon = document.createElement("img");
-      icon.className = "user-icon";
-      const DEFAULT_AVATAR = "/assets/Snale_Avatar.webp";
-      const avatarUrl = j.user.avatarUrl || DEFAULT_AVATAR;
-      icon.src = avatarUrl;
-      icon.onerror = () => {
-        icon.src = DEFAULT_AVATAR;
-      };
-
-      const name = document.createElement("span");
-      name.className = "user-name";
-      name.textContent = 'Account';
-
-      sp.append(icon, name);
-
-      const out = document.createElement("button");
-      out.className = "auth-btn";
-      out.textContent = "Logout";
-      out.onclick = async () => {
-        await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
-        window.location.reload();
-      };
-
-      nav.append(sp, out);
-    } else {
-      const login = document.createElement("button");
-      login.className = "auth-btn";
-      login.textContent = "Login / Register";
-      login.onclick = () => (window.location.href = "/");
-      nav.append(login);
-    }
-  } catch (err) {
-    console.error("NAV ERROR:", err);
-  }
-}
 
 
 let currentAddons = [];
-let editingId = null;
 
 const addonGrid = document.getElementById("addonGrid");
 const emptyState = document.getElementById("emptyState");
-const modal = document.getElementById("editModal");
-const modalClose = document.getElementById("modalClose");
-const cancelEdit = document.getElementById("cancelEdit");
-const editForm = document.getElementById("editForm");
-const modalAddonName = document.getElementById("modalAddonName");
 
 
 async function loadUserAddons() {
@@ -106,31 +55,16 @@ async function loadUserAddons() {
       const card = document.createElement("article");
       card.className = "user-addon-card fade-in-card";
       card.innerHTML = `
-      <div style="background:${a.bannerUrl ? `url(${a.bannerUrl}) center/cover` : "#171717"}; height:120px; border-radius:8px 8px 0 0;"></div>
-
-      <div style="padding:12px;">
-      <div style="display:flex; gap:10px; align-items:center;">
-      <div style="width:56px;height:56px;border-radius:8px;overflow:hidden;background:#111;">
-      <img class="img-fade" src="${a.iconUrl || "assets/default_icon.png"}"
-      alt="icon"
-      style="width:100%;height:100%;object-fit:cover;color:transparent;">
+      <div class="user-addon-icon">
+        <img class="img-fade" src="${a.iconThumbUrl || a.iconUrl || "assets/default_icon.png"}" alt="icon">
       </div>
-
-      <div style="flex:1;">
-      <h4 style="margin:0 0 6px 0;">${escapeHtml(a.name)}</h4>
-      <div style="color:#aaa;font-size:0.9rem;">
-      v${escapeHtml(a.version || "—")} • ${new Date(a.created_at).toLocaleDateString()}
-      </div>
-      </div>
-      </div>
-
-      <div style="display:flex; gap:8px; margin-top:10px; justify-content:space-between;">
-      <div style="display:flex; gap:8px;">
-      <button class="edit-btn" data-id="${a.id}">Edit</button>
-      <button class="view-btn" data-id="${a.id}">View</button>
-      </div>
-      <button class="delete-btn" data-id="${a.id}">Delete</button>
-      </div>
+      <div class="user-addon-info">
+        <h4>${escapeHtml(a.name)}</h4>
+        <div class="user-addon-meta">v${escapeHtml(a.version || "—")} &bull; ${parseServerDate(a.created_at).toLocaleDateString("en-GB")}</div>
+        <div class="user-addon-actions">
+          <button class="btn btn-ghost btn-sm view-btn" data-id="${a.id}">View</button>
+          <button class="btn btn-danger btn-sm delete-btn" data-id="${a.id}">Delete</button>
+        </div>
       </div>
       `;
 
@@ -147,10 +81,6 @@ async function loadUserAddons() {
       addonGrid.appendChild(card);
     });
 
-    document.querySelectorAll(".edit-btn").forEach((b) =>
-      b.addEventListener("click", () => openEditModal(b.dataset.id))
-    );
-
     document.querySelectorAll(".view-btn").forEach((b) =>
       b.addEventListener("click", () => {
         window.location.href = `/addon.html?id=${b.dataset.id}`;
@@ -164,60 +94,6 @@ async function loadUserAddons() {
     console.error("LOAD ADDONS FAIL:", err);
     emptyState.classList.remove("hidden");
   }
-}
-
-
-async function openEditModal(id) {
-  const addon = currentAddons.find(a => String(a.id) === String(id));
-  if (!addon) return showToast("Addon not found", { error: true });
-
-  editingId = id;
-
-  modalAddonName.textContent = addon.name;
-
-  document.getElementById("editId").value = id;
-  document.getElementById("e_name").value = addon.name || "";
-  document.getElementById("e_short").value = addon.description || "";
-
-  let localLong =
-    addon.longDescription ||
-    addon.long_description ||
-    addon.long_desc ||
-    "";
-
-  document.getElementById("e_long").value = localLong;
-
-  fetch(`/api/addons/${id}`)
-    .then(res => res.ok ? res.json() : null)
-    .then(j => {
-      if (!j || !j.addon) return;
-
-      const full = j.addon.longDescription ||
-        j.addon.long_description ||
-        j.addon.long_desc ||
-        "";
-
-      document.getElementById("e_long").value = full;
-    })
-    .catch(() => {
-      console.warn("Could not fetch full longDescription");
-    });
-
-
-  applyTagsFromAddon(addon);
-  await loadCompatibilityOptions();
-  applyCompatibilityFromAddon(addon);
-
-
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-}
-
-function closeModal() {
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
 }
 
 
@@ -262,158 +138,6 @@ confirmOk.addEventListener("click", async () => {
 });
 
 
-const tagOptions = [
-  "Biomes",
-  "Recipes",
-  "Tools",
-  "Items",
-  "Currency",
-  "QoL",
-  "Structures",
-  "Mod",
-];
-
-let selectedTags = [];
-
-function renderTagChips() {
-  const wrap = document.getElementById("edit-tag-chips");
-  wrap.innerHTML = "";
-
-  tagOptions.forEach((tag) => {
-    const div = document.createElement("div");
-    div.className = "chip" + (selectedTags.includes(tag) ? " active" : "");
-    div.textContent = tag;
-
-    div.addEventListener("click", () => {
-      if (selectedTags.includes(tag)) {
-        selectedTags = selectedTags.filter((t) => t !== tag);
-      } else if (selectedTags.length < 6) {
-        selectedTags.push(tag);
-      }
-      updateTagField();
-      renderTagChips();
-    });
-
-    wrap.appendChild(div);
-  });
-}
-
-function updateTagField() {
-  document.getElementById("e_tags").value = JSON.stringify(selectedTags);
-}
-
-function applyTagsFromAddon(addon) {
-  try {
-    selectedTags = Array.isArray(addon.tags)
-      ? addon.tags
-      : JSON.parse(addon.tags || "[]");
-  } catch {
-    selectedTags = [];
-  }
-
-  updateTagField();
-  renderTagChips();
-}
-
-
-let compatOptions = [];
-
-async function loadCompatibilityOptions() {
-  const select = document.getElementById("e_compat");
-  if (!select) return;
-
-  select.innerHTML = "";
-
-  try {
-    const res = await fetch("/api/game/versions");
-    const data = await res.json();
-
-    if (!data.ok || !Array.isArray(data.versions)) return;
-
-    compatOptions = data.versions;
-
-    compatOptions.forEach((v) => {
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      select.appendChild(opt);
-    });
-
-  } catch (err) {
-    console.error("Failed to load compatibility versions:", err);
-  }
-}
-
-function applyCompatibilityFromAddon(addon) {
-  const select = document.getElementById("e_compat");
-  if (!select) return;
-
-  const saved = (
-    addon.compatibility ||
-    addon.compat ||
-    addon.compatibilityVersion ||
-    addon.version_compatibility ||
-    ""
-  ).toString().trim();
-
-  const apply = () => {
-    const exists = [...select.options].some(o => o.value === saved);
-
-    if (exists) {
-      select.value = saved;
-    } else if (saved) {
-      const opt = document.createElement("option");
-      opt.value = saved;
-      opt.textContent = saved + " (legacy)";
-      select.appendChild(opt);
-      select.value = saved;
-    }
-  };
-
-  if (select.options.length === 0) {
-    setTimeout(apply, 50);
-  } else {
-    apply();
-  }
-}
-
-
-editForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const id = editingId;
-  const fd = new FormData(editForm);
-
-  try {
-    const res = await fetch(`/api/addons/${id}/update`, {
-      method: "POST",
-      credentials: "include",
-      body: fd,
-    });
-
-    const txt = await res.text();
-    let json;
-
-    try {
-      json = txt ? JSON.parse(txt) : {};
-    } catch {
-      alert("Update failed: server returned invalid data");
-      return;
-    }
-
-    if (json.ok) {
-      showToast("Updated!");
-      closeModal();
-      loadUserAddons();
-    } else {
-      alert("" + (json.error || "Update failed"));
-    }
-  } catch (err) {
-    alert("Network error");
-  }
-});
-
-
 function escapeHtml(s) {
   return String(s || "").replace(/[&<>"']/g, (m) => {
     return {
@@ -427,33 +151,288 @@ function escapeHtml(s) {
 }
 
 
+const modelGrid = document.getElementById("modelGrid");
+const modelEmptyState = document.getElementById("modelEmptyState");
+
+async function loadUserModels() {
+  if (!modelGrid) return;
+  try {
+    const res = await fetch("/api/user/models", { credentials: "include" });
+    if (res.status === 401) return;
+
+    const json = await res.json();
+    modelGrid.innerHTML = "";
+    if (!json.ok || !Array.isArray(json.models) || json.models.length === 0) {
+      modelEmptyState.classList.remove("hidden");
+      return;
+    }
+
+    modelEmptyState.classList.add("hidden");
+    json.models.forEach((m) => {
+      const isDraft = m.status === "draft";
+      const card = document.createElement("article");
+      card.className = "model-card fade-in-card";
+      card.innerHTML = `
+      <div class="model-card-header">
+        ${escapeHtml(m.title)}
+        ${isDraft ? '<span class="model-draft-badge">Draft</span>' : ""}
+      </div>
+      <div class="model-card-thumb">
+        <img class="img-fade" src="${escapeHtml(m.texture_path)}" alt="${escapeHtml(m.title)}">
+      </div>
+      <div class="model-card-footer">
+        <div class="model-card-actions">
+          ${isDraft ? `<button class="btn btn-ghost btn-sm model-publish-btn" data-id="${m.id}">Publish</button>` : ""}
+          <button class="btn btn-ghost btn-sm model-edit-btn" data-id="${m.id}">Edit</button>
+          <button class="btn btn-danger btn-sm model-delete-btn" data-id="${m.id}">Delete</button>
+        </div>
+      </div>
+      `;
+
+      const cardIcon = card.querySelector("img.img-fade");
+      if (cardIcon) {
+        const reveal = () => cardIcon.classList.add("loaded");
+        if (cardIcon.complete && cardIcon.naturalWidth > 0) reveal();
+        else {
+          cardIcon.addEventListener("load", reveal, { once: true });
+          cardIcon.addEventListener("error", reveal, { once: true });
+        }
+      }
+
+      modelGrid.appendChild(card);
+    });
+
+    modelGrid.querySelectorAll(".model-delete-btn").forEach((b) =>
+      b.addEventListener("click", async () => {
+        if (!confirm("Delete this model?")) return;
+        try {
+          const res = await fetch(`/api/models/${b.dataset.id}`, { method: "DELETE" });
+          const data = await res.json();
+          if (!data.ok) {
+            showToast(data.error || "Failed to delete.", { error: true });
+            return;
+          }
+          await loadUserModels();
+        } catch (err) {
+          console.error("Delete model failed:", err);
+          showToast("Failed to delete.", { error: true });
+        }
+      })
+    );
+
+    modelGrid.querySelectorAll(".model-edit-btn").forEach((b) =>
+      b.addEventListener("click", () => {
+        window.location.href = `/uploadmodel.html?edit=${encodeURIComponent(b.dataset.id)}`;
+      })
+    );
+
+    modelGrid.querySelectorAll(".model-publish-btn").forEach((b) =>
+      b.addEventListener("click", async () => {
+        b.disabled = true;
+        try {
+          const res = await fetch(`/api/models/${b.dataset.id}/update`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "published" }),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            showToast(data.error || "Failed to publish.", { error: true });
+            b.disabled = false;
+            return;
+          }
+          showToast("Model published.");
+          await loadUserModels();
+        } catch (err) {
+          console.error("Publish model failed:", err);
+          showToast("Failed to publish.", { error: true });
+          b.disabled = false;
+        }
+      })
+    );
+  } catch (err) {
+    console.error("Failed to load user models:", err);
+  }
+}
+
+const serverManageGrid = document.getElementById("serverManageGrid");
+const serverEmptyState = document.getElementById("serverEmptyState");
+
+async function loadUserServers() {
+  if (!serverManageGrid) return;
+  try {
+    const res = await fetch("/api/user/servers", { credentials: "include" });
+    if (res.status === 401) return;
+
+    const json = await res.json();
+    serverManageGrid.innerHTML = "";
+    if (!json.ok || !Array.isArray(json.servers) || json.servers.length === 0) {
+      serverEmptyState.classList.remove("hidden");
+      return;
+    }
+
+    serverEmptyState.classList.add("hidden");
+    json.servers.forEach((s) => {
+      const isDraft = s.status === "draft";
+      const isOnline = !!s.online;
+      const card = document.createElement("article");
+      card.className = "server-card fade-in-card";
+      card.innerHTML = `
+      <img class="server-card-icon img-fade" src="${escapeHtml(s.icon_url || "assets/default_icon.png")}" alt="">
+      <div class="server-card-main">
+        <div class="server-card-title-row">
+          <span class="server-card-title">${escapeHtml(s.name)}</span>
+          ${isDraft ? '<span class="server-draft-badge">Draft</span>' : ""}
+        </div>
+        <p class="server-card-desc">${escapeHtml(s.description || "")}</p>
+      </div>
+      <div class="server-card-stats">
+        <span class="server-status-badge ${isOnline ? "server-status-online" : "server-status-offline"}">${isOnline ? `Online - ${escapeHtml(String(s.player_count ?? 0))} players` : "Offline"}</span>
+        <div class="user-addon-actions">
+          <button class="btn btn-ghost btn-sm server-publish-btn" data-id="${s.id}" data-draft="${isDraft}">${isDraft ? "Publish" : "Unpublish"}</button>
+          <button class="btn btn-ghost btn-sm server-edit-btn" data-id="${s.id}">Edit</button>
+          <button class="btn btn-danger btn-sm server-delete-btn" data-id="${s.id}">Delete</button>
+        </div>
+      </div>
+      `;
+      serverManageGrid.appendChild(card);
+    });
+
+    serverManageGrid.querySelectorAll(".server-delete-btn").forEach((b) =>
+      b.addEventListener("click", async () => {
+        if (!confirm("Delete this server?")) return;
+        try {
+          const res = await fetch(`/api/servers/${b.dataset.id}`, { method: "DELETE", credentials: "include" });
+          const data = await res.json();
+          if (!data.ok) {
+            showToast(data.error || "Failed to delete.", { error: true });
+            return;
+          }
+          await loadUserServers();
+        } catch (err) {
+          console.error("Delete server failed:", err);
+          showToast("Failed to delete.", { error: true });
+        }
+      })
+    );
+
+    serverManageGrid.querySelectorAll(".server-edit-btn").forEach((b) =>
+      b.addEventListener("click", () => {
+        window.location.href = `/server.html?id=${encodeURIComponent(b.dataset.id)}`;
+      })
+    );
+
+    serverManageGrid.querySelectorAll(".server-publish-btn").forEach((b) =>
+      b.addEventListener("click", async () => {
+        const wasDraft = b.dataset.draft === "true";
+        const newStatus = wasDraft ? "published" : "draft";
+        b.disabled = true;
+        try {
+          const res = await fetch(`/api/servers/${b.dataset.id}/update`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            showToast(data.error || "Failed to update status.", { error: true });
+            b.disabled = false;
+            return;
+          }
+          showToast(wasDraft ? "Server published." : "Server set to draft.");
+          await loadUserServers();
+        } catch (err) {
+          console.error("Publish/unpublish server failed:", err);
+          showToast("Failed to update status.", { error: true });
+          b.disabled = false;
+        }
+      })
+    );
+  } catch (err) {
+    console.error("Failed to load user servers:", err);
+  }
+}
+
+function initCollapsiblePanel(heroId, panelId) {
+  const hero = document.getElementById(heroId);
+  const panel = document.getElementById(panelId);
+  if (!hero || !panel) return;
+
+  function toggle() {
+    const willOpen = panel.classList.contains("hidden");
+    panel.classList.toggle("hidden", !willOpen);
+    hero.setAttribute("aria-expanded", String(willOpen));
+  }
+
+  hero.addEventListener("click", toggle);
+  hero.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
-  // loadNavUser();
   loadUserAddons();
+  loadUserModels();
+  loadUserServers();
+  initCollapsiblePanel("uploadsHero", "uploadsPanel");
+  initCollapsiblePanel("modelsHero", "modelsPanel");
+  initCollapsiblePanel("serversHero", "serversPanel");
 
   const goUpload = document.getElementById("goUpload");
   if (goUpload) {
-    goUpload.addEventListener("click", () => {
-      window.location.href = "/upload.html"; 
+    goUpload.addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.location.href = "/upload.html";
     });
   }
 
   const uploadNew = document.getElementById("uploadNew");
   if (uploadNew) {
     uploadNew.addEventListener("click", () => {
-      window.location.href = "/upload.html"; 
+      window.location.href = "/upload.html";
     });
   }
+
+  const accountTabs = document.querySelectorAll(".account-tab");
+  accountTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const which = tab.dataset.accountTab;
+      accountTabs.forEach((t) => {
+        t.classList.toggle("active", t === tab);
+        t.setAttribute("aria-selected", t === tab ? "true" : "false");
+      });
+      document.querySelectorAll(".account-panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `account-panel-${which}`);
+      });
+    });
+  });
 });
 
+
+function setFieldError(errorElId, message) {
+  const el = document.getElementById(errorElId);
+  if (!el) return;
+  if (message) {
+    el.textContent = message;
+    el.hidden = false;
+  } else {
+    el.textContent = "";
+    el.hidden = true;
+  }
+}
 
 async function changeUsername() {
   const newUsernameEl = document.getElementById("newUsername");
   if (!newUsernameEl) return;
+  setFieldError("newUsernameError", null);
 
   const newUsername = newUsernameEl.value.trim();
   if (!newUsername) {
-    return showToast("Enter a username", { error: true });
+    return setFieldError("newUsernameError", "Enter a username.");
   }
 
   try {
@@ -468,17 +447,15 @@ async function changeUsername() {
 
     if (data.ok) {
       showToast("Username updated");
-      // update nav display immediately
       const name = document.querySelector(".user-name");
       if (name && data.username) name.textContent = data.username;
-      // optionally reload to refresh all data
       setTimeout(() => location.reload(), 500);
     } else {
-      showToast(data.error || "Failed to update username", { error: true });
+      setFieldError("newUsernameError", data.error || "Failed to update username.");
     }
   } catch (err) {
     console.error("CHANGE USERNAME ERROR:", err);
-    showToast("Network error", { error: true });
+    setFieldError("newUsernameError", "Network error - please try again.");
   }
 }
 
@@ -487,12 +464,13 @@ async function changePassword() {
   const oldEl = document.getElementById("oldPassword");
   const newEl = document.getElementById("newPassword");
   if (!oldEl || !newEl) return;
+  setFieldError("changePasswordError", null);
 
   const oldPassword = oldEl.value;
   const newPassword = newEl.value;
 
   if (!oldPassword || !newPassword) {
-    return showToast("Fill both fields", { error: true });
+    return setFieldError("changePasswordError", "Fill in both fields.");
   }
 
   try {
@@ -506,24 +484,438 @@ async function changePassword() {
     const data = await res.json();
 
     if (data.ok) {
-      showToast("Password updated");
-      // clear inputs
+      showToast("Password updated - please log in again");
       oldEl.value = "";
       newEl.value = "";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1600);
     } else {
-      showToast(data.error || "Failed to update password", { error: true });
+      setFieldError("changePasswordError", data.error || "Failed to update password.");
     }
   } catch (err) {
     console.error("CHANGE PASSWORD ERROR:", err);
-    showToast("Network error", { error: true });
+    setFieldError("changePasswordError", "Network error - please try again.");
   }
 }
 
 
 
-modalClose.addEventListener("click", closeModal);
-cancelEdit.addEventListener("click", closeModal);
 
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) closeModal();
-});
+const deleteAccountModal = document.getElementById("deleteAccountModal");
+const openDeleteAccountBtn = document.getElementById("openDeleteAccount");
+const deleteAccountCancel = document.getElementById("deleteAccountCancel");
+const deleteAccountConfirm = document.getElementById("deleteAccountConfirm");
+const deleteAccountUsernameInput = document.getElementById("deleteAccountUsernameInput");
+const deleteAccountPasswordInput = document.getElementById("deleteAccountPassword");
+const deleteAccountError = document.getElementById("deleteAccountError");
+const deleteAccountUsernameLabel = document.getElementById("deleteAccountUsername");
+
+let currentUsername = null;
+
+async function loadCurrentUsername() {
+  try {
+    const res = await fetch("/api/auth/status", { credentials: "include" });
+    const json = await res.json();
+    if (json.ok && json.user) {
+      currentUsername = json.user.username;
+      if (deleteAccountUsernameLabel) deleteAccountUsernameLabel.textContent = currentUsername;
+      loadRecoveryStatus(currentUsername);
+      loadPasskeys();
+      loadNotificationPrefs();
+      loadPrivacySettings();
+      loadThemePreference();
+    }
+  } catch (err) {
+    console.error("Failed to load current username for delete-account confirmation:", err);
+  }
+}
+
+async function loadThemePreference() {
+  const select = document.getElementById("themePreference");
+  if (!select) return;
+
+  const THEME_KEY = "cubyzhub-theme";
+  let current = "ashframe";
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === "default" || stored === "ashframe") current = stored;
+  } catch (_) {}
+  select.value = current;
+
+  if (window.enhanceSelect) window.enhanceSelect(select);
+
+  select.addEventListener("change", async () => {
+    const previousValue = select.dataset.lastValue || current;
+    const theme = select.value;
+
+    if (theme === "default") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", "ashframe");
+    }
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch (_) {}
+
+    try {
+      const res = await fetch("/api/users/theme-preference", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ theme })
+      });
+      const json = await res.json();
+      if (json.ok) {
+        select.dataset.lastValue = theme;
+        showToast("Theme saved");
+      } else {
+        select.value = previousValue;
+        showToast(json.error || "Failed to save theme", { error: true });
+      }
+    } catch (err) {
+      console.error("Failed to save theme preference:", err);
+      select.value = previousValue;
+      showToast("Failed to save theme", { error: true });
+    }
+  });
+}
+
+async function loadPrivacySettings() {
+  const followersSelect = document.getElementById("followersVisibility");
+  const followingSelect = document.getElementById("followingVisibility");
+  const activityToggle = document.getElementById("activityVisible");
+  if (!followersSelect || !followingSelect) return;
+
+  try {
+    const res = await fetch("/api/users/privacy-settings", { credentials: "include" });
+    const json = await res.json();
+    if (json.ok) {
+      followersSelect.value = json.followersVisibility;
+      followingSelect.value = json.followingVisibility;
+      if (activityToggle) activityToggle.checked = json.activityVisible !== false;
+    }
+  } catch (err) {
+    console.error("Failed to load privacy settings:", err);
+  }
+
+  if (activityToggle) {
+    activityToggle.addEventListener("change", async () => {
+      const previousValue = !activityToggle.checked;
+      try {
+        const res = await fetch("/api/users/privacy-settings", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ activityVisible: activityToggle.checked })
+        });
+        const json = await res.json();
+        if (json.ok) {
+          showToast("Privacy setting saved");
+        } else {
+          activityToggle.checked = previousValue;
+          showToast(json.error || "Failed to save setting", { error: true });
+        }
+      } catch (err) {
+        console.error("Failed to save activity visibility:", err);
+        activityToggle.checked = previousValue;
+        showToast("Failed to save setting", { error: true });
+      }
+    });
+  }
+
+  if (window.enhanceSelect) {
+    window.enhanceSelect(followersSelect);
+    window.enhanceSelect(followingSelect);
+  }
+
+  async function savePrivacySetting(select, bodyKey) {
+    const previousValue = select.dataset.lastValue || select.value;
+    try {
+      const res = await fetch("/api/users/privacy-settings", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [bodyKey]: select.value })
+      });
+      const json = await res.json();
+      if (json.ok) {
+        select.dataset.lastValue = select.value;
+        showToast("Privacy setting saved");
+      } else {
+        select.value = previousValue;
+        showToast(json.error || "Failed to save setting", { error: true });
+      }
+    } catch (err) {
+      console.error("Failed to save privacy setting:", err);
+      select.value = previousValue;
+      showToast("Failed to save setting", { error: true });
+    }
+  }
+
+  followersSelect.dataset.lastValue = followersSelect.value;
+  followingSelect.dataset.lastValue = followingSelect.value;
+  followersSelect.addEventListener("change", () => savePrivacySetting(followersSelect, "followersVisibility"));
+  followingSelect.addEventListener("change", () => savePrivacySetting(followingSelect, "followingVisibility"));
+}
+
+async function loadNotificationPrefs() {
+  const toggles = document.querySelectorAll(".pref-toggle");
+  if (!toggles.length) return;
+
+  try {
+    const res = await fetch("/api/users/notification-prefs", { credentials: "include" });
+    const json = await res.json();
+    if (!json.ok) return;
+
+    toggles.forEach((toggle) => {
+      const key = toggle.dataset.pref;
+      toggle.checked = json.prefs[key] !== false;
+    });
+  } catch (err) {
+    console.error("Failed to load notification preferences:", err);
+  }
+
+  toggles.forEach((toggle) => {
+    toggle.addEventListener("change", async () => {
+      const key = toggle.dataset.pref;
+      const previousValue = !toggle.checked;
+      try {
+        const res = await fetch("/api/users/notification-prefs", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prefs: { [key]: toggle.checked } })
+        });
+        const json = await res.json();
+        if (!json.ok) {
+          toggle.checked = previousValue;
+          showToast(json.error || "Failed to save setting", { error: true });
+        }
+      } catch (err) {
+        console.error("Failed to save notification preference:", err);
+        toggle.checked = previousValue;
+        showToast("Failed to save setting", { error: true });
+      }
+    });
+  });
+}
+
+const recoveryStatusEl = document.getElementById("recoveryStatus");
+const openRecoverySetupBtn = document.getElementById("openRecoverySetup");
+
+async function loadRecoveryStatus(username) {
+  if (!recoveryStatusEl || !username) return;
+  try {
+    const res = await fetch("/api/auth/recovery-options", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    const json = await res.json();
+    if (!json.ok) {
+      recoveryStatusEl.textContent = "Could not load recovery status.";
+      return;
+    }
+    if (json.hasSecurityQuestion && json.hasRecoveryCode) {
+      recoveryStatusEl.textContent = "Security question and recovery code set up.";
+    } else if (json.hasSecurityQuestion) {
+      recoveryStatusEl.textContent = "Security question set up.";
+    } else if (json.hasRecoveryCode) {
+      recoveryStatusEl.textContent = "Recovery code set up.";
+    } else {
+      recoveryStatusEl.textContent = "No recovery method set up.";
+      recoveryStatusEl.style.color = "#e0b25d";
+    }
+  } catch (err) {
+    console.error("Failed to load recovery status:", err);
+    recoveryStatusEl.textContent = "Could not load recovery status.";
+  }
+}
+
+if (openRecoverySetupBtn) {
+  openRecoverySetupBtn.addEventListener("click", () => {
+    if (typeof window.openAccountRecoverySetup === "function") {
+      window.openAccountRecoverySetup();
+    }
+  });
+}
+
+const passkeyListEl = document.getElementById("passkeyList");
+const addPasskeyBtn = document.getElementById("addPasskeyBtn");
+
+async function loadPasskeys() {
+  if (!passkeyListEl) return;
+  try {
+    const res = await fetch("/api/auth/passkeys", { credentials: "include" });
+    const json = await res.json();
+    if (!json.ok) return;
+
+    passkeyListEl.innerHTML = "";
+    if (!json.passkeys.length) {
+      const li = document.createElement("li");
+      li.style.cssText = "color:#aaa;font-size:0.9rem;";
+      li.textContent = "No passkeys added yet.";
+      passkeyListEl.appendChild(li);
+      return;
+    }
+
+    json.passkeys.forEach((pk) => {
+      const li = document.createElement("li");
+      li.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;background:#171b19;border:1px solid #2d3530;border-radius:8px;";
+
+      const label = document.createElement("span");
+      label.style.cssText = "font-size:0.9rem;color:#ddd;";
+      const created = pk.created_at ? parseServerDate(pk.created_at).toLocaleDateString("en-GB") : "";
+      label.textContent = `${pk.device_name || "Passkey"} — added ${created}`;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "btn btn-danger btn-sm";
+      removeBtn.textContent = "Remove";
+      removeBtn.addEventListener("click", async () => {
+        if (!confirm("Remove this passkey? You'll no longer be able to sign in with it.")) return;
+        try {
+          const delRes = await fetch(`/api/auth/passkeys/${pk.id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const delJson = await delRes.json();
+          if (delJson.ok) {
+            showToast("Passkey removed");
+            loadPasskeys();
+          } else {
+            showToast(delJson.error || "Failed to remove passkey", { error: true });
+          }
+        } catch (err) {
+          console.error("Failed to remove passkey:", err);
+          showToast("Network error", { error: true });
+        }
+      });
+
+      li.append(label, removeBtn);
+      passkeyListEl.appendChild(li);
+    });
+  } catch (err) {
+    console.error("Failed to load passkeys:", err);
+  }
+}
+
+if (addPasskeyBtn) {
+  addPasskeyBtn.addEventListener("click", async () => {
+    if (!window.SimpleWebAuthnBrowser || !window.PublicKeyCredential) {
+      showToast("Passkeys aren't supported in this browser", { error: true });
+      return;
+    }
+    try {
+      const optRes = await fetch("/api/auth/passkey/register-options", {
+        method: "POST",
+        credentials: "include",
+      });
+      const optJson = await optRes.json();
+      if (!optJson.ok) {
+        showToast(optJson.error || "Could not start passkey registration", { error: true });
+        return;
+      }
+
+      const attestation = await window.SimpleWebAuthnBrowser.startRegistration({ optionsJSON: optJson.options });
+
+      const deviceName = prompt("Name this passkey (e.g. \"MacBook\", \"Phone\"):", "") || undefined;
+
+      const verifyRes = await fetch("/api/auth/passkey/register-verify", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deviceName, response: attestation }),
+      });
+      const verifyJson = await verifyRes.json();
+      if (verifyJson.ok) {
+        showToast("Passkey added");
+        loadPasskeys();
+      } else {
+        showToast(verifyJson.error || "Failed to add passkey", { error: true });
+      }
+    } catch (err) {
+      if (err.name !== "NotAllowedError") {
+        console.error("Failed to add passkey:", err);
+        showToast("Failed to add passkey", { error: true });
+      }
+    }
+  });
+}
+
+function openDeleteAccountModal() {
+  if (!deleteAccountModal) return;
+  deleteAccountUsernameInput.value = "";
+  deleteAccountPasswordInput.value = "";
+  deleteAccountError.hidden = true;
+  deleteAccountError.textContent = "";
+  deleteAccountModal.classList.add("open");
+  deleteAccountModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDeleteAccountModal() {
+  if (!deleteAccountModal) return;
+  deleteAccountModal.classList.remove("open");
+  deleteAccountModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+if (openDeleteAccountBtn) {
+  openDeleteAccountBtn.addEventListener("click", openDeleteAccountModal);
+}
+
+if (deleteAccountCancel) {
+  deleteAccountCancel.addEventListener("click", closeDeleteAccountModal);
+}
+
+if (deleteAccountModal) {
+  deleteAccountModal.addEventListener("click", (e) => {
+    if (e.target === deleteAccountModal) closeDeleteAccountModal();
+  });
+}
+
+if (deleteAccountConfirm) {
+  deleteAccountConfirm.addEventListener("click", async () => {
+    deleteAccountError.hidden = true;
+
+    const typedUsername = deleteAccountUsernameInput.value.trim();
+    const password = deleteAccountPasswordInput.value;
+
+    if (currentUsername && typedUsername !== currentUsername) {
+      deleteAccountError.textContent = "Username doesn't match.";
+      deleteAccountError.hidden = false;
+      return;
+    }
+
+    if (!password) {
+      deleteAccountError.textContent = "Password is required.";
+      deleteAccountError.hidden = false;
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/auth/account", {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const json = await res.json().catch(() => ({ ok: false }));
+
+      if (json.ok) {
+        closeDeleteAccountModal();
+        window.location.href = "/";
+      } else {
+        deleteAccountError.textContent = json.error || "Account deletion failed.";
+        deleteAccountError.hidden = false;
+      }
+    } catch (err) {
+      deleteAccountError.textContent = "Network error. Please try again.";
+      deleteAccountError.hidden = false;
+    }
+  });
+}
+
+loadCurrentUsername();

@@ -1,0 +1,268 @@
+<div class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+    <h2 style="margin: 0;">Biome Creator</h2>
+    <div style="display: flex; align-items: center; gap: 8px; position: relative; width: 300px;">
+        <label style="margin: 0; font-size: 13px; color: var(--text-muted); font-weight: normal; white-space: nowrap;">Load Preset:</label>
+        <div style="position: relative; flex: 1;">
+            <input type="text" id="biomePresetSelectorSearch" value="None" readonly style="cursor: pointer; padding: 6px 12px; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text); border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box;" onfocus="document.getElementById('biomePresetDropdown').style.display='block'">
+            <div id="biomePresetDropdown" class="dropdown-options" style="display: none; position: absolute; top: 100%; right: 0; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1001; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('biomePresetSelectorSearch').value='Mountain'; window.loadBiomePreset('mountain'); document.getElementById('biomePresetDropdown').style.display='none';">Mountain</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('biomePresetSelectorSearch').value='Cave'; window.loadBiomePreset('cave'); document.getElementById('biomePresetDropdown').style.display='none';">Cave</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('biomePresetSelectorSearch').value='Ocean'; window.loadBiomePreset('ocean'); document.getElementById('biomePresetDropdown').style.display='none';">Ocean</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('biomePresetSelectorSearch').value='Forest'; window.loadBiomePreset('forest'); document.getElementById('biomePresetDropdown').style.display='none';">Forest</div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="biome-grid-row cols-3" style="margin-bottom: 24px;">
+        <div class="form-group">
+            <label for="biomeId">Biome ID<span class="hint-text">(Filename)</span></label>
+            <input type="text" id="biomeId" placeholder="ruby_valleys" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, '')">
+        </div>
+        <div class="form-group">
+            <label for="biomeChance">Generation Chance</label>
+            <input type="number" id="biomeChance" placeholder="1.0" step="0.01" min="0">
+        </div>
+        <div class="form-group" style="position: relative;">
+            <label for="bioInterpolation">Border Interpolation</label>
+            <input type="hidden" id="bioInterpolation" value=".square">
+            <input type="text" id="bioInterpolationSearch" value=".square (Smooth Default)" readonly style="cursor: pointer;" onfocus="document.getElementById('bioInterpolationDropdown').style.display='block'">
+            <div id="bioInterpolationDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-sizing: border-box;">
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('bioInterpolation').value='.square'; document.getElementById('bioInterpolationSearch').value='.square (Smooth Default)'; document.getElementById('bioInterpolationDropdown').style.display='none';">.square (Smooth Default)</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('bioInterpolation').value='.linear'; document.getElementById('bioInterpolationSearch').value='.linear'; document.getElementById('bioInterpolationDropdown').style.display='none';">.linear</div>
+                <div class="dropdown-option" style="padding: 6px 12px; cursor: pointer;" onmousedown="document.getElementById('bioInterpolation').value='.none'; document.getElementById('bioInterpolationSearch').value='.none'; document.getElementById('bioInterpolationDropdown').style.display='none';">.none</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="biome-dashboard-split" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 15px;">
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="biome-section-box" style="padding: 20px;">
+                <h3>World Gen Properties</h3>
+                <div class="properties-list-stack" style="gap: 14px;">
+                    <div class="property-inline-item" style="padding-bottom: 12px;">
+                        <span class="prop-title">Climate:</span>
+                        <div class="prop-segmented-control">
+                            <label><input type="radio" name="bioTemp" value="hot"><span>.hot</span></label>
+                            <label><input type="radio" name="bioTemp" value="temperate" checked><span>.temperate</span></label>
+                            <label><input type="radio" name="bioTemp" value="cold"><span>.cold</span></label>
+                        </div>
+                    </div>
+                    <div class="property-inline-item" style="padding-bottom: 12px;">
+                        <span class="prop-title">Humidity:</span>
+                        <div class="prop-segmented-control">
+                            <label><input type="radio" name="bioWet" value="wet"><span>.wet</span></label>
+                            <label><input type="radio" name="bioWet" value="neitherWetNorDry" checked><span>.neither</span></label>
+                            <label><input type="radio" name="bioWet" value="dry"><span>.dry</span></label>
+                        </div>
+                    </div>
+                    <div class="property-inline-item" style="padding-bottom: 12px;">
+                        <span class="prop-title">Environment:</span>
+                        <div class="prop-segmented-control">
+                            <label><input type="radio" name="bioZone" value="inland" checked><span>.inland</span></label>
+                            <label><input type="radio" name="bioZone" value="land"><span>.land</span></label>
+                            <label><input type="radio" name="bioZone" value="ocean"><span>.ocean</span></label>
+                        </div>
+                    </div>
+                    <div class="property-inline-item" style="padding-bottom: 12px;">
+                        <span class="prop-title">Flora:</span>
+                        <div class="prop-segmented-control">
+                            <label><input type="radio" name="bioGrowth" value="barren"><span>.barren</span></label>
+                            <label><input type="radio" name="bioGrowth" value="balanced" checked><span>.balanced</span></label>
+                            <label><input type="radio" name="bioGrowth" value="overgrown"><span>.overgrown</span></label>
+                        </div>
+                    </div>
+                    <div class="property-inline-item" style="border: none; padding-bottom: 0;">
+                        <span class="prop-title">Elevation Type:</span>
+                        <div class="prop-segmented-control">
+                            <label><input type="radio" name="bioHeightProp" value="lowTerrain"><span>.lowTerrain</span></label>
+                            <label><input type="radio" name="bioHeightProp" value="balanced" checked><span>.balanced</span></label>
+                            <label><input type="radio" name="bioHeightProp" value="mountain"><span>.mountain</span></label>
+                            <label><input type="radio" name="bioHeightProp" value="antiMountain"><span>.antiMtn</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="biome-section-box" style="padding: 20px;">
+                <h3>Ground Layers</h3>
+                <div class="biome-grid-row cols-1" style="gap: 16px;">
+                    <div class="form-group texture-select-wrapper">
+                        <label for="bioSurfaceBlock">Top Surface Layer</label>
+                        <input type="text" id="bioSurfaceBlock" placeholder="cubyz:grass" autocomplete="off" onfocus="window.showRecipeDropdown('bioSurfaceDropdown', 'bioSurfaceBlock', 'blocks')" oninput="window.filterDropdown('bioSurfaceBlock', 'bioSurfaceDropdown')">
+                        <div id="bioSurfaceDropdown" class="dropdown-options"></div>
+                    </div>
+                    <div class="form-group texture-select-wrapper">
+                        <label for="bioSubBlock">Subsurface Layer (Up to 3 deep)</label>
+                        <input type="text" id="bioSubBlock" placeholder="cubyz:soil" autocomplete="off" onfocus="window.showRecipeDropdown('bioSubDropdown', 'bioSubBlock', 'blocks')" oninput="window.filterDropdown('bioSubBlock', 'bioSubDropdown')">
+                        <div id="bioSubDropdown" class="dropdown-options"></div>
+                    </div>
+                    <div class="form-group texture-select-wrapper">
+                        <label for="bioStoneBlock">Bottom Stone Layer</label>
+                        <input type="text" id="bioStoneBlock" placeholder="cubyz:slate/smooth" autocomplete="off" onfocus="window.showRecipeDropdown('bioStoneDropdown', 'bioStoneBlock', 'blocks')" oninput="window.filterDropdown('bioStoneBlock', 'bioStoneDropdown')">
+                        <div id="bioStoneDropdown" class="dropdown-options"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="biome-section-box" style="padding: 20px;">
+                <h3>Terrain Size & Shape</h3>
+                <div class="biome-grid-row cols-2" style="margin-bottom: 8px;">
+                    <div class="form-group">
+                        <label for="bioMinRadius">Min Cluster Radius</label>
+                        <input type="number" id="bioMinRadius" placeholder="256">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioMaxRadius">Max Cluster Radius</label>
+                        <input type="number" id="bioMaxRadius" placeholder="320">
+                    </div>
+                </div>
+
+                <div class="biome-grid-row cols-3" style="margin-bottom: 8px;">
+                    <div class="form-group">
+                        <label for="bioMinHeight">Min Height</label>
+                        <input type="number" id="bioMinHeight" placeholder="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioMaxHeight">Max Height</label>
+                        <input type="number" id="bioMaxHeight" placeholder="40">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-top: 28px; cursor: pointer;">
+                            <input type="checkbox" id="bioSmoothBeaches" checked> Smooth Beaches
+                        </label>
+                    </div>
+                </div>
+
+                <div class="biome-grid-row cols-2" style="margin-bottom: 8px;">
+                    <div class="form-group">
+                        <label for="bioMinHeightLimit">Min Floor Limit</label>
+                        <input type="number" id="bioMinHeightLimit" placeholder="7">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioMaxHeightLimit">Max Ceiling Limit</label>
+                        <input type="number" id="bioMaxHeightLimit" placeholder="50">
+                    </div>
+                </div>
+
+                <div class="biome-grid-row cols-3" style="margin-bottom: 8px; border-top: 1px dashed var(--border); padding-top: 14px;">
+                    <div class="form-group">
+                        <label for="bioRoughness">Roughness Factor</label>
+                        <input type="number" id="bioRoughness" placeholder="1.0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioHills">Hills Factor</label>
+                        <input type="number" id="bioHills" placeholder="5.0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioMountains">Mountains Factor</label>
+                        <input type="number" id="bioMountains" placeholder="0.0" step="0.1">
+                    </div>
+                </div>
+
+                <div class="biome-grid-row cols-2">
+                    <div class="form-group">
+                        <label for="bioSoilCreep">Soil Creep Slip Factor</label>
+                        <input type="number" id="bioSoilCreep" value="1.0" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="bioKeepOriginalTerrain">Keep Original Mix</label>
+                        <input type="number" id="bioKeepOriginalTerrain" placeholder="1.0" step="0.01" min="0" max="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="biome-section-box" style="padding: 20px;">
+                <h3>Environment, Audio & Atmospheric Tints</h3>
+                <div class="biome-grid-row cols-2" style="margin-bottom: 12px; gap: 20px;">
+                    <div class="form-group texture-select-wrapper" style="position: relative; margin-bottom: 0;">
+                        <label for="bioMusic">Ambient Music Track</label>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+                            <button type="button" id="btnPlayMusic" onclick="window.toggleMusicPreview()" style="background: #2b2b2b; border: 1px solid var(--border-color); color: var(--text); padding: 8px 14px; border-radius: 4px; cursor: pointer; height: 38px; flex-shrink: 0; font-size: 13px;">▶</button>
+                            <div style="flex: 1; position: relative;">
+                                <input type="text" id="bioMusic" placeholder="cubyz:sunrise" autocomplete="off" onfocus="window.showRecipeDropdown('bioMusicDropdown', 'bioMusic', 'music')" oninput="window.filterDropdown('bioMusic', 'bioMusicDropdown')">
+                                <div id="bioMusicDropdown" class="dropdown-options" style="display: none; position: absolute; width: 100%; min-width: 320px; max-height: 220px; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--border); z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5);"></div>
+                            </div>
+                        </div>
+                        <label class="file-input-label" style="display: inline-block; margin-top: 2px; cursor: pointer; color: var(--accent); font-size: 12px; font-weight: normal;">+ Add custom Audio <input type="file" accept=".ogg,.mp3,.wav" style="display:none" onchange="window.handleCustomAudio(this)"></label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="bioFogDensity">Fog Thickness Density</label>
+                        <input type="number" id="bioFogDensity" placeholder="1.5" step="0.1">
+                    </div>
+                </div>
+                <div class="biome-grid-row cols-3" style="align-items: center; border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 12px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="bioSkyColor">Sky Tint</label>
+                        <div class="color-picker-input-wrapper"><input type="color" id="bioSkyColor" value="#75b2ff"></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="bioFogColor">Fog Atmospheric Tint</label>
+                        <div class="color-picker-input-wrapper"><input type="color" id="bioFogColor" value="#e2f2ff"></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="display: inline-flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; margin-top: 20px;">
+                            <input type="checkbox" id="bioSpawn" checked> Valid Spawn
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="biome-section-box" style="margin-top: 24px; padding: 20px;">
+        <div style="display: flex; align-items: center; justify-content: flex-start; gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 16px;">
+            <h3 style="margin: 0; padding: 0; border: none; line-height: 1;">Underground Cave Gen</h3>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 0; cursor: pointer; font-size: 13px; color: var(--accent); transform: translateY(1px); font-weight: bold;">
+                <input type="checkbox" id="bioIsCave" onchange="document.getElementById('caveSettings').style.display = this.checked ? 'grid' : 'none'"> Enable Cave Biome Properties
+            </label>
+        </div>
+        <div id="caveSettings" class="biome-grid-row cols-3" style="display: none; gap: 20px; padding: 4px 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="bioCaves">Cave Density Scale</label>
+                <input type="number" id="bioCaves" placeholder="1.0" step="0.1">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="bioCaveRadiusFactor">Cave Openness Radius Factor</label>
+                <input type="number" id="bioCaveRadiusFactor" placeholder="1.0" step="0.1">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="bioCrystals">Glow Crystals Frequency</label>
+                <input type="number" id="bioCrystals" placeholder="0" min="0">
+            </div>
+            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                <label for="bioCaveLayer">Cave Layer <span class="hint-text">(required in 0.3.0+ - a cave biome without one of these silently never spawns, with only a server log warning)</span></label>
+                <select id="bioCaveLayer" onchange="document.getElementById('bioCaveLayerCustom').style.display = this.value === '__custom__' ? 'block' : 'none'; window.markFormAsDirty();">
+                    <option value="">— Select a cave layer —</option>
+                    <option value="cave_layer">cave_layer (general caves)</option>
+                    <option value="shallow_cave_layer">shallow_cave_layer</option>
+                    <option value="surface_caves_layer">surface_caves_layer</option>
+                    <option value="sky_layer">sky_layer</option>
+                    <option value="sky_island_layer">sky_island_layer</option>
+                    <option value="sky_island_fog_layer">sky_island_fog_layer</option>
+                    <option value="dropoff_layer">dropoff_layer</option>
+                    <option value="mantle_layer">mantle_layer</option>
+                    <option value="lower_mantle_layer">lower_mantle_layer</option>
+                    <option value="root_layer">root_layer</option>
+                    <option value="root_transition_layer">root_transition_layer</option>
+                    <option value="void_layer">void_layer</option>
+                    <option value="__custom__">Custom layer (define your own)...</option>
+                </select>
+                <input type="text" id="bioCaveLayerCustom" placeholder="e.g. my_custom_layer" style="display: none; margin-top: 8px;">
+                <span class="field-explanation">Any tag ending in "_layer" assigns this biome to that cave layer - it just needs to match a layer your addon (or the vanilla game) actually defines under cave_layers/. Tags are never namespaced/prefixed with your mod id in Cubyz (confirmed in the game's own src/tag.zig) - use a plain name, just pick something specific enough to avoid colliding with another addon's layer name. The listed options are vanilla's own layers; pick "Custom" to target your own addon-defined layer instead.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="biome-section-box" style="margin-top: 24px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">
+            <h3 style="margin: 0; padding: 0; border: none; line-height: 1;">Foliage, Decor & Structures</h3>
+            <button type="button" class="btn-secondary" onclick="window.addStructureRow()" style="background: var(--accent); color: #000; margin: 0; padding: 8px 16px; font-size: 13px; font-weight: bold; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;">+ Add Structure Layer</button>
+        </div>
+        <div id="biomeStructuresContainer" style="display: flex; flex-direction: column; gap: 16px; min-height: 20px;"></div>
+    </div>
+
+</div>
