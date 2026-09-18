@@ -13,7 +13,7 @@
     "build:css": "esbuild public/style.css public/ashframe-theme.css public/buttons.css --minify --outdir=public/dist"
   },
   "author": "Ashframe",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@simplewebauthn/server": "^13.1.1",
     "bcrypt": "^6.0.0",
@@ -37,11 +37,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ashframe-org/cubyz-addon-marketplace.git"
+    "url": "git+https://github.com/ashframe-org/cubyz-hub.git"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/ashframe-org/cubyz-addon-marketplace/issues"
+    "url": "https://github.com/ashframe-org/cubyz-hub/issues"
   },
-  "homepage": "https://github.com/ashframe-org/cubyz-addon-marketplace#readme"
+  "homepage": "https://github.com/ashframe-org/cubyz-hub#readme"
 }
